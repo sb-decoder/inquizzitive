@@ -21,6 +21,11 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+  .dark body,
+  .dark html,
+  .dark #root {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+  }
 }
 
 @layer components {
@@ -43,6 +48,15 @@
     );
     backdrop-filter: blur(10px);
     animation: float 6s ease-in-out infinite;
+  }
+
+  /* Dark Mode Shapes */
+  .dark .shape {
+    background: linear-gradient(
+      45deg,
+      rgba(100, 100, 255, 0.1),
+      rgba(150, 100, 255, 0.05)
+    );
   }
 
   .shape-1 {
@@ -69,6 +83,12 @@
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .floating-nav {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   }
 
   .nav-brand {
@@ -125,6 +145,16 @@
   .glass-card:hover {
     @apply -translate-y-0.5;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .glass-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   }
 
   /* Welcome Section */
