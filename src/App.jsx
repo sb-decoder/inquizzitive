@@ -31,7 +31,7 @@ export default function App() {
       // Replace this with your actual Gemini API call
 
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
       const prompt = `
       Generate ${numQuestions} multiple choice questions on ${selectedCategory} for ${selectedDifficulty} difficulty level.
       
@@ -156,6 +156,7 @@ export default function App() {
               <h1 className="welcome-title">
                 Welcome to <span className="gradient-text">Inquizzitive</span>
               </h1>
+
               <p className="welcome-subtitle">
                 Master government exams with AI-powered practice sessions
               </p>
@@ -212,18 +213,62 @@ export default function App() {
                   disabled={loading}
                   className="start-btn"
                 >
-                  {loading ? (
-                    <>
-                      <span className="loading-spinner"></span>
-                      Generating Quiz...
-                    </>
-                  ) : (
-                    <>
-                      <span>🚀</span>
-                      Start Quiz
-                    </>
-                  )}
+                  <span>🚀</span>
+                  Start Quiz
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {loading && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
+            <div className="relative">
+              <div className="absolute inset-0 animate-ping opacity-20">
+                <div className="h-32 w-32 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500"></div>
+              </div>
+
+              <div className="relative flex flex-col items-center gap-6">
+                <div className="relative h-32 w-32">
+                  <div className="absolute inset-0 animate-spin rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 p-1">
+                    <div className="h-full w-full rounded-full bg-gray-900"></div>
+                  </div>
+
+                  <div
+                    className="absolute inset-0 animate-spin"
+                    style={{ animationDuration: "1.5s" }}
+                  >
+                    <div className="h-full w-full rounded-full border-4 border-transparent border-t-purple-400"></div>
+                  </div>
+
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-4xl animate-pulse">🧠</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-2">
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                    Generating Your Quiz
+                  </h3>
+                  <p className="text-gray-400 animate-pulse">
+                    Crafting {numQuestions} questions on {selectedCategory}...
+                  </p>
+
+                  <div className="flex gap-2 mt-2">
+                    <div
+                      className="h-2 w-2 rounded-full bg-purple-500 animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    ></div>
+                    <div
+                      className="h-2 w-2 rounded-full bg-pink-500 animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    ></div>
+                    <div
+                      className="h-2 w-2 rounded-full bg-blue-500 animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    ></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
