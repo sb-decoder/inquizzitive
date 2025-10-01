@@ -8,7 +8,15 @@ export default function App() {
   const [submitted, setSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
   const [error, setError] = useState(null);
-  const [categories] = useState(["Current Affairs", "Geography", "History", "Indian Defence", "Politics"]);
+  const [categories] = useState([
+    "Current Affairs",
+    "Geography",
+    "History",
+    "Indian Defence",
+    "Politics",
+    "Sports",
+    "Literature",
+  ]);
   const [difficulties] = useState(["Easy", "Medium", "Hard"]);
   const [selectedCategory, setSelectedCategory] = useState("Current Affairs");
   const [selectedDifficulty, setSelectedDifficulty] = useState("Medium");
