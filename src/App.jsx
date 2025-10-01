@@ -386,9 +386,9 @@ export default function App() {
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
       const prompt = `
-     Generate \${numQuestions} multiple-choice questions focused on \${selectedCategory}, tailored for Indian government exam preparation (e.g., UPSC, SSC, or similar competitive exams). Ensure questions are exam-oriented: they should cover key topics, historical events, policies, figures, or concepts relevant to the category, with a focus on factual accuracy, analytical depth, and real-world application where appropriate.
+      Generate ${numQuestions} multiple-choice questions focused on ${selectedCategory}, tailored for Indian government exam preparation (e.g., UPSC, SSC, or similar competitive exams). Ensure questions are exam-oriented: they should cover key topics, historical events, policies, figures, or concepts relevant to the category, with a focus on factual accuracy, analytical depth, and real-world application where appropriate.
 
-      Adhere to the selected difficulty level:
+      Adhere to the selected difficulty level which is ${selectedDifficulty}:
       - Easy: Basic recall of facts, straightforward questions with obvious distractors.
       - Medium: Require moderate understanding, including connections between concepts, with plausible distractors.
       - Hard: In-depth analysis, nuanced details, or application-based questions, with closely related distractors that test deep knowledge.
@@ -408,7 +408,6 @@ export default function App() {
           "answer": "Narendra Modi",
           "explanation": "Narendra Modi has been the Prime Minister of India since 2014, leading the BJP government. The other options are prominent politicians but not the current PM."
         }
-      },
       ]
 
       Ensure the entire response is parseable as JSON.`;
@@ -487,8 +486,7 @@ export default function App() {
   }
 
   const score = submitted ? calculateScore() : null;
-
-  // Calculate progress based on answered questions
+  
   function calculateProgress() {
     const answeredCount = Object.keys(answers).length;
     const totalQuestions = quiz.length;
@@ -501,7 +499,6 @@ export default function App() {
   }
 
   const progress = calculateProgress();
-
   return (
     <div className="app">
       {/* Floating Navbar */}
@@ -519,12 +516,12 @@ export default function App() {
 
           <button
             onClick={toggleDarkMode}
-            className="ml-1 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
+            className="ml-2 p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
             aria-label="Toggle dark mode"
           >
             {isDarkMode ? (
               <svg
-                className="w-4 h-4 text-yellow-300"
+                className="w-5 h-5 text-yellow-300"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -536,7 +533,7 @@ export default function App() {
               </svg>
             ) : (
               <svg
-                className="w-4 h-4 text-gray-300"
+                className="w-5 h-5 text-gray-300"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -696,22 +693,6 @@ export default function App() {
                   {Math.floor(timeLeft / 60)}:
                   {(timeLeft % 60).toString().padStart(2, "0")}
                 </span>
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="glass-card progress-card">
-              <div className="progress-header">
-                <span className="progress-text">
-                  Progress: {progress.answered} of {progress.total} questions answered
-                </span>
-                <span className="progress-percentage">{progress.percentage}%</span>
-              </div>
-              <div className="progress-bar-container">
-                <div 
-                  className="progress-bar-fill"
-                  style={{ width: `${progress.percentage}%` }}
-                ></div>
               </div>
             </div>
 
