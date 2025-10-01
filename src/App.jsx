@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function App() {
   const [loading, setLoading] = useState(false);
@@ -7,7 +7,13 @@ export default function App() {
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
-  const [categories] = useState(["Current Affairs", "Geography", "History", "Indian Defence", "Politics"]);
+  const [categories] = useState([
+    "Current Affairs",
+    "Geography",
+    "History",
+    "Indian Defence",
+    "Politics",
+  ]);
   const [difficulties] = useState(["Easy", "Medium", "Hard"]);
   const [selectedCategory, setSelectedCategory] = useState("Current Affairs");
   const [selectedDifficulty, setSelectedDifficulty] = useState("Medium");
@@ -20,10 +26,11 @@ export default function App() {
     setSubmitted(false);
     setAnswers({});
     setShowStartScreen(false);
-    
+
     try {
-       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
       const prompt = `
       Generate ${numQuestions} multiple choice questions on ${selectedCategory} for ${selectedDifficulty} difficulty level.
       
@@ -43,21 +50,20 @@ export default function App() {
       const result = await model.generateContent(prompt);
       let text = await result.response.text();
       text = text.replace(/```json|```/g, "").trim();
-      
+
       console.log("Raw AI response:", text); // Debug log
-      
+
       const questions = JSON.parse(text);
-      
+
       // Validate and clean the data
-      const cleanedQuestions = questions.map(q => ({
+      const cleanedQuestions = questions.map((q) => ({
         ...q,
         answer: q.answer?.trim(),
-        options: q.options?.map(opt => opt?.trim())
+        options: q.options?.map((opt) => opt?.trim()),
       }));
-      
+
       console.log("Cleaned questions:", cleanedQuestions); // Debug log
-      
-      
+
       setQuiz(cleanedQuestions);
       // Set timer based on number of questions (30 seconds per question)
       setTimeLeft(cleanedQuestions.length * 30);
@@ -91,9 +97,12 @@ export default function App() {
       // Trim whitespace and do case-insensitive comparison
       const userAnswer = answers[i]?.trim();
       const correctAnswer = q.answer?.trim();
-      
-      if (userAnswer && correctAnswer && 
-          userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+
+      if (
+        userAnswer &&
+        correctAnswer &&
+        userAnswer.toLowerCase() === correctAnswer.toLowerCase()
+      ) {
         correct++;
       }
     });
@@ -123,7 +132,9 @@ export default function App() {
           <span className="nav-title">Inquizzitive</span>
         </div>
         <div className="nav-links">
-           <button className="nav-btn" onClick={resetQuiz}>Practice</button>
+          <button className="nav-btn" onClick={resetQuiz}>
+            Practice
+          </button>
           <button className="nav-btn">Dashboard</button>
           <button className="nav-btn nav-btn-primary">Sign In</button>
         </div>
@@ -147,40 +158,44 @@ export default function App() {
               <p className="welcome-subtitle">
                 Master government exams with AI-powered practice sessions
               </p>
-              
+
               <div className="quiz-setup">
                 <div className="setup-row">
                   <div className="input-group">
                     <label>Category</label>
-                    <select 
-                      value={selectedCategory} 
+                    <select
+                      value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
                       className="glass-select"
                     >
                       {categories.map((cat) => (
-                        <option key={cat} value={cat}>{cat}</option>
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
                       ))}
                     </select>
                   </div>
-                  
+
                   <div className="input-group">
                     <label>Difficulty</label>
-                    <select 
-                      value={selectedDifficulty} 
+                    <select
+                      value={selectedDifficulty}
                       onChange={(e) => setSelectedDifficulty(e.target.value)}
                       className="glass-select"
                     >
                       {difficulties.map((diff) => (
-                        <option key={diff} value={diff}>{diff}</option>
+                        <option key={diff} value={diff}>
+                          {diff}
+                        </option>
                       ))}
                     </select>
                   </div>
                 </div>
-                
+
                 <div className="input-group">
                   <label>Number of Questions</label>
-                  <select 
-                    value={numQuestions} 
+                  <select
+                    value={numQuestions}
                     onChange={(e) => setNumQuestions(Number(e.target.value))}
                     className="glass-select"
                   >
@@ -190,9 +205,9 @@ export default function App() {
                     <option value={20}>20 Questions (10 min)</option>
                   </select>
                 </div>
-                
-                <button 
-                  onClick={fetchQuiz} 
+
+                <button
+                  onClick={fetchQuiz}
                   disabled={loading}
                   className="start-btn"
                 >
@@ -219,12 +234,15 @@ export default function App() {
             <div className="glass-card quiz-header-card">
               <div className="quiz-info">
                 <h2>{selectedCategory} Quiz</h2>
-                <span className="quiz-meta">{selectedDifficulty} • {quiz.length} Questions</span>
+                <span className="quiz-meta">
+                  {selectedDifficulty} • {quiz.length} Questions
+                </span>
               </div>
               <div className="timer">
                 <span className="timer-icon">⏱️</span>
                 <span className="timer-text">
-                  {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
+                  {Math.floor(timeLeft / 60)}:
+                  {(timeLeft % 60).toString().padStart(2, "0")}
                 </span>
               </div>
             </div>
@@ -236,15 +254,19 @@ export default function App() {
                     <span className="question-number">Q{idx + 1}</span>
                     <p className="question-text">{q.question}</p>
                   </div>
-                  
+
                   <div className="options-grid">
                     {q.options.map((opt, i) => (
                       <button
                         key={i}
                         onClick={() => handleOptionSelect(idx, opt)}
-                        className={`option-btn ${answers[idx] === opt ? 'selected' : ''}`}
+                        className={`option-btn ${
+                          answers[idx] === opt ? "selected" : ""
+                        }`}
                       >
-                        <span className="option-letter">{String.fromCharCode(65 + i)}</span>
+                        <span className="option-letter">
+                          {String.fromCharCode(65 + i)}
+                        </span>
                         <span className="option-text">{opt}</span>
                       </button>
                     ))}
@@ -269,11 +291,13 @@ export default function App() {
                 <span className="celebration-emoji">🎉</span>
                 <h2>Quiz Completed!</h2>
               </div>
-              
+
               <div className="score-display">
                 <div className="score-circle">
                   <span className="score-percentage">{score.percentage}%</span>
-                  <span className="score-fraction">{score.correct}/{score.total}</span>
+                  <span className="score-fraction">
+                    {score.correct}/{score.total}
+                  </span>
                 </div>
                 <div className="score-details">
                   <div className="score-item">
@@ -282,7 +306,9 @@ export default function App() {
                   </div>
                   <div className="score-item">
                     <span className="score-label">Wrong</span>
-                    <span className="score-value wrong">{score.total - score.correct}</span>
+                    <span className="score-value wrong">
+                      {score.total - score.correct}
+                    </span>
                   </div>
                   <div className="score-item">
                     <span className="score-label">Total</span>
@@ -297,31 +323,44 @@ export default function App() {
               {quiz.map((q, idx) => {
                 const userAnswer = answers[idx];
                 const isCorrect = userAnswer === q.answer;
-                
+
                 return (
-                  <div key={idx} className={`glass-card answer-card ${isCorrect ? 'correct' : 'incorrect'}`}>
+                  <div
+                    key={idx}
+                    className={`glass-card answer-card ${
+                      isCorrect ? "correct" : "incorrect"
+                    }`}
+                  >
                     <div className="answer-header">
                       <span className="answer-number">Q{idx + 1}</span>
-                      <span className={`answer-status ${isCorrect ? 'correct' : 'incorrect'}`}>
-                        {isCorrect ? '✅' : '❌'}
+                      <span
+                        className={`answer-status ${
+                          isCorrect ? "correct" : "incorrect"
+                        }`}
+                      >
+                        {isCorrect ? "✅" : "❌"}
                       </span>
                     </div>
-                    
+
                     <p className="answer-question">{q.question}</p>
-                    
+
                     <div className="answer-details">
                       <div className="answer-row">
                         <span className="answer-label">Your Answer:</span>
-                        <span className={`answer-value ${isCorrect ? 'correct' : 'incorrect'}`}>
+                        <span
+                          className={`answer-value ${
+                            isCorrect ? "correct" : "incorrect"
+                          }`}
+                        >
                           {userAnswer || "Not answered"}
                         </span>
                       </div>
-                      
+
                       <div className="answer-row">
                         <span className="answer-label">Correct Answer:</span>
                         <span className="answer-value correct">{q.answer}</span>
                       </div>
-                      
+
                       {q.explanation && (
                         <div className="explanation">
                           <span className="explanation-icon">💡</span>
