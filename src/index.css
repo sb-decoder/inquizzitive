@@ -252,6 +252,44 @@
     padding: 100px 20px 40px;
   }
 
+  /* Alert Banner */
+  .alert {
+    @apply flex justify-between items-center gap-4 mb-4 px-4 py-3 rounded-2xl;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .alert-error {
+    @apply border-l-4;
+    border-left-color: #fca5a5; /* red-300 */
+    background: rgba(239, 68, 68, 0.08);
+  }
+
+  .alert-content { @apply flex items-center gap-3; }
+  .alert-icon { @apply text-xl; }
+  .alert-text { @apply flex flex-col gap-1; }
+  .alert-title { @apply text-white font-bold text-sm; }
+  .alert-desc { @apply text-white/85 text-sm; }
+  .alert-actions { @apply flex items-center gap-2 ml-auto; }
+
+  .btn-retry {
+    @apply text-white font-semibold px-3 py-2 rounded-xl;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  }
+  .btn-retry:hover:not(:disabled) { @apply -translate-y-px; }
+  .btn-retry:disabled { @apply opacity-70 cursor-not-allowed; }
+
+  .alert-close {
+    @apply text-white w-8 h-8 rounded-lg;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  .alert-close:hover { background: rgba(255, 255, 255, 0.15); }
+
   /* Glass Card Base */
   .glass-card {
     @apply rounded-3xl transition-all duration-300;
