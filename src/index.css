@@ -144,6 +144,95 @@ body, html, #root {
   margin: 0 auto;
 }
 
+/* Alert Banner */
+.alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.alert-error {
+  border-left: 4px solid #fca5a5;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.alert-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-icon {
+  font-size: 20px;
+}
+
+.alert-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alert-title {
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.alert-desc {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+}
+
+.alert-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.btn-retry {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
+}
+
+.btn-retry:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-retry:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.alert-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.alert-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 /* Glass Card Base */
 .glass-card {
   background: rgba(255, 255, 255, 0.1);

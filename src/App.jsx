@@ -7,6 +7,7 @@ export default function App() {
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [error, setError] = useState(null);
   const [categories] = useState(["Current Affairs", "Geography", "History", "Indian Defence", "Politics"]);
   const [difficulties] = useState(["Easy", "Medium", "Hard"]);
   const [selectedCategory, setSelectedCategory] = useState("Current Affairs");
@@ -19,10 +20,15 @@ export default function App() {
     setLoading(true);
     setSubmitted(false);
     setAnswers({});
-    setShowStartScreen(false);
+    setError(null);
+    // Keep start screen visible while loading; hide it only on success
     
     try {
-       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("Missing Gemini API key. Please set VITE_GEMINI_API_KEY in your environment.");
+      }
+      const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
       const prompt = `
       Generate ${numQuestions} multiple choice questions on ${selectedCategory} for ${selectedDifficulty} difficulty level.
@@ -45,10 +51,22 @@ export default function App() {
       text = text.replace(/```json|```/g, "").trim();
       
       console.log("Raw AI response:", text); // Debug log
-      
-      const questions = JSON.parse(text);
+      if (!text) {
+        throw new Error("The AI returned an empty response. Please try again.");
+      }
+
+      let questions;
+      try {
+        questions = JSON.parse(text);
+      } catch {
+        throw new Error("Couldn't understand the quiz format. Please try again.");
+      }
       
       // Validate and clean the data
+      if (!Array.isArray(questions) || questions.length === 0) {
+        throw new Error("No questions were generated. Please try again.");
+      }
+
       const cleanedQuestions = questions.map(q => ({
         ...q,
         answer: q.answer?.trim(),
@@ -57,13 +75,22 @@ export default function App() {
       
       console.log("Cleaned questions:", cleanedQuestions); // Debug log
       
-      
+      // Basic shape check for first item
+      const first = cleanedQuestions[0];
+      if (!first || !first.question || !Array.isArray(first.options) || typeof first.answer !== 'string') {
+        throw new Error("The quiz data was malformed. Please try again.");
+      }
+
       setQuiz(cleanedQuestions);
       // Set timer based on number of questions (30 seconds per question)
       setTimeLeft(cleanedQuestions.length * 30);
+      setShowStartScreen(false);
     } catch (err) {
       console.error("Error generating quiz:", err);
-      alert("Failed to generate quiz. Check console.");
+      setQuiz([]);
+      // Show friendly error in UI
+      const friendly = err?.message || "We couldn't generate your quiz. Please try again in a moment.";
+      setError(friendly);
     }
     setLoading(false);
   }
@@ -110,6 +137,7 @@ export default function App() {
     setSubmitted(false);
     setTimeLeft(0);
     setShowStartScreen(true);
+    setError(null);
   }
 
   const score = submitted ? calculateScore() : null;
@@ -137,6 +165,24 @@ export default function App() {
       </div>
 
       <div className="main-container">
+        {/* Error Banner */}
+        {error && (
+          <div className="alert alert-error" role="alert">
+            <div className="alert-content">
+              <div className="alert-icon">⚠️</div>
+              <div className="alert-text">
+                <div className="alert-title">We hit a snag</div>
+                <div className="alert-desc">{error}</div>
+              </div>
+            </div>
+            <div className="alert-actions">
+              <button className="btn-retry" disabled={loading} onClick={fetchQuiz}>
+                {loading ? "Retrying..." : "Retry"}
+              </button>
+              <button className="alert-close" aria-label="Dismiss error" onClick={() => setError(null)}>×</button>
+            </div>
+          </div>
+        )}
         {/* Welcome Screen */}
         {showStartScreen && (
           <div className="welcome-section">
