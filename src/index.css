@@ -340,6 +340,56 @@
     @apply text-white text-base font-medium;
   }
 
+  /* Progress Bar */
+  .progress-card {
+    @apply px-6 py-5;
+  }
+
+  .progress-header {
+    @apply flex justify-between items-center mb-4;
+  }
+
+  .progress-text {
+    @apply text-white text-sm font-medium;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .progress-percentage {
+    @apply text-white text-sm font-bold px-3 py-1 rounded-full;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+  }
+
+  .progress-bar-container {
+    @apply w-full h-3 rounded-full overflow-hidden;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .progress-bar-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+    box-shadow: 0 0 10px rgba(245, 87, 108, 0.4);
+    position: relative;
+  }
+
+  .progress-bar-fill::after {
+    content: '';
+    @apply absolute top-0 right-0 w-2 h-full;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  /* Dark mode progress bar */
+  .dark .progress-bar-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .progress-bar-fill {
+    box-shadow: 0 0 10px rgba(245, 87, 108, 0.6);
+  }
+
   /* Quiz Actions */
   .quiz-actions {
     @apply flex justify-center py-6;
@@ -592,6 +642,18 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .floating-nav {
@@ -625,6 +687,22 @@
 
   .quiz-header-card {
     @apply flex-col gap-4 text-center;
+  }
+
+  .progress-card {
+    @apply px-4 py-4;
+  }
+
+  .progress-header {
+    @apply flex-col gap-2 items-start;
+  }
+
+  .progress-text {
+    @apply text-xs;
+  }
+
+  .progress-percentage {
+    @apply text-xs px-2 py-1;
   }
 
   .score-display {
