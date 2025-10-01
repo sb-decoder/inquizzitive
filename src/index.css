@@ -14,17 +14,19 @@
   }
 
   body,
-  html,
-  #root {
+  html
+   {
     font-family: "Inter", system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #667eea;
     min-height: 100vh;
     overflow-x: hidden;
   }
   .dark body,
   .dark html,
-  .dark #root {
-    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+  .dark {
+    background-image: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+    background-color: #1a1a2e;
   }
 }
 
