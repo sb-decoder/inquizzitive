@@ -140,6 +140,20 @@ export default function App() {
 
   const score = submitted ? calculateScore() : null;
 
+  // Calculate progress based on answered questions
+  function calculateProgress() {
+    const answeredCount = Object.keys(answers).length;
+    const totalQuestions = quiz.length;
+    const percentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+    return {
+      answered: answeredCount,
+      total: totalQuestions,
+      percentage: Math.round(percentage)
+    };
+  }
+
+  const progress = calculateProgress();
+
   return (
     <div className="app">
       {/* Floating Navbar */}
@@ -334,6 +348,22 @@ export default function App() {
                   {Math.floor(timeLeft / 60)}:
                   {(timeLeft % 60).toString().padStart(2, "0")}
                 </span>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="glass-card progress-card">
+              <div className="progress-header">
+                <span className="progress-text">
+                  Progress: {progress.answered} of {progress.total} questions answered
+                </span>
+                <span className="progress-percentage">{progress.percentage}%</span>
+              </div>
+              <div className="progress-bar-container">
+                <div 
+                  className="progress-bar-fill"
+                  style={{ width: `${progress.percentage}%` }}
+                ></div>
               </div>
             </div>
 
