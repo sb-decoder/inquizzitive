@@ -1,0 +1,70 @@
+/* src/components/Result.css */
+.result-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.question-feedback {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.question-item {
+  background: rgba(255, 255, 255, 0.1); /* Glassmorphic background */
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 10px 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* src/components/Result.css */
+.download-pdf-btn {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2), rgba(59, 130, 246, 0.2)); /* Purple/pink/blue gradient */
+  backdrop-filter: blur(12px); /* Stronger blur for glass effect */
+  border: 1px solid rgba(255, 255, 255, 0.4); /* Brighter border */
+  border-radius: 10px; /* Softer corners */
+  padding: 12px 24px; /* Larger padding */
+  color: #ffffff; /* White text */
+  font-size: 16px; /* Consistent font size */
+  font-weight: 600; /* Bolder text */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transitions */
+  margin-left: 12px; /* Slightly more spacing */
+  display: inline-flex; /* Align icon and text */
+  align-items: center; /* Center icon and text */
+  gap: 8px; /* Space between icon and text */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.download-pdf-btn:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3), rgba(59, 130, 246, 0.3)); /* Brighter gradient on hover */
+  transform: translateY(-3px); /* More pronounced lift */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Glow effect */
+  border-color: rgba(255, 255, 255, 0.6); /* Brighter border */
+}
+
+.download-pdf-btn:active {
+  transform: translateY(0); /* Reset position */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .download-pdf-btn {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 12px;
+    padding: 14px;
+    font-size: 15px;
+    justify-content: center; /* Center icon and text */
+  }
+
+  .results-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}

@@ -77,8 +77,8 @@
   /* Floating Navigation */
   .floating-nav {
     @apply fixed top-5 left-1/2 -translate-x-1/2 flex justify-between items-center;
-    @apply min-w-[320px] max-w-[90vw] z-[1000];
-    @apply px-4 py-3 rounded-[60px];
+    @apply min-w-[500px] z-[1000];
+    @apply px-6 py-3 rounded-[60px];
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -105,11 +105,11 @@
   }
 
   .nav-links {
-    @apply flex gap-2 items-center;
+    @apply flex gap-4;
   }
 
   .nav-btn {
-    @apply bg-transparent border-none text-white px-3 py-2 rounded-[30px];
+    @apply bg-transparent border-none text-white px-4 py-2 rounded-[30px];
     @apply font-medium cursor-pointer transition-all duration-300 text-sm;
   }
 
@@ -338,56 +338,6 @@
 
   .option-text {
     @apply text-white text-base font-medium;
-  }
-
-  /* Progress Bar */
-  .progress-card {
-    @apply px-6 py-5;
-  }
-
-  .progress-header {
-    @apply flex justify-between items-center mb-4;
-  }
-
-  .progress-text {
-    @apply text-white text-sm font-medium;
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .progress-percentage {
-    @apply text-white text-sm font-bold px-3 py-1 rounded-full;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
-  }
-
-  .progress-bar-container {
-    @apply w-full h-3 rounded-full overflow-hidden;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .progress-bar-fill {
-    @apply h-full rounded-full transition-all duration-700 ease-out;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
-    box-shadow: 0 0 10px rgba(245, 87, 108, 0.4);
-    position: relative;
-  }
-
-  .progress-bar-fill::after {
-    content: '';
-    @apply absolute top-0 right-0 w-2 h-full;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
-    animation: shimmer 2s ease-in-out infinite;
-  }
-
-  /* Dark mode progress bar */
-  .dark .progress-bar-container {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .dark .progress-bar-fill {
-    box-shadow: 0 0 10px rgba(245, 87, 108, 0.6);
   }
 
   /* Quiz Actions */
@@ -642,48 +592,19 @@
   }
 }
 
-@keyframes shimmer {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .floating-nav {
-    @apply min-w-0 px-3 py-2;
-    width: calc(100% - 20px);
-    max-width: calc(100vw - 20px);
-  }
-
-  .nav-brand {
-    @apply gap-2;
+    @apply min-w-0 px-5 py-2.5;
+    width: calc(100% - 40px);
   }
 
   .nav-title {
-    @apply text-base;
-  }
-
-  .nav-logo {
     @apply text-lg;
   }
 
-  .nav-links {
-    @apply gap-1;
-  }
-
   .nav-btn {
-    @apply px-2 py-1.5 text-xs;
-  }
-
-  .nav-btn-primary {
-    @apply px-3 py-1.5;
+    @apply px-3 py-1.5 text-xs;
   }
 
   .main-container {
@@ -704,22 +625,6 @@
 
   .quiz-header-card {
     @apply flex-col gap-4 text-center;
-  }
-
-  .progress-card {
-    @apply px-4 py-4;
-  }
-
-  .progress-header {
-    @apply flex-col gap-2 items-start;
-  }
-
-  .progress-text {
-    @apply text-xs;
-  }
-
-  .progress-percentage {
-    @apply text-xs px-2 py-1;
   }
 
   .score-display {
@@ -744,36 +649,6 @@
 }
 
 @media (max-width: 480px) {
-  .floating-nav {
-    @apply px-2 py-1.5;
-    width: calc(100% - 16px);
-    max-width: calc(100vw - 16px);
-  }
-
-  .nav-brand {
-    @apply gap-1.5;
-  }
-
-  .nav-title {
-    @apply text-sm;
-  }
-
-  .nav-logo {
-    @apply text-base;
-  }
-
-  .nav-links {
-    @apply gap-0.5;
-  }
-
-  .nav-btn {
-    @apply px-1.5 py-1 text-xs;
-  }
-
-  .nav-btn-primary {
-    @apply px-2 py-1;
-  }
-
   .welcome-title {
     @apply text-[2rem];
   }
