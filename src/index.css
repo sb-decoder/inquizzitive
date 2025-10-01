@@ -251,8 +251,16 @@
   }
 
   .quiz-header-card {
-    @apply px-8 py-6 flex justify-between items-center;
-  }
+  @apply fixed left-1/2 -translate-x-1/2 flex justify-between items-center;
+  @apply z-[999] w-[90%] max-w-[900px] px-[calc(8px*1.1)] py-[calc(6px*1.1)] ;
+  top: calc(5px + 60px + 10px); /* nav top + nav height + spacing */
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  height: 15%; /* define header height for spacing calculation */
+  margin: 20px ;
+}
 
   .quiz-info h2 {
     @apply text-white text-[1.8rem] font-semibold mb-1;
@@ -263,24 +271,43 @@
     color: rgba(255, 255, 255, 0.7);
   }
 
-  .timer {
-    @apply flex items-center gap-2 px-5 py-3 rounded-[50px];
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
+.timer {
+  @apply relative flex items-center justify-center;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
 
-  .timer-icon {
-    @apply text-xl;
-  }
+.timer svg {
+  @apply absolute inset-0;
+  transform: rotate(-90deg); /* progress starts at top */
+}
 
-  .timer-text {
-    @apply text-white font-semibold text-lg;
-    font-variant-numeric: tabular-nums;
-  }
+.timer circle {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.timer .background {
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+.timer .progress {
+  stroke: #4cafef;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer .time-text {
+  @apply absolute font-bold text-lg;
+  color: white;
+}
+
 
   /* Questions */
   .questions-container {
-    @apply flex flex-col gap-5;
+    @apply flex flex-col gap-5 mt-32;
   }
 
   .question-card {

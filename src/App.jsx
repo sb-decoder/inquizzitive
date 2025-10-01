@@ -139,6 +139,7 @@ export default function App() {
   }
 
   const score = submitted ? calculateScore() : null;
+  const FULL_DASH_ARRAY = 2 * Math.PI * 50; // r=50
 
   return (
     <div className="app">
@@ -328,12 +329,27 @@ export default function App() {
                   {selectedDifficulty} • {quiz.length} Questions
                 </span>
               </div>
+              {/* Timer Section with Circular Progress Bar */}
               <div className="timer">
-                <span className="timer-icon">⏱️</span>
-                <span className="timer-text">
+
+
+                <svg width="90" height="90">
+                  <circle className="background" cx="45" cy="45" r="36" />
+                  <circle
+                    className="progress"
+                    cx="45"
+                    cy="45"
+                    r="36"
+                    strokeDasharray={FULL_DASH_ARRAY}
+                    strokeDashoffset={
+                      (1 - timeLeft / (quiz.length * 30)) * FULL_DASH_ARRAY
+                    }
+                  />
+                </svg>
+                <div className="time-text">
                   {Math.floor(timeLeft / 60)}:
                   {(timeLeft % 60).toString().padStart(2, "0")}
-                </span>
+                </div>
               </div>
             </div>
 
@@ -350,9 +366,8 @@ export default function App() {
                       <button
                         key={i}
                         onClick={() => handleOptionSelect(idx, opt)}
-                        className={`option-btn ${
-                          answers[idx] === opt ? "selected" : ""
-                        }`}
+                        className={`option-btn ${answers[idx] === opt ? "selected" : ""
+                          }`}
                       >
                         <span className="option-letter">
                           {String.fromCharCode(65 + i)}
@@ -417,16 +432,14 @@ export default function App() {
                 return (
                   <div
                     key={idx}
-                    className={`glass-card answer-card ${
-                      isCorrect ? "correct" : "incorrect"
-                    }`}
+                    className={`glass-card answer-card ${isCorrect ? "correct" : "incorrect"
+                      }`}
                   >
                     <div className="answer-header">
                       <span className="answer-number">Q{idx + 1}</span>
                       <span
-                        className={`answer-status ${
-                          isCorrect ? "correct" : "incorrect"
-                        }`}
+                        className={`answer-status ${isCorrect ? "correct" : "incorrect"
+                          }`}
                       >
                         {isCorrect ? "✅" : "❌"}
                       </span>
@@ -438,9 +451,8 @@ export default function App() {
                       <div className="answer-row">
                         <span className="answer-label">Your Answer:</span>
                         <span
-                          className={`answer-value ${
-                            isCorrect ? "correct" : "incorrect"
-                          }`}
+                          className={`answer-value ${isCorrect ? "correct" : "incorrect"
+                            }`}
                         >
                           {userAnswer || "Not answered"}
                         </span>
