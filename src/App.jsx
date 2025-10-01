@@ -2,7 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useState } from "react";
 import { jsPDF } from 'jspdf'; // Import jsPDF
-import './assets/styles/Result.css'; // Import styles for PDF button
+import './components/Result.css'
 
 export default function App() {
   const [loading, setLoading] = useState(false);
