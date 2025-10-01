@@ -20,6 +20,24 @@ export default function App() {
   const [numQuestions, setNumQuestions] = useState(10);
   const [showStartScreen, setShowStartScreen] = useState(true);
 
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   // Fetch Quiz
   async function fetchQuiz() {
     setLoading(true);
@@ -30,7 +48,6 @@ export default function App() {
     try {
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
       const prompt = `
       Generate ${numQuestions} multiple choice questions on ${selectedCategory} for ${selectedDifficulty} difficulty level.
       
@@ -137,6 +154,34 @@ export default function App() {
           </button>
           <button className="nav-btn">Dashboard</button>
           <button className="nav-btn nav-btn-primary">Sign In</button>
+
+          <button
+            onClick={toggleDarkMode}
+            className="ml-2 p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? (
+              <svg
+                className="w-5 h-5 text-yellow-300"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="w-5 h-5 text-gray-300"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+              </svg>
+            )}
+          </button>
         </div>
       </nav>
 
@@ -155,6 +200,7 @@ export default function App() {
               <h1 className="welcome-title">
                 Welcome to <span className="gradient-text">Inquizzitive</span>
               </h1>
+
               <p className="welcome-subtitle">
                 Master government exams with AI-powered practice sessions
               </p>
@@ -211,18 +257,62 @@ export default function App() {
                   disabled={loading}
                   className="start-btn"
                 >
-                  {loading ? (
-                    <>
-                      <span className="loading-spinner"></span>
-                      Generating Quiz...
-                    </>
-                  ) : (
-                    <>
-                      <span>🚀</span>
-                      Start Quiz
-                    </>
-                  )}
+                  <span>🚀</span>
+                  Start Quiz
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {loading && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
+            <div className="relative">
+              <div className="absolute inset-0 animate-ping opacity-20">
+                <div className="h-32 w-32 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500"></div>
+              </div>
+
+              <div className="relative flex flex-col items-center gap-6">
+                <div className="relative h-32 w-32">
+                  <div className="absolute inset-0 animate-spin rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 p-1">
+                    <div className="h-full w-full rounded-full bg-gray-900"></div>
+                  </div>
+
+                  <div
+                    className="absolute inset-0 animate-spin"
+                    style={{ animationDuration: "1.5s" }}
+                  >
+                    <div className="h-full w-full rounded-full border-4 border-transparent border-t-purple-400"></div>
+                  </div>
+
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-4xl animate-pulse">🧠</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-2">
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                    Generating Your Quiz
+                  </h3>
+                  <p className="text-gray-400 animate-pulse">
+                    Crafting {numQuestions} questions on {selectedCategory}...
+                  </p>
+
+                  <div className="flex gap-2 mt-2">
+                    <div
+                      className="h-2 w-2 rounded-full bg-purple-500 animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    ></div>
+                    <div
+                      className="h-2 w-2 rounded-full bg-pink-500 animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    ></div>
+                    <div
+                      className="h-2 w-2 rounded-full bg-blue-500 animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    ></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
