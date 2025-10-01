@@ -77,8 +77,8 @@
   /* Floating Navigation */
   .floating-nav {
     @apply fixed top-5 left-1/2 -translate-x-1/2 flex justify-between items-center;
-    @apply min-w-[320px] max-w-[90vw] z-[1000];
-    @apply px-4 py-3 rounded-[60px];
+    @apply min-w-[500px] z-[1000];
+    @apply px-6 py-3 rounded-[60px];
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -105,11 +105,11 @@
   }
 
   .nav-links {
-    @apply flex gap-2 items-center;
+    @apply flex gap-4;
   }
 
   .nav-btn {
-    @apply bg-transparent border-none text-white px-3 py-2 rounded-[30px];
+    @apply bg-transparent border-none text-white px-4 py-2 rounded-[30px];
     @apply font-medium cursor-pointer transition-all duration-300 text-sm;
   }
 
@@ -475,7 +475,7 @@
   .option-text {
     @apply text-white text-base font-medium;
   }
-
+  
   /* Progress Bar */
   .progress-card {
     @apply px-6 py-5;
@@ -525,6 +525,7 @@
   .dark .progress-bar-fill {
     box-shadow: 0 0 10px rgba(245, 87, 108, 0.6);
   }
+
 
   /* Quiz Actions */
   .quiz-actions {
@@ -1114,19 +1115,23 @@
     width: calc(100% - 20px);
     max-width: calc(100vw - 20px);
   }
-
-  .nav-brand {
+  
+   .nav-brand {
     @apply gap-2;
   }
 
   .nav-title {
-    @apply text-base;
+    @apply text-lg;
   }
-
+  
   .nav-logo {
     @apply text-lg;
   }
 
+
+  .nav-btn {
+    @apply px-3 py-1.5 text-xs;
+  }
   /* Hide desktop nav, show mobile nav */
   .desktop-nav {
     @apply hidden;
@@ -1155,12 +1160,12 @@
   .quiz-header-card {
     @apply flex-col gap-4 text-center;
   }
-
-  .progress-card {
+  
+   .progress-card {
     @apply px-4 py-4;
   }
-
-  .progress-header {
+  
+    .progress-header {
     @apply flex-col gap-2 items-start;
   }
 
