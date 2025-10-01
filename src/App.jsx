@@ -695,6 +695,20 @@ export default function App() {
                 </span>
               </div>
             </div>
+            <div className="glass-card progress-card">
+              <div className="progress-header">
+                <span className="progress-text">
+                  Progress: {progress.answered} of {progress.total} questions answered
+                </span>
+                <span className="progress-percentage">{progress.percentage}%</span>
+              </div>
+              <div className="progress-bar-container">
+                <div 
+                  className="progress-bar-fill"
+                  style={{ width: `${progress.percentage}%` }}
+                ></div>
+              </div>
+            </div>
 
             <div className="questions-container">
               {quiz.map((q, idx) => (
