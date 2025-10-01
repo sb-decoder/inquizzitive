@@ -77,8 +77,8 @@
   /* Floating Navigation */
   .floating-nav {
     @apply fixed top-5 left-1/2 -translate-x-1/2 flex justify-between items-center;
-    @apply min-w-[500px] z-[1000];
-    @apply px-6 py-3 rounded-[60px];
+    @apply min-w-[320px] max-w-[90vw] z-[1000];
+    @apply px-4 py-3 rounded-[60px];
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -105,11 +105,11 @@
   }
 
   .nav-links {
-    @apply flex gap-4;
+    @apply flex gap-2 items-center;
   }
 
   .nav-btn {
-    @apply bg-transparent border-none text-white px-4 py-2 rounded-[30px];
+    @apply bg-transparent border-none text-white px-3 py-2 rounded-[30px];
     @apply font-medium cursor-pointer transition-all duration-300 text-sm;
   }
 
@@ -657,16 +657,33 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .floating-nav {
-    @apply min-w-0 px-5 py-2.5;
-    width: calc(100% - 40px);
+    @apply min-w-0 px-3 py-2;
+    width: calc(100% - 20px);
+    max-width: calc(100vw - 20px);
+  }
+
+  .nav-brand {
+    @apply gap-2;
   }
 
   .nav-title {
+    @apply text-base;
+  }
+
+  .nav-logo {
     @apply text-lg;
   }
 
+  .nav-links {
+    @apply gap-1;
+  }
+
   .nav-btn {
-    @apply px-3 py-1.5 text-xs;
+    @apply px-2 py-1.5 text-xs;
+  }
+
+  .nav-btn-primary {
+    @apply px-3 py-1.5;
   }
 
   .main-container {
@@ -727,6 +744,36 @@
 }
 
 @media (max-width: 480px) {
+  .floating-nav {
+    @apply px-2 py-1.5;
+    width: calc(100% - 16px);
+    max-width: calc(100vw - 16px);
+  }
+
+  .nav-brand {
+    @apply gap-1.5;
+  }
+
+  .nav-title {
+    @apply text-sm;
+  }
+
+  .nav-logo {
+    @apply text-base;
+  }
+
+  .nav-links {
+    @apply gap-0.5;
+  }
+
+  .nav-btn {
+    @apply px-1.5 py-1 text-xs;
+  }
+
+  .nav-btn-primary {
+    @apply px-2 py-1;
+  }
+
   .welcome-title {
     @apply text-[2rem];
   }
