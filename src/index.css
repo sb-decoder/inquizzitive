@@ -13,7 +13,8 @@
     box-sizing: border-box;
   }
 
-  body,
+  /* Change it to this */
+body,
   html,
   #root {
     font-family: "Inter", system-ui, -apple-system, sans-serif;
