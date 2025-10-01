@@ -717,6 +717,19 @@
     box-shadow: 0 8px 30px rgba(118, 75, 162, 0.4);
   }
 
+  .retry-btn {
+  @apply border-none px-8 py-4 rounded-[50px] text-white;
+  @apply text-lg font-semibold cursor-pointer transition-all duration-300;
+  @apply flex items-center justify-center; /* centers content horizontally & vertically */
+  background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+  box-shadow: 0 4px 20px rgba(238, 9, 121, 0.3);
+}
+
+.retry-btn:hover {
+  @apply -translate-y-0.5;
+  box-shadow: 0 8px 30px rgba(238, 9, 121, 0.4);
+}
+
   /* Scrollbar Styling */
   ::-webkit-scrollbar {
     @apply w-2;

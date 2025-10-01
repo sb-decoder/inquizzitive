@@ -355,7 +355,9 @@ export default function App() {
   const [selectedDifficulty, setSelectedDifficulty] = useState("Medium");
   const [numQuestions, setNumQuestions] = useState(10);
   const [showStartScreen, setShowStartScreen] = useState(true);
+  const [originalQuiz, setOriginalQuiz] = useState([]);
   const [showExamPrepPage, setShowExamPrepPage] = useState(false);
+
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
@@ -438,6 +440,7 @@ export default function App() {
       console.log("Cleaned questions:", cleanedQuestions); // Debug log
 
       setQuiz(cleanedQuestions);
+      setOriginalQuiz(cleanedQuestions);
       setTimeLeft(cleanedQuestions.length * 30);
     } catch (err) {
       console.error("Error generating quiz:", err);
@@ -445,6 +448,13 @@ export default function App() {
     }
     setLoading(false);
   }
+
+  function retryQuiz() {
+  setQuiz([...originalQuiz]);        
+  setAnswers({});                    
+  setSubmitted(false);               
+  setTimeLeft(originalQuiz.length * 30);
+}
 
   // Timer
   useEffect(() => {
@@ -965,6 +975,7 @@ export default function App() {
                     <span className="score-value total">{score.total}</span>
                   </div>
                 </div>
+                <button className="retry-btn" onClick={retryQuiz}>🔄️ Retry</button>
               </div>
             </div>
 
