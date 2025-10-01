@@ -1,0 +1,39 @@
+/* src/components/Result.css */
+.result-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.question-feedback {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.question-item {
+  background: rgba(255, 255, 255, 0.1); /* Glassmorphic background */
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 10px 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.download-pdf-btn {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.download-pdf-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+  transform: translateY(-2px);
+}
