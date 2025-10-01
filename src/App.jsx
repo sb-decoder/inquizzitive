@@ -1,10 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useState } from "react";
+import Signin from './components/Signin.jsx';
 
 export default function App() {
   // Mobile menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+  const [user, setUser] = useState(null); // null = not logged in
+
   // Custom questions for subjects
   // const customQuestions = {
   //   Sports: [
@@ -356,6 +358,7 @@ export default function App() {
     return savedMode ? JSON.parse(savedMode) : false;
   });
 
+  const [showSignin, setShowSignin] = useState(false);
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
@@ -367,6 +370,17 @@ export default function App() {
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+  // Handle Sign In
+  const handleSigninSuccess = (userData) => {
+    setUser(userData); 
+    setShowSignin(false);
+  };
+
+  // Handle Logout
+  const handleLogout = () => {
+    setUser(null);
+    setShowSignin(false);
   };
 
   // Fetch Quiz
@@ -555,7 +569,23 @@ export default function App() {
             Practice
           </button>
           <button className="nav-btn">Dashboard</button>
-          <button className="nav-btn nav-btn-primary">Sign In</button>
+           
+           {user ? (
+            <button
+              className="nav-btn nav-btn-primary"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              className="nav-btn nav-btn-primary"
+              onClick={() => setShowSignin(true)}
+            >
+              Sign In
+            </button>
+          )}
+
 
           <button
             onClick={toggleDarkMode}
@@ -629,7 +659,15 @@ export default function App() {
           </button>
         </div>
       </nav>
-
+       {/* ✅ Show Signin Form as Modal */}
+      {showSignin && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
+          <Signin 
+            onClose={() => setShowSignin(false)} 
+            onSigninSuccess={handleSigninSuccess} 
+          />
+        </div>
+      )}
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
         <div className="mobile-menu">
