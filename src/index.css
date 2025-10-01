@@ -76,7 +76,7 @@
 
   /* Floating Navigation */
   .floating-nav {
-    @apply fixed top-5 left-1/2 -translate-x-1/2 flex justify-between items-center;
+    @apply fixed top-5 left-1/2 -translate-x-1/2 flex justify-between items-center gap-4;
     @apply min-w-[500px] z-[1000];
     @apply px-6 py-3 rounded-[60px];
     background: rgba(255, 255, 255, 0.1);
@@ -330,6 +330,13 @@
   }
 
   .gradient-text {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dark .gradient-text {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
