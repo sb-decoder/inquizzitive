@@ -1,10 +1,12 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+"use client";
+
 import { useEffect, useState } from "react";
+import { useGenerateQuiz, QuizQuestion } from "../hooks/useQuiz";
 
 export default function App() {
-  const [loading, setLoading] = useState(false);
-  const [quiz, setQuiz] = useState([]);
-  const [answers, setAnswers] = useState({});
+  const generateQuizMutation = useGenerateQuiz();
+  const [quiz, setQuiz] = useState<QuizQuestion[]>([]);
+  const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
   const [categories] = useState([
@@ -21,6 +23,7 @@ export default function App() {
   const [showStartScreen, setShowStartScreen] = useState(true);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window === "undefined") return false;
     const savedMode = localStorage.getItem("darkMode");
     return savedMode ? JSON.parse(savedMode) : false;
   });
@@ -31,6 +34,7 @@ export default function App() {
     } else {
       document.documentElement.classList.remove("dark");
     }
+    if (typeof window !== "undefined") return;
     localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
@@ -40,55 +44,25 @@ export default function App() {
 
   // Fetch Quiz
   async function fetchQuiz() {
-    setLoading(true);
     setSubmitted(false);
     setAnswers({});
     setShowStartScreen(false);
 
     try {
-      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const prompt = `
-      Generate ${numQuestions} multiple choice questions on ${selectedCategory} for ${selectedDifficulty} difficulty level.
-      
-      IMPORTANT: The "answer" field must contain the EXACT same text as one of the options.
-      
-      Respond strictly in JSON format like:
-      [
-        {
-          "question": "Who is the current Prime Minister of India?",
-          "options": ["Narendra Modi", "Rahul Gandhi", "Amit Shah", "Yogi Adityanath"],
-          "answer": "Narendra Modi",
-          "explanation": "Narendra Modi has been the Prime Minister of India since 2014."
-        }
-      ]
-      
-      Make sure the answer field exactly matches one of the options (including capitalization and spacing).`;
-      const result = await model.generateContent(prompt);
-      let text = await result.response.text();
-      text = text.replace(/```json|```/g, "").trim();
+      const result = await generateQuizMutation.mutateAsync({
+        category: selectedCategory,
+        difficulty: selectedDifficulty,
+        numQuestions,
+      });
 
-      console.log("Raw AI response:", text); // Debug log
-
-      const questions = JSON.parse(text);
-
-      // Validate and clean the data
-      const cleanedQuestions = questions.map((q) => ({
-        ...q,
-        answer: q.answer?.trim(),
-        options: q.options?.map((opt) => opt?.trim()),
-      }));
-
-      console.log("Cleaned questions:", cleanedQuestions); // Debug log
-
-      setQuiz(cleanedQuestions);
+      setQuiz(result.questions);
       // Set timer based on number of questions (30 seconds per question)
-      setTimeLeft(cleanedQuestions.length * 30);
+      setTimeLeft(result.questions.length * 30);
     } catch (err) {
       console.error("Error generating quiz:", err);
-      alert("Failed to generate quiz. Check console.");
+      alert("Failed to generate quiz. Please try again.");
+      setShowStartScreen(true);
     }
-    setLoading(false);
   }
 
   // Timer
@@ -100,7 +74,7 @@ export default function App() {
     if (timeLeft === 0 && quiz.length > 0 && !submitted) handleSubmit();
   }, [timeLeft, submitted, quiz]);
 
-  function handleOptionSelect(qIndex, option) {
+  function handleOptionSelect(qIndex: number, option: string) {
     if (!submitted) setAnswers((prev) => ({ ...prev, [qIndex]: option }));
   }
 
@@ -254,7 +228,7 @@ export default function App() {
 
                 <button
                   onClick={fetchQuiz}
-                  disabled={loading}
+                  disabled={generateQuizMutation.isPending}
                   className="start-btn"
                 >
                   <span>🚀</span>
@@ -265,7 +239,7 @@ export default function App() {
           </div>
         )}
 
-        {loading && (
+        {generateQuizMutation.isPending && (
           <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
             <div className="relative">
               <div className="absolute inset-0 animate-ping opacity-20">
