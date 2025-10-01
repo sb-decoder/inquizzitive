@@ -216,11 +216,11 @@
   }
 
   .glass-select option {
-    background: rgb(124 116 204);
+    background: rgb(97, 88, 169);
     @apply text-white;
   }
   .dark .glass-select option {
-    background: rgb(34 34 47);
+    background: rgb(34 34 47)
   }
 
   /* Start Button */
