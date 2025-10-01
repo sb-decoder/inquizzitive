@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useState } from "react";
+import ExamPrepPage from "./ExamPrepPage";
 
 export default function App() {
   const [loading, setLoading] = useState(false);
@@ -19,6 +20,7 @@ export default function App() {
   const [selectedDifficulty, setSelectedDifficulty] = useState("Medium");
   const [numQuestions, setNumQuestions] = useState(10);
   const [showStartScreen, setShowStartScreen] = useState(true);
+  const [showExamPrepPage, setShowExamPrepPage] = useState(false);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
@@ -136,6 +138,17 @@ export default function App() {
     setSubmitted(false);
     setTimeLeft(0);
     setShowStartScreen(true);
+    setShowExamPrepPage(false);
+  }
+
+  function showExamPrep() {
+    setShowExamPrepPage(true);
+    setShowStartScreen(false);
+  }
+
+  function hideExamPrep() {
+    setShowExamPrepPage(false);
+    setShowStartScreen(true);
   }
 
   const score = submitted ? calculateScore() : null;
@@ -152,7 +165,9 @@ export default function App() {
           <button className="nav-btn" onClick={resetQuiz}>
             Practice
           </button>
-          <button className="nav-btn">Dashboard</button>
+          <button className="nav-btn" onClick={showExamPrep}>
+            Exam Prep
+          </button>
           <button className="nav-btn nav-btn-primary">Sign In</button>
 
           <button
@@ -193,6 +208,11 @@ export default function App() {
       </div>
 
       <div className="main-container">
+        {/* Exam Prep Page */}
+        {showExamPrepPage && (
+          <ExamPrepPage onBack={hideExamPrep} />
+        )}
+
         {/* Welcome Screen */}
         {showStartScreen && (
           <div className="welcome-section">
@@ -204,6 +224,12 @@ export default function App() {
               <p className="welcome-subtitle">
                 Master government exams with AI-powered practice sessions
               </p>
+
+              <div className="welcome-actions">
+                <button onClick={showExamPrep} className="info-btn">
+                  📚 Learn About Exam Prep
+                </button>
+              </div>
 
               <div className="quiz-setup">
                 <div className="setup-row">
