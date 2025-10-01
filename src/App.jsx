@@ -2,6 +2,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useState } from "react";
 
 export default function App() {
+  // Mobile menu state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
   // Custom questions for subjects
   // const customQuestions = {
   //   Sports: [
@@ -499,6 +502,44 @@ export default function App() {
   }
 
   const progress = calculateProgress();
+  
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMobileMenuOpen && !event.target.closest('.mobile-menu') && !event.target.closest('.hamburger-btn')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('keydown', handleEscapeKey);
+    
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isMobileMenuOpen]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      document.body.classList.remove('mobile-menu-open');
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('mobile-menu-open');
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <div className="app">
       {/* Floating Navbar */}
@@ -507,7 +548,9 @@ export default function App() {
           <span className="nav-logo">🧠</span>
           <span className="nav-title">Inquizzitive</span>
         </div>
-        <div className="nav-links">
+        
+        {/* Desktop Navigation */}
+        <div className="nav-links desktop-nav">
           <button className="nav-btn" onClick={resetQuiz}>
             Practice
           </button>
@@ -542,7 +585,82 @@ export default function App() {
             )}
           </button>
         </div>
+
+        {/* Mobile Navigation */}
+        <div className="mobile-nav">
+          <button
+            onClick={toggleDarkMode}
+            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? (
+              <svg
+                className="w-4 h-4 text-yellow-300"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="w-4 h-4 text-gray-300"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+              </svg>
+            )}
+          </button>
+          
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="hamburger-btn p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
+            aria-label="Toggle menu"
+          >
+            <div className="hamburger-icon">
+              <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+              <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+              <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+            </div>
+          </button>
+        </div>
       </nav>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu">
+          <div className="mobile-menu-content">
+            <button 
+              className="mobile-menu-item" 
+              onClick={() => {
+                resetQuiz();
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              <span className="mobile-menu-icon">🎯</span>
+              Practice
+            </button>
+            <button 
+              className="mobile-menu-item"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span className="mobile-menu-icon">📊</span>
+              Dashboard
+            </button>
+            <button 
+              className="mobile-menu-item primary"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span className="mobile-menu-icon">👤</span>
+              Sign In
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Background Elements */}
       <div className="bg-shapes">
