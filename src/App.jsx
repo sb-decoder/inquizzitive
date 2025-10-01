@@ -386,22 +386,32 @@ export default function App() {
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
       const prompt = `
-      Generate ${numQuestions} multiple choice questions on ${selectedCategory} for ${selectedDifficulty} difficulty level.
-      
-      IMPORTANT: The "answer" field must contain the EXACT same text as one of the options.
-      
-      Respond strictly in JSON format like:
+     Generate \${numQuestions} multiple-choice questions focused on \${selectedCategory}, tailored for Indian government exam preparation (e.g., UPSC, SSC, or similar competitive exams). Ensure questions are exam-oriented: they should cover key topics, historical events, policies, figures, or concepts relevant to the category, with a focus on factual accuracy, analytical depth, and real-world application where appropriate.
+
+      Adhere to the selected difficulty level:
+      - Easy: Basic recall of facts, straightforward questions with obvious distractors.
+      - Medium: Require moderate understanding, including connections between concepts, with plausible distractors.
+      - Hard: In-depth analysis, nuanced details, or application-based questions, with closely related distractors that test deep knowledge.
+
+      Guidelines for high-quality questions:
+      - Make questions clear, concise, and unambiguous—avoid vagueness, overly broad topics, or irrelevant trivia.
+      - Ensure relevance: For Current Affairs, use events up to October 2025; for History/Geography/Politics/Indian Defence, focus on India-centric or globally significant topics impacting India.
+      - Options: Provide exactly 4 options per question. Distractors must be plausible and based on common misconceptions or related facts.
+      - Answer: Must be factually correct and exactly match one option (case-sensitive, including spacing).
+      - Explanation: Provide a detailed, educational explanation (2-4 sentences) citing why the answer is correct and why others are not, to aid learning.
+
+      Respond strictly in valid JSON array format (no extra text, code blocks, or markdown). Example:
       [
         {
           "question": "Who is the current Prime Minister of India?",
           "options": ["Narendra Modi", "Rahul Gandhi", "Amit Shah", "Yogi Adityanath"],
           "answer": "Narendra Modi",
-          "explanation": "Narendra Modi has been the Prime Minister of India since 2014."
+          "explanation": "Narendra Modi has been the Prime Minister of India since 2014, leading the BJP government. The other options are prominent politicians but not the current PM."
         }
       },
       ]
-      
-      Make sure the answer field exactly matches one of the options (including capitalization and spacing).`;
+
+      Ensure the entire response is parseable as JSON.`;
       const result = await model.generateContent(prompt);
       let text = await result.response.text();
       text = text.replace(/```json|```/g, "").trim();
