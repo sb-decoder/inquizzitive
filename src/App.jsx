@@ -519,12 +519,12 @@ export default function App() {
 
           <button
             onClick={toggleDarkMode}
-            className="ml-2 p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
+            className="ml-1 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
             aria-label="Toggle dark mode"
           >
             {isDarkMode ? (
               <svg
-                className="w-5 h-5 text-yellow-300"
+                className="w-4 h-4 text-yellow-300"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -536,7 +536,7 @@ export default function App() {
               </svg>
             ) : (
               <svg
-                className="w-5 h-5 text-gray-300"
+                className="w-4 h-4 text-gray-300"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
