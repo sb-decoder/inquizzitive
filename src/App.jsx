@@ -46,8 +46,6 @@ export default function App() {
     setShowStartScreen(false);
 
     try {
-      // Replace this with your actual Gemini API call
-
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
       const prompt = `
