@@ -15,6 +15,8 @@ export default function App() {
     "History",
     "Indian Defence",
     "Politics",
+    "Sports",
+    "Literature",
   ]);
   const [difficulties] = useState(["Easy", "Medium", "Hard"]);
   const [selectedCategory, setSelectedCategory] = useState("Current Affairs");

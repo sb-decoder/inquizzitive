@@ -108,7 +108,7 @@ This repository participates in **Hacktoberfest**!
 - [ ] Leaderboard system
 - [ ] More exam categories (GATE, CAT, etc.)
 - [ ] PDF export of quiz results
-- [ ] Dark/Light theme toggle
+- [x] Dark/Light theme toggle
 - [ ] Previous year papers integration
 
 ---
