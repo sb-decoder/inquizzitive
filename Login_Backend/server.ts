@@ -1,7 +1,10 @@
+// Login_Backend/server.ts
+
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { Client } from "https://deno.land/x/mysql@v2.12.0/mod.ts";
 import { validateUser, editPass } from "./loginAuth.ts";
 import { makeAcc } from "./newAcc.ts";
+import { updateProfile } from "./updateProfile.ts"; // New import
 
 const client = await new Client().connect({
     hostname: "localhost",
@@ -17,11 +20,8 @@ const corsHeaders = {
 };
 
 export const handler = async (req: Request): Promise<Response> => {
-    //CORS preflight stuff
     if (req.method === 'OPTIONS') {
-        return new Response(null, {
-            headers: new Headers(corsHeaders)
-        });
+        return new Response(null, { headers: new Headers(corsHeaders) });
     }
 
     const url = new URL(req.url);
@@ -34,9 +34,7 @@ export const handler = async (req: Request): Promise<Response> => {
             headers.set('Content-Type', 'application/json');
             return new Response(JSON.stringify(Data.data), { headers, status: Data.status });
         } catch (error) {
-            const headers = new Headers(corsHeaders);
-            headers.set('Content-Type', 'application/json');
-            return new Response(JSON.stringify({ message: "Server error during login" }), { headers, status: 500 });
+            return new Response(JSON.stringify({ message: "Server error during login" }), { status: 500 });
         }
     }
 
@@ -48,9 +46,7 @@ export const handler = async (req: Request): Promise<Response> => {
             headers.set('Content-Type', 'application/json');
             return new Response(JSON.stringify(Data.data), { headers, status: Data.status });
         } catch (error) {
-            const headers = new Headers(corsHeaders);
-            headers.set('Content-Type', 'application/json');
-            return new Response(JSON.stringify({ message: "Failed to update password" }), { headers, status: 500 });
+            return new Response(JSON.stringify({ message: "Failed to update password" }), { status: 500 });
         }
     }
 
@@ -62,17 +58,30 @@ export const handler = async (req: Request): Promise<Response> => {
             headers.set('Content-Type', 'application/json');
             return new Response(JSON.stringify(Data.data), { headers, status: Data.status });
         } catch (error) {
-            const headers = new Headers(corsHeaders);
-            headers.set('Content-Type', 'application/json');
-            return new Response(JSON.stringify({ message: "Failed to create account" }), { headers, status: 500 });
+            return new Response(JSON.stringify({ message: "Failed to create account" }), { status: 500 });
         }
     }
+    
+    // --- THIS IS THE NEW PART WE ARE ADDING ---
+    if (req.method === 'POST' && url.pathname === '/update-profile') {
+        try {
+            const { 
+              uid, email, phone, location, bio, occupation, avatar_data, interests 
+            } = await req.json();
+            
+            const Data = await updateProfile(client, uid, email, phone, location, bio, occupation, avatar_data, interests);
+            
+            const headers = new Headers(corsHeaders);
+            headers.set('Content-Type', 'application/json');
+            return new Response(JSON.stringify(Data.data), { headers, status: Data.status });
+        } catch (error) {
+            console.error("Update profile error:", error);
+            return new Response(JSON.stringify({ message: "Failed to update profile" }), { status: 500 });
+        }
+    }
+    // --- END OF NEW PART ---
 
-    // 404 Not Found for any other route
-    return new Response(JSON.stringify({ message: "Not Found" }), {
-        headers: new Headers(corsHeaders),
-        status: 404
-    });
+    return new Response(JSON.stringify({ message: "Not Found" }), { status: 404 });
 };
 
 console.log("Authentication server running on http://localhost:8000");

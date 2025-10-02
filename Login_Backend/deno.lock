@@ -16,7 +16,8 @@
     }
   },
   "redirects": {
-    "https://deno.land/std/http/server.ts": "https://deno.land/std@0.224.0/http/server.ts"
+    "https://deno.land/std/http/server.ts": "https://deno.land/std@0.224.0/http/server.ts",
+    "https://deno.land/x/bcrypt/mod.ts": "https://deno.land/x/bcrypt@v0.4.1/mod.ts"
   },
   "remote": {
     "https://deno.land/std@0.104.0/_util/assert.ts": "2f868145a042a11d5ad0a3c748dcf580add8a0dbc0e876eaa0026303a5488f58",
@@ -62,6 +63,11 @@
     "https://deno.land/std@0.224.0/async/delay.ts": "f90dd685b97c2f142b8069082993e437b1602b8e2561134827eeb7c12b95c499",
     "https://deno.land/std@0.224.0/http/server.ts": "f9313804bf6467a1704f45f76cb6cd0a3396a3b31c316035e6a4c2035d1ea514",
     "https://deno.land/std@0.77.0/fmt/colors.ts": "c5665c66f1a67228f21c5989bbb04b36d369b98dd7ceac06f5e26856c81c2531",
+    "https://deno.land/x/bcrypt@v0.4.1/mod.ts": "ff09bdae282583cf5f7d87efe37ddcecef7f14f6d12e8b8066a3058db8c6c2f7",
+    "https://deno.land/x/bcrypt@v0.4.1/src/bcrypt/base64.ts": "b8266450a4f1eb6960f60f2f7986afc4dde6b45bd2d7ee7ba10789e67e17b9f7",
+    "https://deno.land/x/bcrypt@v0.4.1/src/bcrypt/bcrypt.ts": "ec221648cc6453ea5e3803bc817c01157dada06aa6f7a0ba6b9f87aae32b21e2",
+    "https://deno.land/x/bcrypt@v0.4.1/src/main.ts": "08d201b289c8d9c46f8839c69cd6625b213863db29775c7a200afc3b540e64f8",
+    "https://deno.land/x/bcrypt@v0.4.1/src/worker.ts": "5a73bdfee9c9e622f47c9733d374b627dce52fb3ec1e74c8226698b3fc57ffac",
     "https://deno.land/x/bytes_formater@v1.4.0/deps.ts": "4f98f74e21145423b873a5ca6ead66dc3e674fa81e230a0a395f9b86aafeceea",
     "https://deno.land/x/bytes_formater@v1.4.0/format.ts": "657c41b9f180c3ed0f934dcf75f77b09b6a610be98bb07525bffe2acfd5af4d5",
     "https://deno.land/x/bytes_formater@v1.4.0/mod.ts": "c6bf35303f53d74e9134eb13f666fb388fb4c62c6b12b17542bbadade250a864",
