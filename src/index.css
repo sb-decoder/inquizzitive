@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* Tailwind CSS Directives */
 @tailwind base;
@@ -13,12 +13,17 @@
     box-sizing: border-box;
   }
 
-   body,
-   html {
-    font-family: "Inter", system-ui, -apple-system, sans-serif;
-background-image: linear-gradient(135deg, #FFF2F2 0%, #A9B5DF 15%, #7886C7 60%, #2D336B 100%);
-background-color: #FFF2F2; 
-
+  body,
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-image: linear-gradient(
+      135deg,
+      #fff2f2 0%,
+      #a9b5df 15%,
+      #7886c7 60%,
+      #2d336b 100%
+    );
+    background-color: #fff2f2;
 
     min-height: 100vh;
     overflow-x: hidden;
@@ -239,15 +244,15 @@ background-color: #FFF2F2;
     .welcome-card {
       margin: 0 8px;
     }
-    
+
     .glass-card {
       margin: 0 8px 16px 8px;
     }
-    
+
     .questions-container {
       padding: 0 8px;
     }
-    
+
     .question-card {
       margin-bottom: 16px;
     }
@@ -273,12 +278,24 @@ background-color: #FFF2F2;
     background: rgba(239, 68, 68, 0.08);
   }
 
-  .alert-content { @apply flex items-center gap-3; }
-  .alert-icon { @apply text-xl; }
-  .alert-text { @apply flex flex-col gap-1; }
-  .alert-title { @apply text-white font-bold text-sm; }
-  .alert-desc { @apply text-white/85 text-sm; }
-  .alert-actions { @apply flex items-center gap-2 ml-auto; }
+  .alert-content {
+    @apply flex items-center gap-3;
+  }
+  .alert-icon {
+    @apply text-xl;
+  }
+  .alert-text {
+    @apply flex flex-col gap-1;
+  }
+  .alert-title {
+    @apply text-white font-bold text-sm;
+  }
+  .alert-desc {
+    @apply text-white/85 text-sm;
+  }
+  .alert-actions {
+    @apply flex items-center gap-2 ml-auto;
+  }
 
   .btn-retry {
     @apply text-white font-semibold px-3 py-2 rounded-xl;
@@ -286,8 +303,12 @@ background-color: #FFF2F2;
     box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
     transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
   }
-  .btn-retry:hover:not(:disabled) { @apply -translate-y-px; }
-  .btn-retry:disabled { @apply opacity-70 cursor-not-allowed; }
+  .btn-retry:hover:not(:disabled) {
+    @apply -translate-y-px;
+  }
+  .btn-retry:disabled {
+    @apply opacity-70 cursor-not-allowed;
+  }
 
   .alert-close {
     @apply text-white w-8 h-8 rounded-lg;
@@ -295,7 +316,9 @@ background-color: #FFF2F2;
     border: none;
     cursor: pointer;
   }
-  .alert-close:hover { background: rgba(255, 255, 255, 0.15); }
+  .alert-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
 
   /* Glass Card Base */
   .glass-card {
@@ -306,7 +329,7 @@ background-color: #FFF2F2;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
   .dark .glass-select option {
-    background: rgb(34 34 47)
+    background: rgb(34 34 47);
   }
   .glass-card:hover {
     @apply -translate-y-0.5;
@@ -322,7 +345,7 @@ background-color: #FFF2F2;
   .dark .glass-card:hover {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   }
-  
+
   /* Welcome Section */
   .welcome-section {
     @apply flex justify-center items-center;
@@ -337,7 +360,7 @@ background-color: #FFF2F2;
     @apply text-[3.5rem] font-bold text-white mb-4;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
-  
+
   .gradient-text {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     -webkit-background-clip: text;
@@ -406,11 +429,11 @@ background-color: #FFF2F2;
   }
 
   .glass-select option {
-    background: #7886C7;
+    background: #7886c7;
     @apply text-white;
   }
   .dark .glass-select option {
-    background: rgb(34 34 47)
+    background: rgb(34 34 47);
   }
 
   /* Start Button */
@@ -532,7 +555,7 @@ background-color: #FFF2F2;
   .option-text {
     @apply text-white text-base font-medium;
   }
-  
+
   /* Progress Bar */
   .progress-card {
     @apply px-6 py-5;
@@ -582,7 +605,6 @@ background-color: #FFF2F2;
   .dark .progress-bar-fill {
     box-shadow: 0 0 10px rgba(245, 87, 108, 0.6);
   }
-
 
   /* Quiz Actions */
   .quiz-actions {
@@ -775,17 +797,17 @@ background-color: #FFF2F2;
   }
 
   .retry-btn {
-  @apply border-none px-8 py-4 rounded-[50px] text-white;
-  @apply text-lg font-semibold cursor-pointer transition-all duration-300;
-  @apply flex items-center justify-center; /* centers content horizontally & vertically */
-  background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
-  box-shadow: 0 4px 20px rgba(238, 9, 121, 0.3);
-}
+    @apply border-none px-8 py-4 rounded-[50px] text-white;
+    @apply text-lg font-semibold cursor-pointer transition-all duration-300;
+    @apply flex items-center justify-center; /* centers content horizontally & vertically */
+    background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+    box-shadow: 0 4px 20px rgba(238, 9, 121, 0.3);
+  }
 
-.retry-btn:hover {
-  @apply -translate-y-0.5;
-  box-shadow: 0 8px 30px rgba(238, 9, 121, 0.4);
-}
+  .retry-btn:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 8px 30px rgba(238, 9, 121, 0.4);
+  }
 
   /* Scrollbar Styling */
   ::-webkit-scrollbar {
@@ -839,7 +861,7 @@ background-color: #FFF2F2;
   }
 
   .header-content {
-    @apply max-w-[600px] mx-auto mt-10 lg:mt-0;
+    @apply max-w-[600px] mx-auto mt-12;
   }
 
   .page-title {
@@ -1185,19 +1207,18 @@ background-color: #FFF2F2;
     width: calc(100% - 20px);
     max-width: calc(100vw - 20px);
   }
-  
-   .nav-brand {
+
+  .nav-brand {
     @apply gap-2;
   }
 
   .nav-title {
     @apply text-lg;
   }
-  
+
   .nav-logo {
     @apply text-lg;
   }
-
 
   .nav-btn {
     @apply px-3 py-1.5 text-xs;
@@ -1230,12 +1251,12 @@ background-color: #FFF2F2;
   .quiz-header-card {
     @apply flex-col gap-4 text-center;
   }
-  
-   .progress-card {
+
+  .progress-card {
     @apply px-4 py-4;
   }
-  
-    .progress-header {
+
+  .progress-header {
     @apply flex-col gap-2 items-start;
   }
 
@@ -1403,11 +1424,11 @@ background-color: #FFF2F2;
   .scroll-to-top {
     @apply bottom-4 right-4;
   }
-  
+
   .scroll-to-top-btn {
     @apply w-12 h-12;
   }
-  
+
   .scroll-to-top-icon {
     @apply w-5 h-5;
   }
