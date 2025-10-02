@@ -16,8 +16,10 @@
    body,
    html {
     font-family: "Inter", system-ui, -apple-system, sans-serif;
-    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    background-color: #667eea;
+background-image: linear-gradient(135deg, #FFF2F2 0%, #A9B5DF 15%, #7886C7 60%, #2D336B 100%);
+background-color: #FFF2F2; 
+
+
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -299,7 +301,9 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
-
+  .dark .glass-select option {
+    background: rgb(34 34 47)
+  }
   .glass-card:hover {
     @apply -translate-y-0.5;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -314,7 +318,7 @@
   .dark .glass-card:hover {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   }
-
+  
   /* Welcome Section */
   .welcome-section {
     @apply flex justify-center items-center;
@@ -398,7 +402,7 @@
   }
 
   .glass-select option {
-    background: rgba(102, 126, 234, 0.95);
+    background: #7886C7;
     @apply text-white;
   }
 
