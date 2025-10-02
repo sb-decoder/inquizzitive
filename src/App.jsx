@@ -832,6 +832,16 @@ const generatePDF = () => {
               <span className="mobile-menu-icon">🎯</span>
               Practice
             </button>
+            <button 
+              className="mobile-menu-item" 
+              onClick={() => {
+                showExamPrep();
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              <span className="mobile-menu-icon">📚</span>
+              Exam Prep
+            </button>
             {user ? (
               <>
                 <button 
