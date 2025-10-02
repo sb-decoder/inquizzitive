@@ -1,3 +1,6 @@
+/* src/App.css */
+
+/* --- ORIGINAL MAIN PROJECT STYLES (UNCHANGED) --- */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -40,3 +43,176 @@
 .read-the-docs {
   color: #888;
 }
+/* --- END OF ORIGINAL STYLES --- */
+
+
+/*
+============================================================
+  FINAL, UNIFIED STYLES FOR ALL AUTH PAGES & NAVBAR MENU
+  This is safely scoped and will NOT break the main project.
+============================================================
+*/
+
+/* --- Base Container for Auth & Setup Pages --- */
+.auth-page-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  background-color: #1a1a2e;
+  font-family: 'Inter', sans-serif;
+  padding: 2rem 1rem;
+}
+
+.auth-grid {
+  position: absolute;
+  width: 110%; /* Slightly larger to allow for movement */
+  height: 110%;
+  top: -5%;
+  left: -5%;
+  z-index: 0;
+  background-size: 60px 60px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  transition: transform 0.1s ease-out; /* Smooths the movement */
+}
+
+/* --- The Main Card for Login, Sign Up, and Setup --- */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  padding: 2.5rem;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  box-shadow: 8px 8px 0px #e53e3e;
+  transition: all 0.2s ease-out;
+  width: 90%;
+  max-width: 500px;
+  color: #1a202c;
+}
+
+.auth-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 10px 10px 0px #e53e3e;
+}
+
+.auth-card h1, .auth-card h2 {
+  color: #1a202c;
+  font-family: "Jost", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.auth-card p {
+  text-align: center;
+  color: #718096;
+  margin-bottom: 2rem;
+}
+
+.auth-card input, .auth-card textarea, .auth-card select {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  padding: 0.8rem 0;
+  border-bottom: 2px solid #ddd;
+  background-color: transparent;
+  color: #1a202c;
+  font-family: "roboto mono", monospace;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.auth-card input:focus, .auth-card textarea:focus, .auth-card select:focus {
+  border-bottom-color: #e53e3e;
+}
+.auth-card label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-weight: 500;
+  text-align: left;
+}
+
+.auth-btn {
+  border: none;
+  outline: none;
+  width: 100%;
+  background-color: #e53e3e;
+  color: #FFFFFF;
+  font-family: "Jost", sans-serif;
+  font-size: 1.1rem;
+  padding: 0.8rem;
+  margin-top: 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+.auth-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(229, 62, 62, 0.3);
+  background-color: #c53030;
+}
+.auth-btn.secondary {
+  background-color: #A0AEC0;
+}
+.auth-btn.secondary:hover {
+  background-color: #718096;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* --- Account Setup Page Styles --- */
+.progress-bar { display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; }
+.progress-step { width: 30px; height: 30px; border-radius: 50%; background: #E2E8F0; color: #A0AEC0; display: flex; justify-content: center; align-items: center; font-weight: bold; transition: all 0.4s ease; }
+.progress-step.active { background: #e53e3e; color: white; }
+.progress-line { flex-grow: 1; height: 4px; background: #E2E8F0; margin: 0 5px; transition: background 0.4s ease; }
+.progress-line.active { background: #e53e3e; }
+
+.interest-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.5rem; justify-content: center; }
+.tag { background: #E2E8F0; color: #4A5568; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: all 0.2s ease; }
+.tag:hover { background: #CBD5E0; }
+.tag.selected { background: #e53e3e; color: white; font-weight: 500; }
+
+.avatar-uploader { width: 150px; height: 150px; border-radius: 50%; border: 3px dashed #CBD5E0; display: flex; justify-content: center; align-items: center; margin: 1rem auto 1.5rem auto; cursor: pointer; background-color: #EDF2F7; overflow: hidden; transition: all 0.3s ease; }
+.avatar-uploader:hover { border-color: #e53e3e; }
+.avatar-preview { width: 100%; height: 100%; object-fit: cover; }
+.step-nav { display: flex; gap: 1rem; margin-top: 1rem; }
+
+/* --- FIX FOR NAVBAR USER MENU --- */
+.user-menu-container { position: relative; display: flex; align-items: center; }
+.user-menu-trigger { display: flex; align-items: center; gap: 0.75rem; background-color: rgba(255, 255, 255, 0.1); padding: 6px 12px 6px 6px; border-radius: 50px; border: 1px solid transparent; cursor: pointer; transition: all 0.3s ease; }
+.user-menu-trigger:hover { background-color: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.3); }
+.user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.5); }
+.user-avatar-placeholder { width: 32px; height: 32px; border-radius: 50%; background-color: #f5576c; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; color: white; text-transform: uppercase; }
+.user-name { color: white; font-weight: 500; font-size: 0.9rem; }
+.user-menu-dropdown { position: absolute; top: calc(100% + 12px); right: 0; width: 220px; background: rgba(30, 30, 50, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); padding: 0.5rem; z-index: 50; animation: fadeInDropdown 0.2s ease-out forwards; }
+.user-menu-header { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; margin-bottom: 0.25rem; }
+.user-menu-header strong { color: white; font-weight: 600; }
+.user-menu-item { display: flex; align-items: center; gap: 0.75rem; width: 100%; text-align: left; padding: 0.75rem 1rem; border-radius: 8px; color: white; font-size: 0.9rem; background: none; border: none; cursor: pointer; transition: background-color 0.2s ease; }
+.user-menu-item:hover { background-color: rgba(255, 255, 255, 0.1); }
+.user-menu-item.sign-out { color: #ff8a8a; font-weight: 500; }
+.dark-mode-toggle { background: none; border: none; padding: 0.5rem; margin-left: 0.5rem; cursor: pointer; font-size: 1.2rem; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+@keyframes fadeInDropdown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+.crop-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
+  display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+.crop-modal-content {
+  background-color: #f7f7f7; padding: 2rem; border-radius: 8px;
+  width: 90%; max-width: 500px; color: #1a202c;
+}
+.crop-modal-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.link-container { display: flex; flex-direction: column; align-items: center; margin-top: 1.5rem; gap: 0.75rem; }
+.CP { display: block; width: 100%; text-align: center; font-family: "roboto mono", monospace; font-size: 0.9rem; cursor: pointer; text-decoration: underline; color: #718096; transition: color 0.2s ease-in-out; }
+.CP:hover { color: #1a202c; }

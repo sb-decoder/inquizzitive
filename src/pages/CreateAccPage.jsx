@@ -1,43 +1,51 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './createAcc.css';
+// src/pages/CreateAccPage.jsx
 
-function CreateAcc() {
+import { useState, useEffect, useRef } from 'react'; // ADDED useEffect and useRef
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import '../App.css'; // CHANGED to use the main App.css file
+
+export default function CreateAccPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [dob, setDOB] = useState("");
   const [name, setName] = useState("");
   const navigate = useNavigate();
-  const gridRef = useRef(null);
-  const mainRef = useRef(null);
-  const maxMovement = 16;
+  const { login } = useAuth();
 
-  useEffect(() => {
-    document.body.style.background = '#1a1a2e';
-    return () => {
-      document.body.style.background = '';
-    };
-  }, []);
+  // --- PARALLAX EFFECT CODE ---
+  const gridRef = useRef(null);
+  const cardRef = useRef(null);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
+      const maxMovement = 12;
       const mouseX = e.clientX / window.innerWidth;
       const mouseY = e.clientY / window.innerHeight;
       const moveX = (mouseX - 0.5) * maxMovement;
       const moveY = (mouseY - 0.5) * maxMovement;
+
       requestAnimationFrame(() => {
-        if (gridRef.current) { gridRef.current.style.transform = `translate(${-moveX}px, ${-moveY}px)`; }
-        if (mainRef.current) {
-          mainRef.current.style.transform = `translate(${8 + moveX * 0.4}px, ${8 + moveY * 0.4}px)`;
-          mainRef.current.style.boxShadow = `var(--primary) ${12 - moveX * 0.4}px ${12 - moveY * 0.4}px`;
+        if (gridRef.current) {
+          gridRef.current.style.transform = `translate(${-moveX}px, ${-moveY}px)`;
+        }
+        if (cardRef.current) {
+          cardRef.current.style.transform = `translate(${moveX * 0.3}px, ${moveY * 0.3}px)`;
+          cardRef.current.style.boxShadow = `${8 + moveX * 0.4}px ${8 + moveY * 0.4}px 0px #e53e3e`;
         }
       });
     };
-    document.addEventListener('mousemove', handleMouseMove);
-    return () => { document.removeEventListener('mousemove', handleMouseMove); };
-  }, []);
 
-  const submitData = async () => {
+    document.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+  // --- END OF PARALLAX CODE ---
+
+  const submitData = async (e) => {
+    e.preventDefault();
     try {
       const response = await fetch("http://localhost:8000/createAcc", {
         method: "POST",
@@ -46,8 +54,10 @@ function CreateAcc() {
       });
       const data = await response.json();
       alert(data.message);
+
       if (data.isValid) {
-        navigate('/login');
+        login(data.user);
+        navigate('/account-setup');
       }
     } catch (error) {
       alert("An error occurred. Please try again.");
@@ -55,31 +65,23 @@ function CreateAcc() {
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      submitData();
-    }
-  };
-
   return (
-    <div className="login-container">
-      <title>SIGN UP</title>
-      <div id="parallax-grid" ref={gridRef}> </div>
-      <div id="main-login" ref={mainRef}>
+    <div className="auth-page-wrapper">
+      <div className="auth-grid" ref={gridRef}></div>
+      
+      <div className="auth-card" ref={cardRef}>
         <h1>SIGN UP</h1>
-        <div id="login">
-          <input type="text" id="name" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-          <input type="text" id="user" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-          <input type="date" id="dob" placeholder="Date Of Birth" value={dob} onChange={(e) => setDOB(e.target.value)} />
-          <input type="password" id="password" placeholder="New Password" value={password} onKeyDown={handleKeyDown} onChange={(e) => setPassword(e.target.value)} />
-          <button id="submit" onClick={(e) => { e.preventDefault(); submitData(); }}>CONTINUE</button>
+        <form className="auth-form" onSubmit={submitData}>
+          <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required/>
+          <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required/>
+          <input type="date" placeholder="Date Of Birth" value={dob} onChange={(e) => setDOB(e.target.value)} required/>
+          <input type="password" placeholder="New Password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
+          <button type="submit" className="auth-btn">CREATE ACCOUNT</button>
           <div className="link-container">
-            <Link className="CP" to="/login"> Already Have an Account </Link>
+            <Link className="CP" to="/login"> Already Have an Account? </Link>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
 }
-
-export default CreateAcc;
