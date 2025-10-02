@@ -3,11 +3,14 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useState } from "react";
 import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
+import AuthModal from "./components/AuthModal";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { quizService } from "./services/quizService";
 
 import { jsPDF } from 'jspdf'; // Import jsPDF
 import './components/Result.css'
 
-export default function App() {
+export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboard, saveQuizResult }) {
   // Mobile menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -499,8 +502,36 @@ export default function App() {
     if (!submitted) setAnswers((prev) => ({ ...prev, [qIndex]: option }));
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     setSubmitted(true);
+    
+    // Save quiz result to database if user is authenticated
+    if (user && saveQuizResult) {
+      const score = calculateScore();
+      const timeTaken = (quiz.length * 30) - timeLeft; // Calculate time taken
+      
+      const quizData = {
+        category: selectedCategory,
+        difficulty: selectedDifficulty,
+        totalQuestions: quiz.length,
+        correctAnswers: score.correct,
+        scorePercentage: parseFloat(score.percentage),
+        timeTaken: timeTaken,
+        questions: quiz,
+        userAnswers: answers
+      };
+      
+      try {
+        const result = await saveQuizResult(quizData);
+        if (result.error) {
+          console.error('Failed to save quiz result:', result.error);
+        } else {
+          console.log('Quiz result saved successfully');
+        }
+      } catch (error) {
+        console.error('Error saving quiz result:', error);
+      }
+    }
   }
 
   function calculateScore() {
@@ -697,7 +728,23 @@ const generatePDF = () => {
           <button className="nav-btn" onClick={showExamPrep}>
             Exam Prep
           </button>
-          <button className="nav-btn nav-btn-primary">Sign In</button>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <button className="nav-btn" onClick={onShowDashboard}>
+                Dashboard
+              </button>
+              <span className="text-sm text-gray-300">
+                {user.email}
+              </span>
+              <button className="nav-btn" onClick={onSignOut}>
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button className="nav-btn nav-btn-primary" onClick={onSignIn}>
+              Sign In
+            </button>
+          )}
           <button
             onClick={toggleDarkMode}
             className="ml-2 p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
@@ -785,20 +832,41 @@ const generatePDF = () => {
               <span className="mobile-menu-icon">🎯</span>
               Practice
             </button>
-            <button 
-              className="mobile-menu-item"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <span className="mobile-menu-icon">📊</span>
-              Dashboard
-            </button>
-            <button 
-              className="mobile-menu-item primary"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <span className="mobile-menu-icon">👤</span>
-              Sign In
-            </button>
+            {user ? (
+              <>
+                <button 
+                  className="mobile-menu-item"
+                  onClick={() => {
+                    onShowDashboard();
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <span className="mobile-menu-icon">📊</span>
+                  Dashboard
+                </button>
+                <button 
+                  className="mobile-menu-item"
+                  onClick={() => {
+                    onSignOut();
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <span className="mobile-menu-icon">👋</span>
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <button 
+                className="mobile-menu-item primary"
+                onClick={() => {
+                  onSignIn();
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                <span className="mobile-menu-icon">👤</span>
+                Sign In
+              </button>
+            )}
           </div>
         </div>
       )}
