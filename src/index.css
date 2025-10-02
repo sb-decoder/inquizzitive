@@ -13,6 +13,10 @@
     box-sizing: border-box;
   }
 
+  html {
+    @apply text-[15px] sm:text-[16px];
+  }
+
   body,
   html {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -28,6 +32,7 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+
   .dark body,
   .dark html,
   .dark {
@@ -850,7 +855,7 @@
 
   .back-btn {
     @apply absolute top-6 left-6 px-4 py-2 rounded-xl text-white;
-    @apply font-medium cursor-pointer transition-all duration-300;
+    @apply text-sm font-medium cursor-pointer transition-all duration-300;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
@@ -865,12 +870,12 @@
   }
 
   .page-title {
-    @apply text-[3rem] font-bold text-white mb-4;
+    @apply text-[2.5rem] sm:text-[3rem] font-bold text-white mb-4;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
   .page-subtitle {
-    @apply text-xl font-normal;
+    @apply text-base sm:text-xl font-normal;
     color: rgba(255, 255, 255, 0.8);
   }
 
