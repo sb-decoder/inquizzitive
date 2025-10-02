@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+@config "../../tailwind.config.js";
 
 /* Tailwind CSS Directives */
 @tailwind base;
@@ -77,8 +79,8 @@
   /* Floating Navigation */
   .floating-nav {
     @apply fixed top-5 left-1/2 -translate-x-1/2 flex justify-between items-center;
-    @apply min-w-[500px] z-[1000];
-    @apply px-6 py-3 rounded-[60px];
+    @apply min-w-[320px] max-w-[90vw] z-[1000];
+    @apply px-4 py-3 rounded-[60px];
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -105,11 +107,11 @@
   }
 
   .nav-links {
-    @apply flex gap-4;
+    @apply flex gap-2 items-center;
   }
 
   .nav-btn {
-    @apply bg-transparent border-none text-white px-4 py-2 rounded-[30px];
+    @apply bg-transparent border-none text-white px-3 py-2 rounded-[30px];
     @apply font-medium cursor-pointer transition-all duration-300 text-sm;
   }
 
@@ -125,6 +127,125 @@
 
   .nav-btn-primary:hover {
     background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Mobile Navigation */
+  .mobile-nav {
+    @apply flex gap-2 items-center;
+  }
+
+  .desktop-nav {
+    @apply flex gap-2 items-center;
+  }
+
+  /* Hamburger Menu */
+  .hamburger-btn {
+    @apply w-10 h-10 flex items-center justify-center;
+  }
+
+  .hamburger-icon {
+    @apply w-5 h-4 flex flex-col justify-between relative;
+  }
+
+  .hamburger-line {
+    @apply w-full h-0.5 bg-white transition-all duration-300 ease-in-out;
+    transform-origin: center;
+  }
+
+  .hamburger-line.open:nth-child(1) {
+    @apply rotate-45 translate-y-[6px];
+  }
+
+  .hamburger-line.open:nth-child(2) {
+    @apply opacity-0;
+  }
+
+  .hamburger-line.open:nth-child(3) {
+    @apply -rotate-45 -translate-y-[6px];
+  }
+
+  /* Mobile Menu Dropdown */
+  .mobile-menu {
+    @apply fixed top-[70px] left-1/2 -translate-x-1/2 z-[999];
+    @apply w-[calc(100%-20px)] max-w-[300px];
+    animation: slideDown 0.3s ease-out;
+  }
+
+  .mobile-menu-content {
+    @apply rounded-2xl overflow-hidden;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .mobile-menu-content {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  .mobile-menu-item {
+    @apply w-full px-6 py-4 text-left text-white border-none bg-transparent;
+    @apply flex items-center gap-3 transition-all duration-300;
+    @apply border-b border-white/10 last:border-b-0;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .mobile-menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .mobile-menu-item.primary {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 8px;
+    border-radius: 12px;
+    @apply border-b-0;
+  }
+
+  .mobile-menu-item.primary:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .mobile-menu-icon {
+    @apply text-lg;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  /* Prevent body scroll when mobile menu is open */
+  .mobile-menu-open {
+    overflow: hidden;
+  }
+
+  /* Additional mobile improvements */
+  @media (max-width: 768px) {
+    .welcome-card {
+      margin: 0 8px;
+    }
+    
+    .glass-card {
+      margin: 0 8px 16px 8px;
+    }
+    
+    .questions-container {
+      padding: 0 8px;
+    }
+    
+    .question-card {
+      margin-bottom: 16px;
+    }
   }
 
   /* Main Container */
@@ -338,6 +459,56 @@
 
   .option-text {
     @apply text-white text-base font-medium;
+  }
+
+  /* Progress Bar */
+  .progress-card {
+    @apply px-6 py-5;
+  }
+
+  .progress-header {
+    @apply flex justify-between items-center mb-4;
+  }
+
+  .progress-text {
+    @apply text-white text-sm font-medium;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .progress-percentage {
+    @apply text-white text-sm font-bold px-3 py-1 rounded-full;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+  }
+
+  .progress-bar-container {
+    @apply w-full h-3 rounded-full overflow-hidden;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .progress-bar-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+    box-shadow: 0 0 10px rgba(245, 87, 108, 0.4);
+    position: relative;
+  }
+
+  .progress-bar-fill::after {
+    content: '';
+    @apply absolute top-0 right-0 w-2 h-full;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  /* Dark mode progress bar */
+  .dark .progress-bar-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .progress-bar-fill {
+    box-shadow: 0 0 10px rgba(245, 87, 108, 0.6);
   }
 
   /* Quiz Actions */
@@ -592,19 +763,45 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .floating-nav {
-    @apply min-w-0 px-5 py-2.5;
-    width: calc(100% - 40px);
+    @apply min-w-0 px-3 py-2;
+    width: calc(100% - 20px);
+    max-width: calc(100vw - 20px);
+  }
+
+  .nav-brand {
+    @apply gap-2;
   }
 
   .nav-title {
+    @apply text-base;
+  }
+
+  .nav-logo {
     @apply text-lg;
   }
 
-  .nav-btn {
-    @apply px-3 py-1.5 text-xs;
+  /* Hide desktop nav, show mobile nav */
+  .desktop-nav {
+    @apply hidden;
+  }
+
+  .mobile-nav {
+    @apply flex;
   }
 
   .main-container {
@@ -625,6 +822,22 @@
 
   .quiz-header-card {
     @apply flex-col gap-4 text-center;
+  }
+
+  .progress-card {
+    @apply px-4 py-4;
+  }
+
+  .progress-header {
+    @apply flex-col gap-2 items-start;
+  }
+
+  .progress-text {
+    @apply text-xs;
+  }
+
+  .progress-percentage {
+    @apply text-xs px-2 py-1;
   }
 
   .score-display {
@@ -648,7 +861,53 @@
   }
 }
 
+@media (min-width: 769px) {
+  /* Hide mobile nav, show desktop nav */
+  .mobile-nav {
+    @apply hidden;
+  }
+
+  .desktop-nav {
+    @apply flex;
+  }
+}
+
 @media (max-width: 480px) {
+  .floating-nav {
+    @apply px-2 py-1.5;
+    width: calc(100% - 16px);
+    max-width: calc(100vw - 16px);
+  }
+
+  .nav-brand {
+    @apply gap-1.5;
+  }
+
+  .nav-title {
+    @apply text-sm;
+  }
+
+  .nav-logo {
+    @apply text-base;
+  }
+
+  .mobile-nav {
+    @apply gap-1;
+  }
+
+  .hamburger-btn {
+    @apply w-8 h-8;
+  }
+
+  .mobile-menu {
+    @apply w-[calc(100%-16px)];
+    top: 60px;
+  }
+
+  .mobile-menu-item {
+    @apply px-4 py-3 text-sm;
+  }
+
   .welcome-title {
     @apply text-[2rem];
   }
