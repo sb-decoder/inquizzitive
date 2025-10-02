@@ -741,9 +741,14 @@ const generatePDF = () => {
               </button>
             </div>
           ) : (
-            <button className="nav-btn nav-btn-primary" onClick={onSignIn}>
-              Sign In
-            </button>
+            <div className="flex items-center gap-2">
+              <button className="nav-btn" onClick={onSignIn}>
+                Sign In
+              </button>
+              <button className="nav-btn nav-btn-primary" onClick={onSignUp}>
+                Sign Up
+              </button>
+            </div>
           )}
           <button
             onClick={toggleDarkMode}
@@ -856,16 +861,28 @@ const generatePDF = () => {
                 </button>
               </>
             ) : (
-              <button 
-                className="mobile-menu-item primary"
-                onClick={() => {
-                  onSignIn();
-                  setIsMobileMenuOpen(false);
-                }}
-              >
-                <span className="mobile-menu-icon">👤</span>
-                Sign In
-              </button>
+              <>
+                <button 
+                  className="mobile-menu-item"
+                  onClick={() => {
+                    onSignIn();
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <span className="mobile-menu-icon">👤</span>
+                  Sign In
+                </button>
+                <button 
+                  className="mobile-menu-item primary"
+                  onClick={() => {
+                    onSignUp();
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <span className="mobile-menu-icon">✨</span>
+                  Sign Up
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -921,6 +938,21 @@ const generatePDF = () => {
                 <button onClick={showExamPrep} className="info-btn">
                   📚 Learn About Exam Prep
                 </button>
+                {!user && (
+                  <div className="auth-cta">
+                    <p className="auth-cta-text">
+                      🔐 <strong>Sign up to track your progress</strong> and save your quiz results!
+                    </p>
+                    <div className="auth-cta-buttons">
+                      <button onClick={onSignUp} className="auth-cta-btn primary">
+                        Create Account
+                      </button>
+                      <button onClick={onSignIn} className="auth-cta-btn secondary">
+                        Sign In
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
 
@@ -1102,6 +1134,16 @@ const generatePDF = () => {
               <div className="results-celebration">
                 <span className="celebration-emoji">🎉</span>
                 <h2>Quiz Completed!</h2>
+                {user && (
+                  <p className="save-status">
+                    ✅ Results automatically saved to your account
+                  </p>
+                )}
+                {!user && (
+                  <p className="save-status warning">
+                    ⚠️ <button onClick={onSignUp} className="inline-link">Sign up</button> to save your progress
+                  </p>
+                )}
               </div>
               <div className="score-display">
                 <div className="score-circle">

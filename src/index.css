@@ -402,6 +402,51 @@
     @apply -translate-y-0.5;
   }
 
+  /* Authentication Call-to-Action */
+  .auth-cta {
+    @apply mt-6 p-6 rounded-xl;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .auth-cta-text {
+    @apply text-white text-center mb-4 text-sm;
+  }
+
+  .auth-cta-buttons {
+    @apply flex justify-center gap-3;
+  }
+
+  .auth-cta-btn {
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300;
+    @apply border border-white/20 hover:border-white/30;
+  }
+
+  .auth-cta-btn.primary {
+    @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white;
+    @apply hover:from-purple-700 hover:to-pink-700;
+  }
+
+  .auth-cta-btn.secondary {
+    @apply bg-white/10 text-white hover:bg-white/20;
+  }
+
+  /* Save Status Indicators */
+  .save-status {
+    @apply text-sm mt-2 text-center;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .save-status.warning {
+    @apply text-yellow-300;
+  }
+
+  .inline-link {
+    @apply underline text-purple-400 hover:text-purple-300 transition-colors;
+    @apply bg-transparent border-none cursor-pointer;
+  }
+
   /* Quiz Setup */
   .quiz-setup {
     @apply flex flex-col gap-6 max-w-[500px] mx-auto mt-4;
