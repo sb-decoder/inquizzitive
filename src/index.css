@@ -405,6 +405,9 @@ background-color: #FFF2F2;
     background: #7886C7;
     @apply text-white;
   }
+  .dark .glass-select option {
+    background: rgb(34 34 47)
+  }
 
   /* Start Button */
   .start-btn {
