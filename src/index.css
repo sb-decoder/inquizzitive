@@ -13,18 +13,19 @@
     box-sizing: border-box;
   }
 
-  body,
-  html,
-  #root {
+   body,
+   html {
     font-family: "Inter", system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #667eea;
     min-height: 100vh;
     overflow-x: hidden;
   }
   .dark body,
   .dark html,
-  .dark #root {
-    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+  .dark {
+    background-image: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+    background-color: #1a1a2e;
   }
 }
 
@@ -76,7 +77,7 @@
 
   /* Floating Navigation */
   .floating-nav {
-    @apply fixed top-5 left-1/2 -translate-x-1/2 flex justify-between items-center;
+    @apply fixed top-5 left-1/2 -translate-x-1/2 flex justify-between items-center gap-4;
     @apply min-w-[500px] z-[1000];
     @apply px-6 py-3 rounded-[60px];
     background: rgba(255, 255, 255, 0.1);
@@ -127,11 +128,168 @@
     background: rgba(255, 255, 255, 0.3);
   }
 
+  /* Mobile Navigation */
+  .mobile-nav {
+    @apply flex gap-2 items-center;
+  }
+
+  .desktop-nav {
+    @apply flex gap-2 items-center;
+  }
+
+  /* Hamburger Menu */
+  .hamburger-btn {
+    @apply w-10 h-10 flex items-center justify-center;
+  }
+
+  .hamburger-icon {
+    @apply w-5 h-4 flex flex-col justify-between relative;
+  }
+
+  .hamburger-line {
+    @apply w-full h-0.5 bg-white transition-all duration-300 ease-in-out;
+    transform-origin: center;
+  }
+
+  .hamburger-line.open:nth-child(1) {
+    @apply rotate-45 translate-y-[6px];
+  }
+
+  .hamburger-line.open:nth-child(2) {
+    @apply opacity-0;
+  }
+
+  .hamburger-line.open:nth-child(3) {
+    @apply -rotate-45 -translate-y-[6px];
+  }
+
+  /* Mobile Menu Dropdown */
+  .mobile-menu {
+    @apply fixed top-[70px] left-1/2 -translate-x-1/2 z-[999];
+    @apply w-[calc(100%-20px)] max-w-[300px];
+    animation: slideDown 0.3s ease-out;
+  }
+
+  .mobile-menu-content {
+    @apply rounded-2xl overflow-hidden;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .mobile-menu-content {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  .mobile-menu-item {
+    @apply w-full px-6 py-4 text-left text-white border-none bg-transparent;
+    @apply flex items-center gap-3 transition-all duration-300;
+    @apply border-b border-white/10 last:border-b-0;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .mobile-menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .mobile-menu-item.primary {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 8px;
+    border-radius: 12px;
+    @apply border-b-0;
+  }
+
+  .mobile-menu-item.primary:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .mobile-menu-icon {
+    @apply text-lg;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  /* Prevent body scroll when mobile menu is open */
+  .mobile-menu-open {
+    overflow: hidden;
+  }
+
+  /* Additional mobile improvements */
+  @media (max-width: 768px) {
+    .welcome-card {
+      margin: 0 8px;
+    }
+    
+    .glass-card {
+      margin: 0 8px 16px 8px;
+    }
+    
+    .questions-container {
+      padding: 0 8px;
+    }
+    
+    .question-card {
+      margin-bottom: 16px;
+    }
+  }
+
   /* Main Container */
   .main-container {
     @apply relative z-[1] max-w-[1000px] mx-auto;
     padding: 100px 20px 40px;
   }
+
+  /* Alert Banner */
+  .alert {
+    @apply flex justify-between items-center gap-4 mb-4 px-4 py-3 rounded-2xl;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .alert-error {
+    @apply border-l-4;
+    border-left-color: #fca5a5; /* red-300 */
+    background: rgba(239, 68, 68, 0.08);
+  }
+
+  .alert-content { @apply flex items-center gap-3; }
+  .alert-icon { @apply text-xl; }
+  .alert-text { @apply flex flex-col gap-1; }
+  .alert-title { @apply text-white font-bold text-sm; }
+  .alert-desc { @apply text-white/85 text-sm; }
+  .alert-actions { @apply flex items-center gap-2 ml-auto; }
+
+  .btn-retry {
+    @apply text-white font-semibold px-3 py-2 rounded-xl;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  }
+  .btn-retry:hover:not(:disabled) { @apply -translate-y-px; }
+  .btn-retry:disabled { @apply opacity-70 cursor-not-allowed; }
+
+  .alert-close {
+    @apply text-white w-8 h-8 rounded-lg;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  .alert-close:hover { background: rgba(255, 255, 255, 0.15); }
 
   /* Glass Card Base */
   .glass-card {
@@ -171,8 +329,15 @@
     @apply text-[3.5rem] font-bold text-white mb-4;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
-
+  
   .gradient-text {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dark .gradient-text {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -180,13 +345,30 @@
   }
 
   .welcome-subtitle {
-    @apply text-xl mb-10 font-normal;
+    @apply text-xl mb-8 font-normal;
     color: rgba(255, 255, 255, 0.8);
+  }
+
+  .welcome-actions {
+    @apply mb-8;
+  }
+
+  .info-btn {
+    @apply border-none px-6 py-3 rounded-[30px] text-white;
+    @apply text-base font-medium cursor-pointer transition-all duration-300;
+    @apply flex items-center justify-center gap-2 mx-auto;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .info-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    @apply -translate-y-0.5;
   }
 
   /* Quiz Setup */
   .quiz-setup {
-    @apply flex flex-col gap-6 max-w-[500px] mx-auto;
+    @apply flex flex-col gap-6 max-w-[500px] mx-auto mt-4;
   }
 
   .setup-row {
@@ -342,6 +524,57 @@
   .option-text {
     @apply text-white text-base font-medium;
   }
+  
+  /* Progress Bar */
+  .progress-card {
+    @apply px-6 py-5;
+  }
+
+  .progress-header {
+    @apply flex justify-between items-center mb-4;
+  }
+
+  .progress-text {
+    @apply text-white text-sm font-medium;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .progress-percentage {
+    @apply text-white text-sm font-bold px-3 py-1 rounded-full;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+  }
+
+  .progress-bar-container {
+    @apply w-full h-3 rounded-full overflow-hidden;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .progress-bar-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+    box-shadow: 0 0 10px rgba(245, 87, 108, 0.4);
+    position: relative;
+  }
+
+  .progress-bar-fill::after {
+    content: '';
+    @apply absolute top-0 right-0 w-2 h-full;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  /* Dark mode progress bar */
+  .dark .progress-bar-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .progress-bar-fill {
+    box-shadow: 0 0 10px rgba(245, 87, 108, 0.6);
+  }
+
 
   /* Quiz Actions */
   .quiz-actions {
@@ -533,6 +766,19 @@
     box-shadow: 0 8px 30px rgba(118, 75, 162, 0.4);
   }
 
+  .retry-btn {
+  @apply border-none px-8 py-4 rounded-[50px] text-white;
+  @apply text-lg font-semibold cursor-pointer transition-all duration-300;
+  @apply flex items-center justify-center; /* centers content horizontally & vertically */
+  background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+  box-shadow: 0 4px 20px rgba(238, 9, 121, 0.3);
+}
+
+.retry-btn:hover {
+  @apply -translate-y-0.5;
+  box-shadow: 0 8px 30px rgba(238, 9, 121, 0.4);
+}
+
   /* Scrollbar Styling */
   ::-webkit-scrollbar {
     @apply w-2;
@@ -561,6 +807,323 @@
   .nav-btn:focus {
     @apply outline-2 outline-offset-2;
     outline-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Exam Prep Page Styles */
+  .exam-prep-page {
+    @apply flex flex-col gap-6;
+  }
+
+  .exam-prep-header {
+    @apply p-8 text-center relative;
+  }
+
+  .back-btn {
+    @apply absolute top-6 left-6 px-4 py-2 rounded-xl text-white;
+    @apply font-medium cursor-pointer transition-all duration-300;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    @apply -translate-x-1;
+  }
+
+  .header-content {
+    @apply max-w-[600px] mx-auto;
+  }
+
+  .page-title {
+    @apply text-[3rem] font-bold text-white mb-4;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .page-subtitle {
+    @apply text-xl font-normal;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Tab Navigation */
+  .tab-navigation {
+    @apply p-2;
+  }
+
+  .tab-buttons {
+    @apply flex gap-2 justify-center flex-wrap;
+  }
+
+  .tab-btn {
+    @apply px-6 py-3 rounded-xl text-white font-medium;
+    @apply cursor-pointer transition-all duration-300 flex items-center gap-2;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .tab-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    @apply -translate-y-0.5;
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(245, 87, 108, 0.3);
+  }
+
+  .tab-icon {
+    @apply text-lg;
+  }
+
+  .tab-label {
+    @apply text-sm font-medium;
+  }
+
+  /* Tab Content */
+  .tab-content {
+    @apply flex flex-col gap-6;
+  }
+
+  .section-title {
+    @apply text-white text-[2rem] font-bold text-center mb-4;
+  }
+
+  .section-description {
+    @apply text-center mb-8;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Overview Section */
+  .overview-section {
+    @apply flex flex-col gap-6;
+  }
+
+  .overview-card {
+    @apply p-8;
+  }
+
+  .overview-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+
+  .overview-item {
+    @apply text-center p-6 rounded-2xl;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .overview-icon {
+    @apply text-4xl mb-4;
+  }
+
+  .overview-item h3 {
+    @apply text-white text-xl font-semibold mb-3;
+  }
+
+  .overview-item p {
+    color: rgba(255, 255, 255, 0.8);
+    @apply leading-relaxed;
+  }
+
+  .success-stats {
+    @apply p-8;
+  }
+
+  .stats-title {
+    @apply text-white text-xl font-semibold text-center mb-6;
+  }
+
+  .stats-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+  }
+
+  .stat-item {
+    @apply text-center;
+  }
+
+  .stat-number {
+    @apply text-4xl font-bold mb-2;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    @apply text-white font-medium;
+  }
+
+  /* Exams Section */
+  .exams-section {
+    @apply flex flex-col gap-6;
+  }
+
+  .exams-intro {
+    @apply p-8 text-center;
+  }
+
+  .exams-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+
+  .exam-card {
+    @apply p-6;
+  }
+
+  .exam-header {
+    @apply flex items-center gap-4 mb-6;
+  }
+
+  .exam-icon {
+    @apply text-4xl;
+  }
+
+  .exam-name {
+    @apply text-white text-xl font-semibold mb-1;
+  }
+
+  .exam-description {
+    color: rgba(255, 255, 255, 0.7);
+    @apply text-sm;
+  }
+
+  .exam-details {
+    @apply flex flex-col gap-4;
+  }
+
+  .exam-list h4,
+  .subject-list h4 {
+    @apply text-white font-medium mb-2;
+  }
+
+  .exam-list ul {
+    @apply list-disc list-inside;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .exam-list li {
+    @apply mb-1;
+  }
+
+  .subject-tags {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .subject-tag {
+    @apply px-3 py-1 rounded-full text-sm font-medium text-white;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Features Section */
+  .features-section {
+    @apply flex flex-col gap-6;
+  }
+
+  .features-intro {
+    @apply p-8 text-center;
+  }
+
+  .features-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  .feature-card {
+    @apply p-6 text-center;
+  }
+
+  .feature-icon {
+    @apply text-4xl mb-4;
+  }
+
+  .feature-title {
+    @apply text-white text-lg font-semibold mb-3;
+  }
+
+  .feature-description {
+    color: rgba(255, 255, 255, 0.8);
+    @apply leading-relaxed text-sm;
+  }
+
+  /* Study Plan Section */
+  .study-plan-section {
+    @apply flex flex-col gap-6;
+  }
+
+  .study-plan-intro {
+    @apply p-8 text-center;
+  }
+
+  .study-plan-timeline {
+    @apply flex flex-col gap-4;
+  }
+
+  .phase-card {
+    @apply p-6;
+  }
+
+  .phase-header {
+    @apply flex items-center gap-4 mb-4;
+  }
+
+  .phase-number {
+    @apply w-12 h-12 rounded-full flex items-center justify-center;
+    @apply text-white font-bold text-lg;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+
+  .phase-name {
+    @apply text-white text-xl font-semibold mb-1;
+  }
+
+  .phase-duration {
+    color: rgba(255, 255, 255, 0.7);
+    @apply text-sm;
+  }
+
+  .phase-focus {
+    color: rgba(255, 255, 255, 0.9);
+    @apply mb-4;
+  }
+
+  .phase-activities h4 {
+    @apply text-white font-medium mb-2;
+  }
+
+  .phase-activities ul {
+    @apply list-disc list-inside;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .phase-activities li {
+    @apply mb-1;
+  }
+
+  /* Call to Action */
+  .cta-section {
+    @apply p-10 text-center;
+  }
+
+  .cta-title {
+    @apply text-white text-[2.5rem] font-bold mb-4;
+  }
+
+  .cta-description {
+    @apply text-xl mb-8;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .cta-btn {
+    @apply border-none px-10 py-4 rounded-[50px] text-white;
+    @apply text-lg font-semibold cursor-pointer transition-all duration-300;
+    @apply flex items-center justify-center gap-3 mx-auto;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 20px rgba(245, 87, 108, 0.3);
+  }
+
+  .cta-btn:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 8px 30px rgba(245, 87, 108, 0.4);
   }
 }
 
@@ -595,19 +1158,49 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .floating-nav {
-    @apply min-w-0 px-5 py-2.5;
-    width: calc(100% - 40px);
+    @apply min-w-0 px-3 py-2;
+    width: calc(100% - 20px);
+    max-width: calc(100vw - 20px);
+  }
+  
+   .nav-brand {
+    @apply gap-2;
   }
 
   .nav-title {
     @apply text-lg;
   }
+  
+  .nav-logo {
+    @apply text-lg;
+  }
+
 
   .nav-btn {
     @apply px-3 py-1.5 text-xs;
+  }
+  /* Hide desktop nav, show mobile nav */
+  .desktop-nav {
+    @apply hidden;
+  }
+
+  .mobile-nav {
+    @apply flex;
   }
 
   .main-container {
@@ -628,6 +1221,22 @@
 
   .quiz-header-card {
     @apply flex-col gap-4 text-center;
+  }
+  
+   .progress-card {
+    @apply px-4 py-4;
+  }
+  
+    .progress-header {
+    @apply flex-col gap-2 items-start;
+  }
+
+  .progress-text {
+    @apply text-xs;
+  }
+
+  .progress-percentage {
+    @apply text-xs px-2 py-1;
   }
 
   .score-display {
@@ -651,7 +1260,53 @@
   }
 }
 
+@media (min-width: 769px) {
+  /* Hide mobile nav, show desktop nav */
+  .mobile-nav {
+    @apply hidden;
+  }
+
+  .desktop-nav {
+    @apply flex;
+  }
+}
+
 @media (max-width: 480px) {
+  .floating-nav {
+    @apply px-2 py-1.5;
+    width: calc(100% - 16px);
+    max-width: calc(100vw - 16px);
+  }
+
+  .nav-brand {
+    @apply gap-1.5;
+  }
+
+  .nav-title {
+    @apply text-sm;
+  }
+
+  .nav-logo {
+    @apply text-base;
+  }
+
+  .mobile-nav {
+    @apply gap-1;
+  }
+
+  .hamburger-btn {
+    @apply w-8 h-8;
+  }
+
+  .mobile-menu {
+    @apply w-[calc(100%-16px)];
+    top: 60px;
+  }
+
+  .mobile-menu-item {
+    @apply px-4 py-3 text-sm;
+  }
+
   .welcome-title {
     @apply text-[2rem];
   }
