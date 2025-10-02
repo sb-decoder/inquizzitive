@@ -2,6 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useState } from "react";
 import ExamPrepPage from "./ExamPrepPage";
+import ScrollTop from "./components/ScrollTop";
 
 import { jsPDF } from 'jspdf'; // Import jsPDF
 import './components/Result.css'
@@ -1107,6 +1108,9 @@ export default function App() {
           </div>
         )}
       </div>
+      
+      {/* Scroll to Top Button */}
+      <ScrollTop />
     </div>
   );
 }
