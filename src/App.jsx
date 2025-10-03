@@ -5,6 +5,7 @@ import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
 import AuthModal from "./components/AuthModal";
 import NotificationBadge from "./components/NotificationBadge";
+import QuestionTimer from "./components/QuestionTimer";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { quizService } from "./services/quizService";
 
@@ -363,6 +364,11 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   const [showStartScreen, setShowStartScreen] = useState(true);
   const [originalQuiz, setOriginalQuiz] = useState([]);
   const [showExamPrepPage, setShowExamPrepPage] = useState(false);
+  const [timerEnabled, setTimerEnabled] = useState(true);
+  const [questionTimeLimit, setQuestionTimeLimit] = useState(30);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [questionStartTime, setQuestionStartTime] = useState(Date.now());
+  const [questionTimerKey, setQuestionTimerKey] = useState(0);
 
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -473,6 +479,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       setQuiz(cleanedQuestions);
       setOriginalQuiz(cleanedQuestions);
       setTimeLeft(cleanedQuestions.length * 30);
+      setCurrentQuestionIndex(0);
+      setQuestionStartTime(Date.now());
+      setQuestionTimerKey(prev => prev + 1);
       setShowStartScreen(false);
     } catch (err) {
       console.error("Error generating quiz:", err);
@@ -488,6 +497,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   setAnswers({});                    
   setSubmitted(false);               
   setTimeLeft(originalQuiz.length * 30);
+  setCurrentQuestionIndex(0);
+  setQuestionStartTime(Date.now());
+  setQuestionTimerKey(prev => prev + 1);
 }
 
   // Timer
@@ -500,7 +512,31 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   }, [timeLeft, submitted, quiz]);
 
   function handleOptionSelect(qIndex, option) {
-    if (!submitted) setAnswers((prev) => ({ ...prev, [qIndex]: option }));
+    if (!submitted) {
+      setAnswers((prev) => ({ ...prev, [qIndex]: option }));
+      
+      // Move to next question if timer is enabled and this isn't the last question
+      if (timerEnabled && qIndex < quiz.length - 1) {
+        setTimeout(() => {
+          setCurrentQuestionIndex(qIndex + 1);
+          setQuestionStartTime(Date.now());
+          setQuestionTimerKey(prev => prev + 1);
+        }, 500); // Small delay to show selection
+      }
+    }
+  }
+
+  // Handle individual question time up
+  function handleQuestionTimeUp() {
+    if (currentQuestionIndex < quiz.length - 1) {
+      // Move to next question
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setQuestionStartTime(Date.now());
+      setQuestionTimerKey(prev => prev + 1);
+    } else {
+      // Last question, submit quiz
+      handleSubmit();
+    }
   }
 
   async function handleSubmit() {
@@ -562,7 +598,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
     setSubmitted(false);
     setTimeLeft(0);
     setShowStartScreen(true);
-
+    setCurrentQuestionIndex(0);
+    setQuestionStartTime(Date.now());
+    setQuestionTimerKey(0);
     setError(null);
     setShowExamPrepPage(false);
   }
@@ -979,6 +1017,38 @@ const generatePDF = () => {
                     <option value={20}>20 Questions (10 min)</option>
                   </select>
                 </div>
+                
+                {/* Timer Settings */}
+                <div className="timer-settings">
+                  <div className="input-group">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={timerEnabled}
+                        onChange={(e) => setTimerEnabled(e.target.checked)}
+                        className="rounded"
+                      />
+                      Enable Question Timer
+                    </label>
+                  </div>
+                  {timerEnabled && (
+                    <div className="input-group">
+                      <label>Time per Question (seconds)</label>
+                      <select
+                        value={questionTimeLimit}
+                        onChange={(e) => setQuestionTimeLimit(Number(e.target.value))}
+                        className="glass-select"
+                      >
+                        <option value={15}>15 seconds</option>
+                        <option value={30}>30 seconds</option>
+                        <option value={45}>45 seconds</option>
+                        <option value={60}>60 seconds</option>
+                        <option value={90}>90 seconds</option>
+                        <option value={120}>2 minutes</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={fetchQuiz}
                   disabled={loading}
@@ -1050,59 +1120,153 @@ const generatePDF = () => {
                   {selectedDifficulty} • {quiz.length} Questions
                 </span>
               </div>
-              <div className="timer">
-                <span className="timer-icon">⏱️</span>
-                <span className="timer-text">
-                  {Math.floor(timeLeft / 60)}:
-                  {(timeLeft % 60).toString().padStart(2, "0")}
-                </span>
-              </div>
-            </div>
-            <div className="glass-card progress-card">
-              <div className="progress-header">
-                <span className="progress-text">
-                  Progress: {progress.answered} of {progress.total} questions answered
-                </span>
-                <span className="progress-percentage">{progress.percentage}%</span>
-              </div>
-              <div className="progress-bar-container">
-                <div 
-                  className="progress-bar-fill"
-                  style={{ width: `${progress.percentage}%` }}
-                ></div>
-              </div>
-            </div>
-            <div className="questions-container">
-              {quiz.map((q, idx) => (
-                <div key={idx} className="glass-card question-card">
-                  <div className="question-header">
-                    <span className="question-number">Q{idx + 1}</span>
-                    <p className="question-text">{q.question}</p>
+              <div className="timer-display">
+                {timerEnabled ? (
+                  <QuestionTimer
+                    duration={questionTimeLimit}
+                    onTimeUp={handleQuestionTimeUp}
+                    isActive={!submitted}
+                    resetTrigger={questionTimerKey}
+                    showTimer={timerEnabled}
+                  />
+                ) : (
+                  <div className="timer">
+                    <span className="timer-icon">⏱️</span>
+                    <span className="timer-text">
+                      {Math.floor(timeLeft / 60)}:
+                      {(timeLeft % 60).toString().padStart(2, "0")}
+                    </span>
                   </div>
-                  <div className="options-grid">
-                    {q.options.map((opt, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleOptionSelect(idx, opt)}
-                        className={`option-btn ${
-                          answers[idx] === opt ? "selected" : ""
-                        }`}
-                      >
-                        <span className="option-letter">
-                          {String.fromCharCode(65 + i)}
-                        </span>
-                        <span className="option-text">{opt}</span>
-                      </button>
-                    ))}
+                )}
+              </div>
+            </div>
+
+            {timerEnabled ? (
+              // Single question view with timer
+              <div className="single-question-mode">
+                <div className="glass-card progress-card">
+                  <div className="progress-header">
+                    <span className="progress-text">
+                      Question {currentQuestionIndex + 1} of {quiz.length}
+                    </span>
+                    <span className="progress-percentage">
+                      {Math.round(((currentQuestionIndex + 1) / quiz.length) * 100)}%
+                    </span>
+                  </div>
+                  <div className="progress-bar-container">
+                    <div 
+                      className="progress-bar-fill"
+                      style={{ width: `${((currentQuestionIndex + 1) / quiz.length) * 100}%` }}
+                    ></div>
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="quiz-actions">
-              <button onClick={handleSubmit} className="submit-btn">
-                Submit Quiz
-              </button>
-            </div>
+
+                {quiz[currentQuestionIndex] && (
+                  <div className="glass-card question-card">
+                    <div className="question-header">
+                      <span className="question-number">Q{currentQuestionIndex + 1}</span>
+                      <p className="question-text">{quiz[currentQuestionIndex].question}</p>
+                    </div>
+                    <div className="options-grid">
+                      {quiz[currentQuestionIndex].options.map((opt, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handleOptionSelect(currentQuestionIndex, opt)}
+                          className={`option-btn ${
+                            answers[currentQuestionIndex] === opt ? "selected" : ""
+                          }`}
+                        >
+                          <span className="option-letter">
+                            {String.fromCharCode(65 + i)}
+                          </span>
+                          <span className="option-text">{opt}</span>
+                        </button>
+                      ))}
+                    </div>
+                    
+                    <div className="question-navigation">
+                      {currentQuestionIndex > 0 && (
+                        <button
+                          onClick={() => {
+                            setCurrentQuestionIndex(currentQuestionIndex - 1);
+                            setQuestionTimerKey(prev => prev + 1);
+                          }}
+                          className="nav-btn prev-btn"
+                        >
+                          ← Previous
+                        </button>
+                      )}
+                      
+                      {currentQuestionIndex < quiz.length - 1 ? (
+                        <button
+                          onClick={() => {
+                            setCurrentQuestionIndex(currentQuestionIndex + 1);
+                            setQuestionStartTime(Date.now());
+                            setQuestionTimerKey(prev => prev + 1);
+                          }}
+                          className="nav-btn next-btn"
+                        >
+                          Next →
+                        </button>
+                      ) : (
+                        <button onClick={handleSubmit} className="submit-btn">
+                          Submit Quiz
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              // All questions view without individual timers
+              <>
+                <div className="glass-card progress-card">
+                  <div className="progress-header">
+                    <span className="progress-text">
+                      Progress: {progress.answered} of {progress.total} questions answered
+                    </span>
+                    <span className="progress-percentage">{progress.percentage}%</span>
+                  </div>
+                  <div className="progress-bar-container">
+                    <div 
+                      className="progress-bar-fill"
+                      style={{ width: `${progress.percentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+                <div className="questions-container">
+                  {quiz.map((q, idx) => (
+                    <div key={idx} className="glass-card question-card">
+                      <div className="question-header">
+                        <span className="question-number">Q{idx + 1}</span>
+                        <p className="question-text">{q.question}</p>
+                      </div>
+                      <div className="options-grid">
+                        {q.options.map((opt, i) => (
+                          <button
+                            key={i}
+                            onClick={() => handleOptionSelect(idx, opt)}
+                            className={`option-btn ${
+                              answers[idx] === opt ? "selected" : ""
+                            }`}
+                          >
+                            <span className="option-letter">
+                              {String.fromCharCode(65 + i)}
+                            </span>
+                            <span className="option-text">{opt}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="quiz-actions">
+                  <button onClick={handleSubmit} className="submit-btn">
+                    Submit Quiz
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
 

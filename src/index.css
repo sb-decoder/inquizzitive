@@ -1425,6 +1425,118 @@
   }
 }
 
+/* Timer Styles */
+.timer-settings {
+  @apply space-y-4 mt-4 p-4 rounded-xl;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timer-display {
+  @apply flex items-center justify-center;
+}
+
+.single-question-mode {
+  @apply space-y-6;
+}
+
+.question-navigation {
+  @apply flex justify-between items-center mt-6 pt-4 border-t border-white/10;
+}
+
+.nav-btn {
+  @apply px-6 py-2 rounded-xl font-medium transition-all duration-300;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  @apply -translate-y-px;
+}
+
+.prev-btn {
+  @apply mr-auto;
+}
+
+.next-btn {
+  @apply ml-auto;
+}
+
+/* Timer Component Styles */
+.timer-container {
+  @apply relative;
+}
+
+.timer-container svg {
+  @apply drop-shadow-lg;
+}
+
+.timer-container.urgent {
+  animation: pulse-urgent 1s infinite;
+}
+
+@keyframes pulse-urgent {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8; 
+    transform: scale(1.05);
+  }
+}
+
+/* Question Timer Color Transitions */
+.timer-container .text-green-500 {
+  transition: color 0.5s ease-in-out;
+}
+
+.timer-container .text-yellow-500 {
+  transition: color 0.5s ease-in-out;
+}
+
+.timer-container .text-red-500 {
+  transition: color 0.5s ease-in-out;
+  animation: pulse-red 1s infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Timer Settings Toggle */
+input[type="checkbox"] {
+  @apply w-4 h-4 rounded border-2 border-white/30;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+input[type="checkbox"]:checked {
+  @apply bg-blue-500 border-blue-500;
+}
+
+/* Mobile Timer Adjustments */
+@media (max-width: 768px) {
+  .timer-display {
+    @apply scale-90;
+  }
+  
+  .question-navigation {
+    @apply flex-col gap-4;
+  }
+  
+  .nav-btn {
+    @apply w-full;
+  }
+  
+  .prev-btn, .next-btn {
+    @apply m-0;
+  }
+}
+
 @media (max-width: 768px) {
   .scroll-to-top {
     @apply bottom-4 right-4;
