@@ -2,16 +2,18 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useState } from "react";
 import ExamPrepPage from "./ExamPrepPage";
-import ScrollTop from "./components/ScrollTop";
-import AuthModal from "./components/AuthModal";
-import NotificationBadge from "./components/NotificationBadge";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { quizService } from "./services/quizService";
+// Removed auth-related imports for standalone mode
 
 import { jsPDF } from 'jspdf'; // Import jsPDF
-import './components/Result.css'
 
-export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboard, saveQuizResult }) {
+export default function App() {
+  // Mock user and auth functions for standalone mode
+  const user = null;
+  const onSignIn = () => console.log('Sign in clicked');
+  const onSignUp = () => console.log('Sign up clicked');
+  const onSignOut = () => console.log('Sign out clicked');
+  const onShowDashboard = () => console.log('Dashboard clicked');
+  const saveQuizResult = () => console.log('Save quiz result');
   // Mobile menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -1204,17 +1206,23 @@ const generatePDF = () => {
         )}
       </div>
       
-      {/* Scroll to Top Button */}
-      <ScrollTop />
-      
-      {/* Smart Notification Badge */}
-      <NotificationBadge 
-        user={user} 
-        onCategorySelect={(category) => {
-          setSelectedCategory(category)
-          setShowStartScreen(true)
-        }}
-      />
+      {/* Footer */}
+      <footer className="app-footer">
+        <div className="footer-content">
+          <div className="footer-brand">
+            <span className="footer-logo">🧠</span>
+            <span className="footer-title">Inquizzitive</span>
+          </div>
+          <div className="footer-links">
+            <button onClick={showExamPrep} className="footer-link">About</button>
+            <a href="https://github.com/sb-decoder/inquizzitive" className="footer-link" target="_blank" rel="noopener noreferrer">Contribute</a>
+            <a href="#contact" className="footer-link">Contact</a>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>&copy; 2024 Inquizzitive. Built for government exam preparation.</p>
+        </div>
+      </footer>
     </div>
   );
 }

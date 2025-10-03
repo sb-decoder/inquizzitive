@@ -390,7 +390,462 @@
   }
 
   .info-btn {
-    @apply border-none px-6 py-3 rounded-[30px] text-white;
+    @apply px-6 py-3 rounded-2xl font-semibold transition-all duration-300;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
+  }
+  
+  .info-btn:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.35);
+  }
+
+  /* Quiz Setup */
+  .quiz-setup {
+    @apply space-y-6;
+  }
+
+  .setup-row {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .input-group {
+    @apply space-y-2;
+  }
+
+  .input-group label {
+    @apply block text-white font-medium text-sm;
+  }
+
+  .glass-select {
+    @apply w-full px-4 py-3 rounded-xl border-none text-white;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .start-btn {
+    @apply w-full px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(245, 87, 108, 0.3);
+  }
+
+  .start-btn:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 12px 40px rgba(245, 87, 108, 0.4);
+  }
+
+  /* Quiz Section */
+  .quiz-section {
+    @apply space-y-6;
+  }
+
+  .quiz-header-card {
+    @apply p-6 flex justify-between items-center;
+  }
+
+  .quiz-info h2 {
+    @apply text-2xl font-bold text-white;
+  }
+
+  .quiz-meta {
+    @apply text-white/70 text-sm;
+  }
+
+  .timer {
+    @apply flex items-center gap-2 text-white font-mono text-lg;
+  }
+
+  /* Progress Card */
+  .progress-card {
+    @apply p-4;
+  }
+
+  .progress-header {
+    @apply flex justify-between items-center mb-3;
+  }
+
+  .progress-text {
+    @apply text-white text-sm;
+  }
+
+  .progress-percentage {
+    @apply text-white font-bold;
+  }
+
+  .progress-bar-container {
+    @apply w-full h-2 rounded-full overflow-hidden;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .progress-bar-fill {
+    @apply h-full rounded-full transition-all duration-300;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+
+  /* Questions */
+  .questions-container {
+    @apply space-y-6;
+  }
+
+  .question-card {
+    @apply p-6;
+  }
+
+  .question-header {
+    @apply mb-6;
+  }
+
+  .question-number {
+    @apply inline-block px-3 py-1 rounded-full text-sm font-bold mb-3;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+
+  .question-text {
+    @apply text-white text-lg font-medium leading-relaxed;
+  }
+
+  .options-grid {
+    @apply grid gap-3;
+  }
+
+  .option-btn {
+    @apply flex items-center gap-4 p-4 rounded-xl transition-all duration-300 text-left;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+  }
+
+  .option-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .option-btn.selected {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-color: transparent;
+  }
+
+  .option-letter {
+    @apply w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .option-text {
+    @apply flex-1;
+  }
+
+  /* Quiz Actions */
+  .quiz-actions {
+    @apply text-center;
+  }
+
+  .submit-btn {
+    @apply px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(245, 87, 108, 0.3);
+  }
+
+  .submit-btn:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 12px 40px rgba(245, 87, 108, 0.4);
+  }
+
+  /* Results Section */
+  .results-section {
+    @apply space-y-6;
+  }
+
+  .results-header {
+    @apply p-8 text-center;
+  }
+
+  .results-celebration {
+    @apply mb-6;
+  }
+
+  .celebration-emoji {
+    @apply text-6xl mb-4 block;
+  }
+
+  .results-celebration h2 {
+    @apply text-3xl font-bold text-white;
+  }
+
+  .score-display {
+    @apply flex flex-col items-center gap-6;
+  }
+
+  .score-circle {
+    @apply w-32 h-32 rounded-full flex flex-col items-center justify-center;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+
+  .score-percentage {
+    @apply text-3xl font-bold text-white;
+  }
+
+  .score-fraction {
+    @apply text-white/80 text-sm;
+  }
+
+  .score-details {
+    @apply flex gap-8;
+  }
+
+  .score-item {
+    @apply text-center;
+  }
+
+  .score-label {
+    @apply block text-white/70 text-sm mb-1;
+  }
+
+  .score-value {
+    @apply text-2xl font-bold;
+  }
+
+  .score-value.correct {
+    @apply text-green-400;
+  }
+
+  .score-value.wrong {
+    @apply text-red-400;
+  }
+
+  .score-value.total {
+    @apply text-white;
+  }
+
+  .retry-btn {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+  }
+
+  .retry-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Answer Review */
+  .answers-review {
+    @apply space-y-4;
+  }
+
+  .review-title {
+    @apply text-2xl font-bold text-white mb-6;
+  }
+
+  .answer-card {
+    @apply p-6;
+  }
+
+  .answer-card.correct {
+    border-left: 4px solid #10b981;
+  }
+
+  .answer-card.incorrect {
+    border-left: 4px solid #ef4444;
+  }
+
+  .answer-header {
+    @apply flex justify-between items-center mb-4;
+  }
+
+  .answer-number {
+    @apply px-3 py-1 rounded-full text-sm font-bold;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  .answer-status {
+    @apply text-2xl;
+  }
+
+  .answer-question {
+    @apply text-white font-medium mb-4;
+  }
+
+  .answer-details {
+    @apply space-y-3;
+  }
+
+  .answer-row {
+    @apply flex gap-3;
+  }
+
+  .answer-label {
+    @apply text-white/70 font-medium min-w-[120px];
+  }
+
+  .answer-value {
+    @apply font-semibold;
+  }
+
+  .answer-value.correct {
+    @apply text-green-400;
+  }
+
+  .answer-value.incorrect {
+    @apply text-red-400;
+  }
+
+  .explanation {
+    @apply flex gap-3 p-4 rounded-xl mt-4;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .explanation-icon {
+    @apply text-yellow-400 text-lg;
+  }
+
+  .explanation-text {
+    @apply text-white/90 text-sm leading-relaxed;
+  }
+
+  /* Results Actions */
+  .results-actions {
+    @apply flex gap-4 justify-center flex-wrap;
+  }
+
+  .new-quiz-btn,
+  .download-pdf-btn {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+    border: none;
+    cursor: pointer;
+  }
+
+  .new-quiz-btn {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
+  }
+
+  .new-quiz-btn:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.35);
+  }
+
+  .download-pdf-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .download-pdf-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Footer */
+  .app-footer {
+    @apply mt-20 py-8 border-t border-white/10;
+  }
+
+  .footer-content {
+    @apply max-w-[1000px] mx-auto px-6 flex justify-between items-center;
+  }
+
+  .footer-brand {
+    @apply flex items-center gap-3;
+  }
+
+  .footer-logo {
+    @apply text-2xl;
+  }
+
+  .footer-title {
+    @apply font-bold text-xl text-white;
+  }
+
+  .footer-links {
+    @apply flex gap-6;
+  }
+
+  .footer-link {
+    @apply text-white/70 hover:text-white transition-colors duration-300 text-sm;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .footer-bottom {
+    @apply max-w-[1000px] mx-auto px-6 pt-4 border-t border-white/5 mt-4;
+  }
+
+  .footer-bottom p {
+    @apply text-white/50 text-sm text-center;
+  }
+
+  /* Animations */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 640px) {
+    .floating-nav {
+      @apply min-w-[calc(100%-20px)] px-4 py-2;
+    }
+
+    .nav-title {
+      @apply text-lg;
+    }
+
+    .welcome-title {
+      @apply text-[2.5rem];
+    }
+
+    .welcome-card {
+      @apply p-6;
+    }
+
+    .score-details {
+      @apply gap-4;
+    }
+
+    .results-actions {
+      @apply flex-col;
+    }
+
+    .footer-content {
+      @apply flex-col gap-4 text-center;
+    }
+  }
+}
+  .info-btn:hover{
+    @apply px-6 py-3 rounded-2xl font-semibold transition-all duration-300;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
+  }
+  
+  .info-btn:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.35);
+  }
+  .info-btn:hover{
+   @apply border-none px-6 py-3 rounded-[30px] text-white;
     @apply text-base font-medium cursor-pointer transition-all duration-300;
     @apply flex items-center justify-center gap-2 mx-auto;
     background: rgba(255, 255, 255, 0.15);
@@ -1160,7 +1615,54 @@
     @apply -translate-y-0.5;
     box-shadow: 0 8px 30px rgba(245, 87, 108, 0.4);
   }
-}
+
+  /* Footer Styles */
+  .app-footer {
+    @apply mt-16 relative z-[1];
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .footer-content {
+    @apply max-w-[1000px] mx-auto px-6 py-8 flex justify-between items-center flex-wrap gap-6;
+  }
+
+  .footer-brand {
+    @apply flex items-center gap-3;
+  }
+
+  .footer-logo {
+    @apply text-2xl;
+  }
+
+  .footer-title {
+    @apply font-bold text-xl text-white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .footer-links {
+    @apply flex gap-8;
+  }
+
+  .footer-link {
+    @apply text-white font-medium transition-all duration-300 hover:text-opacity-80;
+    text-decoration: none;
+  }
+
+  .footer-link:hover {
+    @apply -translate-y-0.5;
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+  }
+
+  .footer-bottom {
+    @apply border-t border-white border-opacity-10 py-4 text-center;
+  }
+
+  .footer-bottom p {
+    @apply text-white text-opacity-70 text-sm;
+  }
+
 
 /* Animations */
 @keyframes float {
@@ -1364,6 +1866,14 @@
 
   .option-text {
     @apply text-sm;
+  }
+
+  .footer-content {
+    @apply flex-col text-center gap-4;
+  }
+
+  .footer-links {
+    @apply gap-6;
   }
 }
 
