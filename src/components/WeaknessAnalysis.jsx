@@ -18,8 +18,16 @@ const WeaknessAnalysis = ({ user }) => {
     setError(null)
     
     try {
+      console.log('🔍 Loading analysis for user:', user.id)
       const result = await analyticsService.analyzeWeakness(user.id)
-      if (result.error) throw result.error
+      console.log('📊 Analysis result:', result)
+      
+      if (result.error) {
+        console.error('❌ Analysis error:', result.error)
+        throw result.error
+      }
+      
+      console.log('✅ Analysis successful, setting data...')
       setAnalysis(result)
     } catch (err) {
       console.error('Error loading weakness analysis:', err)

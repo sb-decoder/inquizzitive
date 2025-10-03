@@ -4,15 +4,21 @@ export const analyticsService = {
   // Analyze user's performance patterns and identify weak areas
   async analyzeWeakness(userId) {
     try {
+      console.log('🔎 Fetching quiz history for user:', userId)
+      
       const { data: quizHistory, error } = await supabase
         .from('quiz_history')
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
 
+      console.log('📚 Quiz history data:', quizHistory)
+      console.log('❓ Quiz history error:', error)
+
       if (error) throw error
 
       if (!quizHistory || quizHistory.length === 0) {
+        console.log('📭 No quiz history found')
         return {
           weakAreas: [],
           strengths: [],
@@ -23,6 +29,8 @@ export const analyticsService = {
           recentTrend: 'no-data'
         }
       }
+
+      console.log(`📊 Found ${quizHistory.length} quizzes, analyzing...`)
 
       // Category-wise analysis
       const categoryStats = {}
