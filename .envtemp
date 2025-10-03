@@ -1,0 +1,8 @@
+# Supabase Configuration
+# Get these values from your Supabase Dashboard > Settings > API
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+
+# Google Gemini API Key
+# Get this from Google AI Studio: https://makersuite.google.com/app/apikey
+VITE_GEMINI_API_KEY=

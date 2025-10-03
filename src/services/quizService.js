@@ -1,13 +1,25 @@
 import { supabase } from '../lib/supabase'
+import { analyticsService } from './analyticsService'
 
 export const quizService = {
   // Save quiz result to database
   async saveQuizResult(quizData) {
     try {
+      console.log('💾 Saving quiz result:', quizData)
+      
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) {
+        throw new Error('User not authenticated')
+      }
+      
+      console.log('👤 Current user:', user.id)
+      
       const { data, error } = await supabase
         .from('quiz_history')
         .insert([
           {
+            user_id: user.id, // This was missing!
             category: quizData.category,
             difficulty: quizData.difficulty,
             total_questions: quizData.totalQuestions,
@@ -23,7 +35,46 @@ export const quizService = {
         ])
         .select()
 
+      console.log('✅ Quiz saved successfully:', data)
+      console.log('❌ Quiz save error:', error)
+
       if (error) throw error
+
+      // After saving quiz, trigger analytics update
+      if (data && data[0]) {
+        try {
+          const { data: { user } } = await supabase.auth.getUser()
+          if (user) {
+            // Update user analytics asynchronously
+            setTimeout(async () => {
+              try {
+                const analysis = await analyticsService.analyzeWeakness(user.id)
+                if (analysis && !analysis.error) {
+                  // Store the analysis in the database for faster future access
+                  await supabase
+                    .from('user_analytics')
+                    .upsert({
+                      user_id: user.id,
+                      analysis_date: new Date().toISOString().split('T')[0],
+                      weak_areas: analysis.weakAreas,
+                      strengths: analysis.strengths,
+                      recommendations: analysis.recommendations,
+                      overall_progress: analysis.overallProgress,
+                      category_analysis: analysis.categoryAnalysis,
+                      difficulty_analysis: analysis.difficultyAnalysis,
+                      insights: analysis.detailedInsights
+                    })
+                }
+              } catch (analyticsError) {
+                console.error('Error updating analytics:', analyticsError)
+              }
+            }, 1000)
+          }
+        } catch (userError) {
+          console.error('Error getting user for analytics:', userError)
+        }
+      }
+
       return { data, error: null }
     } catch (error) {
       console.error('Error saving quiz result:', error)

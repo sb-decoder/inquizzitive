@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { quizService } from '../services/quizService'
+import WeaknessAnalysis from './WeaknessAnalysis'
+import PerformanceCharts from './PerformanceCharts'
 
 const Dashboard = ({ onClose }) => {
   const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState('history')
+  const [activeTab, setActiveTab] = useState('analysis')
   const [quizHistory, setQuizHistory] = useState([])
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -104,6 +106,26 @@ const Dashboard = ({ onClose }) => {
         {/* Tabs */}
         <div className="flex border-b border-white/10">
           <button
+            onClick={() => setActiveTab('analysis')}
+            className={`px-6 py-3 font-medium transition-colors ${
+              activeTab === 'analysis'
+                ? 'text-purple-400 border-b-2 border-purple-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            🎯 Smart Analysis
+          </button>
+          <button
+            onClick={() => setActiveTab('charts')}
+            className={`px-6 py-3 font-medium transition-colors ${
+              activeTab === 'charts'
+                ? 'text-purple-400 border-b-2 border-purple-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            📈 Performance Charts
+          </button>
+          <button
             onClick={() => setActiveTab('history')}
             className={`px-6 py-3 font-medium transition-colors ${
               activeTab === 'history'
@@ -111,7 +133,7 @@ const Dashboard = ({ onClose }) => {
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            Quiz History
+            📝 Quiz History
           </button>
           <button
             onClick={() => setActiveTab('stats')}
@@ -121,7 +143,7 @@ const Dashboard = ({ onClose }) => {
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            Statistics
+            📊 Statistics
           </button>
           <button
             onClick={() => setActiveTab('profile')}
@@ -131,7 +153,7 @@ const Dashboard = ({ onClose }) => {
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            Profile
+            👤 Profile
           </button>
         </div>
 
@@ -141,6 +163,16 @@ const Dashboard = ({ onClose }) => {
             <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300">
               {error}
             </div>
+          )}
+
+          {/* Smart Analysis Tab */}
+          {activeTab === 'analysis' && (
+            <WeaknessAnalysis user={user} />
+          )}
+
+          {/* Performance Charts Tab */}
+          {activeTab === 'charts' && (
+            <PerformanceCharts user={user} />
           )}
 
           {/* Quiz History Tab */}

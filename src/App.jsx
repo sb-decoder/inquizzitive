@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
 import AuthModal from "./components/AuthModal";
+import NotificationBadge from "./components/NotificationBadge";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { quizService } from "./services/quizService";
 
@@ -1205,6 +1206,15 @@ const generatePDF = () => {
       
       {/* Scroll to Top Button */}
       <ScrollTop />
+      
+      {/* Smart Notification Badge */}
+      <NotificationBadge 
+        user={user} 
+        onCategorySelect={(category) => {
+          setSelectedCategory(category)
+          setShowStartScreen(true)
+        }}
+      />
     </div>
   );
 }
