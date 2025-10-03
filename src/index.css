@@ -390,6 +390,19 @@
   }
 
   .info-btn {
+    @apply px-6 py-3 rounded-2xl font-semibold transition-all duration-300;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
+  }
+  
+  .info-btn:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.35);
+  }
+}{
     @apply border-none px-6 py-3 rounded-[30px] text-white;
     @apply text-base font-medium cursor-pointer transition-all duration-300;
     @apply flex items-center justify-center gap-2 mx-auto;

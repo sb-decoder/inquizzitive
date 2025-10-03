@@ -5,7 +5,6 @@ import ExamPrepPage from "./ExamPrepPage";
 // Removed auth-related imports for standalone mode
 
 import { jsPDF } from 'jspdf'; // Import jsPDF
-import './components/Result.css'
 
 export default function App() {
   // Mock user and auth functions for standalone mode
