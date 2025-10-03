@@ -5,10 +5,21 @@ export const quizService = {
   // Save quiz result to database
   async saveQuizResult(quizData) {
     try {
+      console.log('💾 Saving quiz result:', quizData)
+      
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) {
+        throw new Error('User not authenticated')
+      }
+      
+      console.log('👤 Current user:', user.id)
+      
       const { data, error } = await supabase
         .from('quiz_history')
         .insert([
           {
+            user_id: user.id, // This was missing!
             category: quizData.category,
             difficulty: quizData.difficulty,
             total_questions: quizData.totalQuestions,
@@ -23,6 +34,9 @@ export const quizService = {
           }
         ])
         .select()
+
+      console.log('✅ Quiz saved successfully:', data)
+      console.log('❌ Quiz save error:', error)
 
       if (error) throw error
 
