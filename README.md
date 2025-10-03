@@ -25,6 +25,19 @@ Built with React, powered by Google's Gemini AI, and featuring a stunning glassm
 
 ---
 
+
+## 🔮 Roadmap
+
+- [x] User authentication and profiles
+- [x] Progress tracking dashboard
+- [ ] Leaderboard system
+- [ ] More exam categories (GATE, CAT, etc.)
+- [x] PDF export of quiz results
+- [x] Dark/Light theme toggle
+- [ ] Previous year papers integration
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -99,17 +112,7 @@ This repository participates in **Hacktoberfest**!
 - **Build Tool:** Vite
 - **Package Manager:** npm
 
----
 
-## 🔮 Roadmap
-
-- [ ] User authentication and profiles
-- [ ] Progress tracking dashboard
-- [ ] Leaderboard system
-- [ ] More exam categories (GATE, CAT, etc.)
-- [x] PDF export of quiz results
-- [x] Dark/Light theme toggle
-- [ ] Previous year papers integration
 
 ---
 
