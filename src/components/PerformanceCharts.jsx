@@ -1,5 +1,25 @@
 import { useState, useEffect } from 'react'
 import { analyticsService } from '../services/analyticsService'
+import GlassmorphicDropdown from './GlassmorphicDropdown'
+
+const PERIOD_OPTIONS = [
+  { value: 7, label: 'Last 7 days' },
+  { value: 14, label: 'Last 2 weeks' },
+  { value: 30, label: 'Last 30 days' },
+  { value: 60, label: 'Last 2 months' },
+  { value: 90, label: 'Last 3 months' },
+]
+const PERIOD_LABELS = PERIOD_OPTIONS.map(opt => opt.label)
+const getPeriodValue = (label) => PERIOD_OPTIONS.find(opt => opt.label === label)?.value
+
+const CHART_OPTIONS = [
+  { value: 'overall', label: 'Overall Performance' },
+  { value: 'category', label: 'Category Trends' },
+  { value: 'both', label: 'Both Views' },
+]
+const CHART_LABELS = CHART_OPTIONS.map(opt => opt.label)
+const getChartValue = (label) => CHART_OPTIONS.find(opt => opt.label === label)?.value
+const getChartLabel = (value) => CHART_OPTIONS.find(opt => opt.value === value)?.label
 
 const PerformanceCharts = ({ user }) => {
   const [chartData, setChartData] = useState(null)
@@ -263,30 +283,22 @@ const PerformanceCharts = ({ user }) => {
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
           <label className="text-sm text-gray-400">Time Period:</label>
-          <select
-            value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(Number(e.target.value))}
-            className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 text-white text-sm"
-          >
-            <option value={7}>Last 7 days</option>
-            <option value={14}>Last 2 weeks</option>
-            <option value={30}>Last 30 days</option>
-            <option value={60}>Last 2 months</option>
-            <option value={90}>Last 3 months</option>
-          </select>
+          <GlassmorphicDropdown
+            options={PERIOD_LABELS}
+            defaultOption={getPeriodLabel(selectedPeriod)}
+            onSelect={(label) => setSelectedPeriod(getPeriodValue(label))}
+            className="w-40"
+          />
         </div>
         
         <div className="flex items-center gap-2">
           <label className="text-sm text-gray-400">Chart Type:</label>
-          <select
-            value={selectedChart}
-            onChange={(e) => setSelectedChart(e.target.value)}
-            className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 text-white text-sm"
-          >
-            <option value="overall">Overall Performance</option>
-            <option value="category">Category Trends</option>
-            <option value="both">Both Views</option>
-          </select>
+          <GlassmorphicDropdown
+            options={CHART_LABELS}
+            defaultOption={getChartLabel(selectedChart)}
+            onSelect={(label) => setSelectedChart(getChartValue(label))}
+            className="w-48"
+          />
         </div>
       </div>
 

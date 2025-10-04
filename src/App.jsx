@@ -6,11 +6,22 @@ import ScrollTop from "./components/ScrollTop";
 import AuthModal from "./components/AuthModal";
 import NotificationBadge from "./components/NotificationBadge";
 import GuestModeNotice from "./components/GuestModeNotice";
+import GlassmorphicDropdown from "./components/GlassmorphicDropdown";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { quizService } from "./services/quizService";
 
 import { jsPDF } from 'jspdf'; // Import jsPDF
 import './components/Result.css'
+
+const QUESTION_OPTIONS = [
+  { value: 5, label: '5 Questions (2.5 min)' },
+  { value: 10, label: '10 Questions (5 min)' },
+  { value: 15, label: '15 Questions (7.5 min)' },
+  { value: 20, label: '20 Questions (10 min)' },
+]
+const QUESTION_LABELS = QUESTION_OPTIONS.map(opt => opt.label)
+const getQuestionValue = (label) => QUESTION_OPTIONS.find(opt => opt.label === label)?.value
+const getQuestionLabel = (value) => QUESTION_OPTIONS.find(opt => opt.value === value)?.label
 
 export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboard, saveQuizResult }) {
   // Mobile menu state
@@ -953,45 +964,31 @@ const generatePDF = () => {
                 <div className="setup-row">
                   <div className="input-group">
                     <label>Category</label>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="glass-select"
-                    >
-                      {categories.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                    </select>
+                    <GlassmorphicDropdown
+                      options={categories}
+                      defaultOption={selectedCategory}
+                      onSelect={setSelectedCategory}
+                      className="w-full"
+                    />
                   </div>
                   <div className="input-group">
                     <label>Difficulty</label>
-                    <select
-                      value={selectedDifficulty}
-                      onChange={(e) => setSelectedDifficulty(e.target.value)}
-                      className="glass-select"
-                    >
-                      {difficulties.map((diff) => (
-                        <option key={diff} value={diff}>
-                          {diff}
-                        </option>
-                      ))}
-                    </select>
+                    <GlassmorphicDropdown
+                      options={difficulties}
+                      defaultOption={selectedDifficulty}
+                      onSelect={setSelectedDifficulty}
+                      className="w-full"
+                    />
                   </div>
                 </div>
                 <div className="input-group">
                   <label>Number of Questions</label>
-                  <select
-                    value={numQuestions}
-                    onChange={(e) => setNumQuestions(Number(e.target.value))}
-                    className="glass-select"
-                  >
-                    <option value={5}>5 Questions (2.5 min)</option>
-                    <option value={10}>10 Questions (5 min)</option>
-                    <option value={15}>15 Questions (7.5 min)</option>
-                    <option value={20}>20 Questions (10 min)</option>
-                  </select>
+                  <GlassmorphicDropdown
+                    options={QUESTION_LABELS}
+                    defaultOption={getQuestionLabel(numQuestions)}
+                    onSelect={(label) => setNumQuestions(getQuestionValue(label))}
+                    className="w-full"
+                  />
                 </div>
                 <button
                   onClick={fetchQuiz}
