@@ -478,7 +478,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
 
       setQuiz(cleanedQuestions);
       setOriginalQuiz(cleanedQuestions);
-      setTimeLeft(cleanedQuestions.length * 30);
+      // Set overall timer based on question timer setting
+      const totalTime = timerEnabled ? cleanedQuestions.length * questionTimeLimit : cleanedQuestions.length * 30;
+      setTimeLeft(totalTime);
       setCurrentQuestionIndex(0);
       setQuestionStartTime(Date.now());
       setQuestionTimerKey(prev => prev + 1);
@@ -496,7 +498,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   setQuiz([...originalQuiz]);        
   setAnswers({});                    
   setSubmitted(false);               
-  setTimeLeft(originalQuiz.length * 30);
+  // Set timer based on current timer settings
+  const totalTime = timerEnabled ? originalQuiz.length * questionTimeLimit : originalQuiz.length * 30;
+  setTimeLeft(totalTime);
   setCurrentQuestionIndex(0);
   setQuestionStartTime(Date.now());
   setQuestionTimerKey(prev => prev + 1);
