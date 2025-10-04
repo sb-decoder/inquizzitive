@@ -413,7 +413,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       //   return;
       // }
       // Otherwise, use AI-generated questions
-      const requestUrl = `${import.meta.env.VITE_API_BASE_URL || ""}/api/gemini?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`
+      const requestUrl = `${import.meta.env.VITE_API_BASE_URL || ""}/api/getGeminiResponse?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`
       const result = await fetch(requestUrl, {
         method: "GET"
       })
