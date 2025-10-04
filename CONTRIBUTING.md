@@ -32,7 +32,7 @@ git checkout -b feature/your-feature-name
   * Click on **"Get API Key"** or **"Create API Key"**
   * Copy your API key and add it to your `.env` file:
     ```bash
-    VITE_GEMINI_API_KEY=your_api_key_here
+    GEMINI_API_KEY=your_api_key_here
     ```
 * Make sure to **never commit your `.env` file** to the repository.
 
@@ -45,7 +45,7 @@ git checkout -b feature/your-feature-name
 
 ```bash
 npm install
-npm run dev
+npm start
 ```
 
 ### 7. Commit and Push
