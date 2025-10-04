@@ -20,14 +20,7 @@
   body,
   html {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-image: linear-gradient(
-      135deg,
-      #fff2f2 0%,
-      #a9b5df 15%,
-      #7886c7 60%,
-      #2d336b 100%
-    );
-    background-color: #fff2f2;
+    background-color: #a9b5df; /* Changed to match the gradient's blue color for seamless blending */
 
     min-height: 100vh;
     overflow-x: hidden;
@@ -36,8 +29,7 @@
   .dark body,
   .dark html,
   .dark {
-    background-image: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
-    background-color: #1a1a2e;
+    background-color: #1a1a2e; /* Keep solid color for fallback/default */
   }
 }
 
@@ -49,7 +41,24 @@
 
   /* Background Shapes */
   .bg-shapes {
-    @apply fixed top-0 left-0 w-full h-full pointer-events-none z-0;
+    position: fixed;
+    top: -20px;
+    left: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    pointer-events: none;
+    z-index: 0;
+    background-image: linear-gradient(
+      135deg,
+      #fff2f2 0%,
+      #a9b5df 15%,
+      #7886c7 60%,
+      #2d336b 100%
+    );
+  }
+
+  .dark .bg-shapes {
+    background-image: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
   }
 
   .shape {
@@ -328,8 +337,8 @@
   /* Glass Card Base */
   .glass-card {
     @apply rounded-3xl transition-all duration-300;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
+    background: rgba(200, 200, 200, 0.2);
+    backdrop-filter: blur(35px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
@@ -362,7 +371,10 @@
   }
 
   .welcome-title {
-    @apply text-[3.5rem] font-bold text-white mb-4;
+    @apply font-bold text-white mb-4;
+    font-size: clamp(2rem, 4vw, 3rem); /* Adjusted for smaller max size to fit on one line */
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
