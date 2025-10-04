@@ -1,7 +1,7 @@
 // api/getGeminiResponse
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const getGeminiResponse = async (req, res) => {
+export default async function handler(req, res) {
   try {
     const { qcount, category, difficulty } = req.query;
     if(!qcount || !category || !difficulty) {
@@ -61,5 +61,3 @@ const getGeminiResponse = async (req, res) => {
     });
   }
 };
-
-export { getGeminiResponse };
