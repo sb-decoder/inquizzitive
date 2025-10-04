@@ -10,7 +10,7 @@ const getGeminiResponse = async (req, res) => {
     const selectedCategory = category;
     const selectedDifficulty = difficulty;
 
-    const apiKey = process.env.VITE_GEMINI_API_KEY || null;
+    const apiKey = process.env.GEMINI_API_KEY || null;
     if (!apiKey) {
       console.error("GEMINI API key not found in process.env");
       return res.status(500).json({
