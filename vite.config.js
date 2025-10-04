@@ -4,30 +4,37 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react()],
   build: {
-    // Production optimizations
+   
     minify: "terser",
     terserOptions: {
       compress: {
-        drop_console: true, // Remove console.logs in production
+        drop_console: true,
         drop_debugger: true,
       },
     },
     rollupOptions: {
       output: {
         manualChunks: {
-          // Split vendor code for better caching
+          
           "react-vendor": ["react", "react-dom"],
-          "google-ai": ["@google/generative-ai"],
         },
       },
     },
-    // Enable source maps for debugging if needed
     sourcemap: false,
-    // Optimize chunk size
     chunkSizeWarningLimit: 1000,
   },
-  // Performance optimizations
+
   optimizeDeps: {
-    include: ["react", "react-dom", "@google/generative-ai"],
+    include: ["react", "react-dom"],
+  },
+  
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:5174", 
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 });

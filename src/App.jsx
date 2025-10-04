@@ -8,6 +8,7 @@ import NotificationBadge from "./components/NotificationBadge";
 import GlassmorphicDropdown from "./components/GlassmorphicDropdown";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { quizService } from "./services/quizService";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 import { jsPDF } from 'jspdf'; // Import jsPDF
 import './components/Result.css'
@@ -413,11 +414,18 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       //   return;
       // }
       // Otherwise, use AI-generated questions
-      const result = await fetch(`/api/gemini?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`,{
-        method: "GET"
-      })
-      let text = await result.text();
-      text = text.replace(/```json|```/g, "").trim();
+      const result = await fetch(
+      `${API_BASE_URL}/api/gemini?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`,
+       { method: "GET" }
+      );
+
+      if (!result.ok) {
+        const errText = await result.text();
+        throw new Error(`Server Error: ${errText}`);
+      } 
+
+let text = await result.text();
+text = text.replace(/```json|```/g, "").trim();
 
       console.log("Raw AI response:", text); // Debug log
 
