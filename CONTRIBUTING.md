@@ -36,19 +36,29 @@ git checkout -b feature/your-feature-name
     ```
 * Make sure to **never commit your `.env` file** to the repository.
 
-### 6. Test Your Changes
+### 5. Test Your Changes
 * Work on code, UI, docs, or any improvement.
 * If you are fixing a bug or issue, **reference the issue number** in your commit message.
 
-### 5. Test Your Changes
+### 6. Test Your Changes Locally
 * Make sure the project runs without errors:
 
 ```bash
 npm install
-npm start
+# Two separate terminal one for client one for server
+npm run client
+npm run server
 ```
 
-### 7. Commit and Push
+### 7. Test Your Changes in Production environment
+* Make sure the project runs without errors:
+- Note: It will automatically stops
+```bash
+npm install
+npm run start
+```
+
+### 8. Commit and Push
 
 ```bash
 git add .
@@ -56,7 +66,7 @@ git commit -m "✨ Added new feature: description (fixes #issue_number)"
 git push origin feature/your-feature-name
 ```
 
-### 8. Open a Pull Request
+### 9. Open a Pull Request
 * Go to your fork on GitHub.
 * You'll see a **Compare & Pull Request** button. Click it.
 * Provide details about what you changed and why.
