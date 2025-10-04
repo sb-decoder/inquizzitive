@@ -516,6 +516,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
 
   async function handleSubmit() {
     setSubmitted(true);
+    window.scrollTo(0, 0); // Scroll to top on quiz submission
     
     // Save quiz result to database if user is authenticated
     if (user && saveQuizResult) {
