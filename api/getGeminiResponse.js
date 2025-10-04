@@ -1,3 +1,4 @@
+// api/getGeminiResponse
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const getGeminiResponse = async (req, res) => {

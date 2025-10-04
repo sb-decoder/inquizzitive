@@ -16,7 +16,7 @@ app.use(cors(process.env.VITE_API_BASE_URL));
 app.use(express.json());
 
 // --- API Route for Gemini (test) ---
-app.get("/api/gemini", getGeminiResponse);
+app.get("/api/getGeminiResponse", getGeminiResponse);
 
 // Serve built files in production
 if (process.env.NODE_ENV === "production") {
