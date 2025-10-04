@@ -91,7 +91,7 @@ const Dashboard = ({ onClose }) => {
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div>
             <h2 className="text-2xl font-bold text-white">Dashboard</h2>
-            <p className="text-gray-400">Welcome back, {user?.email}</p>
+            <p className="text-gray-400">Welcome back, {user?.user_metadata?.full_name || user?.email}</p>
           </div>
           <button
             onClick={onClose}
@@ -319,11 +319,11 @@ const Dashboard = ({ onClose }) => {
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                     <span className="text-2xl font-bold text-white">
-                      {user?.email?.charAt(0).toUpperCase()}
+                      {(user?.user_metadata?.full_name ? user.user_metadata.full_name.charAt(0) : user?.email?.charAt(0)).toUpperCase()}
                     </span>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-white">{user?.email}</h4>
+                    <h4 className="text-lg font-semibold text-white">{user?.user_metadata?.full_name || user?.email}</h4>
                     <p className="text-gray-400">Member since {formatDate(user?.created_at || new Date())}</p>
                   </div>
                 </div>
