@@ -716,7 +716,7 @@ const generatePDF = () => {
                 Dashboard
               </button>
               <span className="text-sm text-gray-300">
-                {user.email}
+                {user.user_metadata?.full_name || user.email}
               </span>
               <button className="nav-btn" onClick={onSignOut}>
                 Sign Out
