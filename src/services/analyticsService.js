@@ -1,6 +1,107 @@
 import { supabase } from '../lib/supabase'
 
+
 export const analyticsService = {
+
+    async getPerformanceChartData(userId, days = 30) {
+    try {
+      console.log('📊 Fetching performance chart data for user:', userId, 'days:', days)
+      
+      const fromDate = new Date()
+      fromDate.setDate(fromDate.getDate() - days)
+      
+      const { data: quizHistory, error } = await supabase
+        .from('quiz_history')
+        .select('*')
+        .eq('user_id', userId)
+        .gte('created_at', fromDate.toISOString())
+        .order('created_at', { ascending: true })
+
+      if (error) throw error
+
+      if (!quizHistory || quizHistory.length === 0) {
+        return {
+          overall: [],
+          categoryTrends: {},
+          totalQuizzes: 0,
+          error: null
+        }
+      }
+
+      const dailyData = {}
+      const categoryData = {}
+
+      quizHistory.forEach(quiz => {
+        const date = quiz.created_at.split('T')[0]
+        const category = quiz.category || 'General'
+        const score = parseFloat(quiz.score_percentage) || 0
+
+        if (!dailyData[date]) {
+          dailyData[date] = {
+            date,
+            scores: [],
+            totalQuestions: 0,
+            correctAnswers: 0
+          }
+        }
+        dailyData[date].scores.push(score)
+        dailyData[date].totalQuestions += quiz.total_questions || 0
+        dailyData[date].correctAnswers += quiz.correct_answers || 0
+
+        if (!categoryData[category]) {
+          categoryData[category] = []
+        }
+        categoryData[category].push({
+          date,
+          score,
+          quiz_id: quiz.id
+        })
+      })
+
+      const overallData = Object.values(dailyData).map(day => ({
+        date: day.date,
+        averageScore: day.scores.reduce((sum, score) => sum + score, 0) / day.scores.length,
+        accuracy: day.totalQuestions > 0 ? (day.correctAnswers / day.totalQuestions) * 100 : 0,
+        quizCount: day.scores.length
+      }))
+
+      const categoryTrends = {}
+      Object.keys(categoryData).forEach(category => {
+        const categoryQuizzes = categoryData[category]
+        const dailyAvg = {}
+        
+        categoryQuizzes.forEach(quiz => {
+          if (!dailyAvg[quiz.date]) {
+            dailyAvg[quiz.date] = []
+          }
+          dailyAvg[quiz.date].push(quiz.score)
+        })
+
+        categoryTrends[category] = Object.keys(dailyAvg).map(date => ({
+          date,
+          averageScore: dailyAvg[date].reduce((sum, score) => sum + score, 0) / dailyAvg[date].length,
+          quizCount: dailyAvg[date].length
+        })).sort((a, b) => new Date(a.date) - new Date(b.date))
+      })
+
+      return {
+        overall: overallData,
+        categoryTrends,
+        totalQuizzes: quizHistory.length,
+        error: null
+      }
+
+    } catch (error) {
+      console.error('Error getting performance chart data:', error)
+      return {
+        overall: [],
+        categoryTrends: {},
+        totalQuizzes: 0,
+        error: error.message
+      }
+    }
+  },
+
   // Analyze user's performance patterns and identify weak areas
   async analyzeWeakness(userId) {
     try {

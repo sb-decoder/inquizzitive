@@ -9,6 +9,7 @@ const PERIOD_OPTIONS = [
   { value: 60, label: 'Last 2 months' },
   { value: 90, label: 'Last 3 months' },
 ]
+
 const PERIOD_LABELS = PERIOD_OPTIONS.map(opt => opt.label)
 const getPeriodValue = (label) => PERIOD_OPTIONS.find(opt => opt.label === label)?.value
 
@@ -17,9 +18,9 @@ const CHART_OPTIONS = [
   { value: 'category', label: 'Category Trends' },
   { value: 'both', label: 'Both Views' },
 ]
+
 const CHART_LABELS = CHART_OPTIONS.map(opt => opt.label)
 const getChartValue = (label) => CHART_OPTIONS.find(opt => opt.label === label)?.value
-const getChartLabel = (value) => CHART_OPTIONS.find(opt => opt.value === value)?.label
 
 const PerformanceCharts = ({ user }) => {
   const [chartData, setChartData] = useState(null)
@@ -40,223 +41,181 @@ const PerformanceCharts = ({ user }) => {
     
     try {
       const result = await analyticsService.getPerformanceChartData(user.id, selectedPeriod)
-      if (result.error) throw result.error
+      
+      if (result?.error) {
+        throw new Error(result.error)
+      }
+      
       setChartData(result)
     } catch (err) {
       console.error('Error loading chart data:', err)
-      setError('Failed to load performance charts.')
+      setError('Failed to load performance charts. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  // Simple SVG-based chart component
   const LineChart = ({ data, title, color = '#8B5CF6', yKey = 'averageScore' }) => {
-    if (!data || data.length === 0) {
+    if (!data || !Array.isArray(data) || data.length === 0) {
       return (
-        <div className="h-64 flex items-center justify-center bg-white/5 rounded-lg border border-white/10">
-          <div className="text-center">
-            <div className="text-4xl mb-2">📊</div>
-            <p className="text-gray-400">No data available</p>
-          </div>
+        <div className="text-center text-gray-400 p-8">
+          <p>📊 No data available for {title}</p>
+          <p className="text-sm mt-2">Complete more quizzes to see trends</p>
         </div>
       )
     }
 
-    const maxValue = Math.max(...data.map(d => d[yKey] || 0))
-    const minValue = Math.min(...data.map(d => d[yKey] || 0))
-    const range = maxValue - minValue || 1
-    
-    const width = 400
-    const height = 200
-    const padding = 40
+    try {
+      const validData = data.filter(item => 
+        item && 
+        typeof item[yKey] === 'number' && 
+        !isNaN(item[yKey]) && 
+        isFinite(item[yKey])
+      )
 
-    const points = data.map((d, i) => {
-      const x = padding + (i / (data.length - 1)) * (width - 2 * padding)
-      const y = height - padding - ((d[yKey] - minValue) / range) * (height - 2 * padding)
-      return `${x},${y}`
-    }).join(' ')
+      if (validData.length === 0) {
+        return (
+          <div className="text-center text-gray-400 p-8">
+            <p>⚠️ Invalid data for {title}</p>
+            <p className="text-sm mt-2">Data validation failed</p>
+          </div>
+        )
+      }
 
-    return (
-      <div className="bg-white/5 rounded-lg border border-white/10 p-4">
-        <h4 className="text-lg font-semibold text-white mb-4">{title}</h4>
-        <div className="relative">
-          <svg width="100%" height="200" viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
-            {/* Grid lines */}
-            {[0, 25, 50, 75, 100].map(value => {
-              const y = height - padding - ((value - minValue) / range) * (height - 2 * padding)
-              return (
-                <g key={value}>
-                  <line
-                    x1={padding}
-                    y1={y}
-                    x2={width - padding}
-                    y2={y}
-                    stroke="rgba(255,255,255,0.1)"
-                    strokeWidth="1"
-                  />
-                  <text
-                    x={padding - 10}
-                    y={y + 4}
-                    textAnchor="end"
-                    fill="rgba(255,255,255,0.5)"
-                    fontSize="12"
-                  >
-                    {value}%
-                  </text>
-                </g>
-              )
-            })}
-            
-            {/* Chart line */}
-            <polyline
-              points={points}
-              fill="none"
-              stroke={color}
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            
-            {/* Data points */}
-            {data.map((d, i) => {
-              const x = padding + (i / (data.length - 1)) * (width - 2 * padding)
-              const y = height - padding - ((d[yKey] - minValue) / range) * (height - 2 * padding)
-              return (
-                <circle
-                  key={i}
-                  cx={x}
-                  cy={y}
-                  r="4"
-                  fill={color}
-                  className="hover:r-6 transition-all cursor-pointer"
-                >
-                  <title>{`${d.date}: ${d[yKey]}%`}</title>
-                </circle>
-              )
-            })}
-          </svg>
-          
-          {/* Latest value indicator */}
-          {data.length > 0 && (
-            <div className="absolute top-4 right-4 bg-white/10 rounded-lg p-2 border border-white/20">
-              <div className="text-sm text-gray-400">Latest</div>
-              <div className="text-lg font-bold" style={{ color }}>
-                {data[data.length - 1][yKey]}%
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
+      const values = validData.map(item => item[yKey])
+      const minValue = Math.min(...values)
+      const maxValue = Math.max(...values)
+      
+      const range = maxValue - minValue || 1
+      const padding = Math.max(range * 0.1, 5)
+      const chartMin = Math.max(0, minValue - padding)
+      const chartMax = maxValue + padding
 
-  // Category comparison chart
-  const CategoryChart = ({ categoryTrends }) => {
-    const categories = Object.keys(categoryTrends)
-    if (categories.length === 0) {
+      const width = 800
+      const height = 300
+      const chartHeight = height - 60
+      const chartWidth = width - 80
+
+      const getX = (index) => {
+        if (validData.length <= 1) return chartWidth / 2
+        return (index / (validData.length - 1)) * chartWidth + 40
+      }
+
+      const getY = (value) => {
+        if (chartMax === chartMin) return chartHeight / 2 + 30
+        const normalizedValue = (value - chartMin) / (chartMax - chartMin)
+        return chartHeight - (normalizedValue * chartHeight) + 30
+      }
+
+      const pathData = validData.map((item, index) => {
+        const x = getX(index)
+        const y = getY(item[yKey])
+        return `${index === 0 ? 'M' : 'L'} ${x} ${y}`
+      }).join(' ')
+
       return (
-        <div className="h-64 flex items-center justify-center bg-white/5 rounded-lg border border-white/10">
-          <div className="text-center">
-            <div className="text-4xl mb-2">📊</div>
-            <p className="text-gray-400">No category data available</p>
+        <div className="bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/20">
+          <h3 className="text-lg font-semibold mb-4 text-white">{title}</h3>
+          <div className="w-full overflow-x-auto">
+            <svg width={width} height={height} className="w-full h-auto">
+              <defs>
+                <pattern id={`grid-${title.replace(/\s+/g, '-')}`} width="40" height="30" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 30" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+                </pattern>
+              </defs>
+              <rect width={chartWidth} height={chartHeight} x="40" y="30" 
+                    fill={`url(#grid-${title.replace(/\s+/g, '-')})`} />
+              
+              {[0, 0.25, 0.5, 0.75, 1].map(ratio => {
+                const value = chartMin + (chartMax - chartMin) * ratio
+                const y = chartHeight - (ratio * chartHeight) + 30
+                return (
+                  <g key={ratio}>
+                    <line x1="35" y1={y} x2="40" y2={y} stroke="rgba(255,255,255,0.3)" />
+                    <text x="30" y={y + 4} textAnchor="end" fontSize="12" fill="rgba(255,255,255,0.6)">
+                      {Math.round(value)}
+                    </text>
+                  </g>
+                )
+              })}
+
+              {pathData && (
+                <path
+                  d={pathData}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              )}
+
+              {validData.map((item, index) => {
+                const x = getX(index)
+                const y = getY(item[yKey])
+                return (
+                  <g key={index}>
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r="4"
+                      fill={color}
+                      stroke="white"
+                      strokeWidth="2"
+                    />
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r="12"
+                      fill="transparent"
+                      className="hover:fill-white/10 cursor-pointer"
+                      title={`Date: ${item.date}\nScore: ${Math.round(item[yKey])}%`}
+                    />
+                  </g>
+                )
+              })}
+
+              {validData.map((item, index) => {
+                if (index % Math.max(1, Math.floor(validData.length / 5)) === 0) {
+                  const x = getX(index)
+                  const date = new Date(item.date)
+                  const label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                  
+                  return (
+                    <text
+                      key={index}
+                      x={x}
+                      y={height - 10}
+                      textAnchor="middle"
+                      fontSize="11"
+                      fill="rgba(255,255,255,0.6)"
+                    >
+                      {label}
+                    </text>
+                  )
+                }
+                return null
+              })}
+            </svg>
           </div>
         </div>
       )
+    } catch (svgError) {
+      console.error('SVG Rendering Error:', svgError)
+      return (
+        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6">
+          <p className="text-red-400">❌ Chart rendering failed</p>
+          <p className="text-sm text-red-300 mt-2">{svgError.message}</p>
+        </div>
+      )
     }
-
-    const colors = ['#8B5CF6', '#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#6366F1']
-
-    return (
-      <div className="bg-white/5 rounded-lg border border-white/10 p-4">
-        <h4 className="text-lg font-semibold text-white mb-4">Category Performance Trends</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.slice(0, 6).map((category, index) => {
-            const data = categoryTrends[category]
-            const latestScore = data[data.length - 1]?.score || 0
-            const trend = data.length > 1 ? 
-              (data[data.length - 1]?.score || 0) - (data[0]?.score || 0) : 0
-            
-            return (
-              <div key={category} className="bg-white/5 rounded-lg p-3 border border-white/10">
-                <div className="flex items-center justify-between mb-2">
-                  <h5 className="font-medium text-white text-sm">{category}</h5>
-                  <div className="flex items-center gap-1 text-xs">
-                    <span className={trend >= 0 ? 'text-green-400' : 'text-red-400'}>
-                      {trend >= 0 ? '↗' : '↘'}
-                    </span>
-                    <span className="text-gray-400">
-                      {Math.abs(trend).toFixed(1)}%
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"
-                    style={{ backgroundColor: colors[index % colors.length] + '20', border: `2px solid ${colors[index % colors.length]}` }}
-                  >
-                    {latestScore.toFixed(0)}
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-gray-400">Quizzes</div>
-                    <div className="text-sm text-white">{data.length}</div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    )
-  }
-
-  // Progress overview with key metrics
-  const ProgressOverview = ({ overallTrend }) => {
-    if (!overallTrend || overallTrend.length === 0) return null
-
-    const totalQuizzes = overallTrend.reduce((sum, day) => sum + day.totalQuizzes, 0)
-    const averageScore = overallTrend.reduce((sum, day) => sum + day.averageScore, 0) / overallTrend.length
-    const latestScore = overallTrend[overallTrend.length - 1]?.averageScore || 0
-    const firstScore = overallTrend[0]?.averageScore || 0
-    const improvement = latestScore - firstScore
-
-    return (
-      <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30 p-6">
-        <h4 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-          <span>📈</span>
-          {selectedPeriod}-Day Progress Summary
-        </h4>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-400">{totalQuizzes}</div>
-            <div className="text-sm text-gray-400">Total Quizzes</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-400">{averageScore.toFixed(1)}%</div>
-            <div className="text-sm text-gray-400">Average Score</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-400">{latestScore.toFixed(1)}%</div>
-            <div className="text-sm text-gray-400">Latest Score</div>
-          </div>
-          <div className="text-center">
-            <div className={`text-2xl font-bold ${improvement >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-              {improvement >= 0 ? '+' : ''}{improvement.toFixed(1)}%
-            </div>
-            <div className="text-sm text-gray-400">Improvement</div>
-          </div>
-        </div>
-      </div>
-    )
   }
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mb-4"></div>
-        <p className="text-gray-300">Loading performance charts...</p>
+      <div className="text-center py-12">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400"></div>
+        <p className="mt-4 text-gray-400">Loading performance charts...</p>
       </div>
     )
   }
@@ -264,89 +223,95 @@ const PerformanceCharts = ({ user }) => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-6xl mb-4">📊</div>
-        <h3 className="text-xl font-semibold text-gray-300 mb-2">Chart Error</h3>
-        <p className="text-gray-400 mb-4">{error}</p>
-        <button
-          onClick={loadChartData}
-          className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors"
-        >
-          Retry
-        </button>
+        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 max-w-md mx-auto">
+          <p className="text-red-400">❌ {error}</p>
+          <button 
+            onClick={loadChartData}
+            className="mt-4 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-300 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     )
   }
 
+  if (!chartData || (chartData.overall?.length === 0 && Object.keys(chartData.categoryTrends || {}).length === 0)) {
+    return (
+      <div className="text-center py-12">
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-6 max-w-md mx-auto">
+          <p className="text-yellow-400">📈 Take more quizzes in the selected time period to see your performance trends.</p>
+          <p className="text-sm text-yellow-300 mt-2">Charts will appear after you complete at least 3 quizzes.</p>
+        </div>
+      </div>
+    )
+  }
+
+  const categoryTrends = chartData.categoryTrends || {}
+  const hasOverallData = chartData.overall && chartData.overall.length > 0
+  const hasCategoryData = Object.keys(categoryTrends).length > 0
+
   return (
     <div className="space-y-6">
-      {/* Controls */}
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-400">Time Period:</label>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-300 mb-2">Time Period</label>
           <GlassmorphicDropdown
             options={PERIOD_LABELS}
-            defaultOption={getPeriodLabel(selectedPeriod)}
-            onSelect={(label) => setSelectedPeriod(getPeriodValue(label))}
-            className="w-40"
+            defaultOption={PERIOD_LABELS[2]}
+            onSelect={(selected) => {
+              const value = getPeriodValue(selected)
+              if (value !== selectedPeriod) {
+                setSelectedPeriod(value)
+              }
+            }}
           />
         </div>
-        
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-400">Chart Type:</label>
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-300 mb-2">Chart Type</label>
           <GlassmorphicDropdown
             options={CHART_LABELS}
-            defaultOption={getChartLabel(selectedChart)}
-            onSelect={(label) => setSelectedChart(getChartValue(label))}
-            className="w-48"
+            defaultOption={CHART_LABELS[0]}
+            onSelect={(selected) => {
+              const value = getChartValue(selected)
+              if (value !== selectedChart) {
+                setSelectedChart(value)
+              }
+            }}
           />
         </div>
       </div>
 
-      {/* Progress Overview */}
-      {chartData?.overallTrend && (
-        <ProgressOverview overallTrend={chartData.overallTrend} />
-      )}
+      <div className="space-y-6">
+        {(selectedChart === 'overall' || selectedChart === 'both') && hasOverallData && (
+          <LineChart
+            data={chartData.overall}
+            title="Overall Performance Trend"
+            color="#8B5CF6"
+            yKey="averageScore"
+          />
+        )}
 
-      {/* Charts */}
-      {(selectedChart === 'overall' || selectedChart === 'both') && chartData?.overallTrend && (
-        <LineChart
-          data={chartData.overallTrend}
-          title="Overall Performance Trend"
-          color="#8B5CF6"
-          yKey="averageScore"
-        />
-      )}
+        {(selectedChart === 'category' || selectedChart === 'both') && hasCategoryData && (
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold text-white">Category Performance</h3>
+            {Object.entries(categoryTrends).map(([category, data], index) => (
+              <LineChart
+                key={category}
+                data={data}
+                title={`${category} Performance`}
+                color={['#F59E0B', '#10B981', '#EF4444', '#3B82F6', '#8B5CF6'][index % 5]}
+                yKey="averageScore"
+              />
+            ))}
+          </div>
+        )}
 
-      {(selectedChart === 'category' || selectedChart === 'both') && chartData?.categoryTrends && (
-        <CategoryChart categoryTrends={chartData.categoryTrends} />
-      )}
-
-      {/* No Data State */}
-      {(!chartData?.overallTrend || chartData.overallTrend.length === 0) && (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">📈</div>
-          <h3 className="text-xl font-semibold text-gray-300 mb-2">No Chart Data</h3>
-          <p className="text-gray-400 mb-4">
-            Take more quizzes in the selected time period to see your performance trends.
-          </p>
-          <p className="text-sm text-gray-500">
-            Charts will appear after you complete at least 3 quizzes.
-          </p>
-        </div>
-      )}
-
-      {/* Tips */}
-      <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-        <h5 className="font-semibold text-blue-300 mb-2 flex items-center gap-2">
-          <span>💡</span>
-          Chart Reading Tips
-        </h5>
-        <ul className="text-sm text-gray-300 space-y-1">
-          <li>• Hover over chart points to see exact values</li>
-          <li>• Look for upward trends to see improvement</li>
-          <li>• Consistent performance is as important as high scores</li>
-          <li>• Use different time periods to see long-term progress</li>
-        </ul>
+        {!hasOverallData && !hasCategoryData && (
+          <div className="text-center py-12">
+            <p className="text-gray-400">📊 No chart data available for the selected period</p>
+          </div>
+        )}
       </div>
     </div>
   )
