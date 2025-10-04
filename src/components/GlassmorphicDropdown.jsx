@@ -74,6 +74,7 @@ const GlassmorphicDropdown = ({ options, defaultOption, onSelect, className }) =
             <div
               key={option}
               className={optionClasses + (selected === option ? ' bg-white/30' : '')}
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={() => handleSelect(option)}
             >
               {option}
