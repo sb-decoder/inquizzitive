@@ -5,4 +5,4 @@ VITE_SUPABASE_ANON_KEY=
 
 # Google Gemini API Key
 # Get this from Google AI Studio: https://makersuite.google.com/app/apikey
-GEMINI_API_KEY=
+VITE_GEMINI_API_KEY=
