@@ -6,6 +6,7 @@ import ScrollTop from "./components/ScrollTop";
 import AuthModal from "./components/AuthModal";
 import NotificationBadge from "./components/NotificationBadge";
 import GlassmorphicDropdown from "./components/GlassmorphicDropdown";
+import StudyBuddyChat from "./components/StudyBuddyChat";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { quizService } from "./services/quizService";
 
@@ -374,7 +375,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   const [showStartScreen, setShowStartScreen] = useState(true);
   const [originalQuiz, setOriginalQuiz] = useState([]);
   const [showExamPrepPage, setShowExamPrepPage] = useState(false);
-
+  const [showFloatingChat, setShowFloatingChat] = useState(false);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
@@ -1179,6 +1180,35 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
           setShowStartScreen(true)
         }}
       />
+
+      {/* Floating Chat Button */}
+      {user && !showStartScreen && (
+        <button
+          onClick={() => setShowFloatingChat(!showFloatingChat)}
+          className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 z-40 flex items-center justify-center group"
+          title="AI Study Buddy"
+        >
+          {showFloatingChat ? (
+            <span className="text-white text-xl">✕</span>
+          ) : (
+            <span className="text-white text-xl group-hover:scale-110 transition-transform">🤖</span>
+          )}
+        </button>
+      )}
+
+      {/* Floating Chat Component */}
+      {user && showFloatingChat && (
+        <StudyBuddyChat
+          isFloating={true}
+          onClose={() => setShowFloatingChat(false)}
+          quizContext={{
+            category: selectedCategory,
+            difficulty: selectedDifficulty,
+            currentQuiz: quiz.length > 0 ? quiz : null,
+            answers: answers
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -25,11 +25,41 @@ CREATE TABLE IF NOT EXISTS public.quiz_history (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Create study_conversations table to store AI chat history
+CREATE TABLE IF NOT EXISTS public.study_conversations (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  user_message TEXT NOT NULL,
+  ai_response TEXT NOT NULL,
+  context JSONB, -- stores quiz context or study session data
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create bookmarked_questions table to store user's bookmarked questions
+CREATE TABLE IF NOT EXISTS public.bookmarked_questions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  question TEXT NOT NULL,
+  options JSONB NOT NULL,
+  correct_answer TEXT NOT NULL,
+  explanation TEXT,
+  category TEXT NOT NULL,
+  difficulty TEXT NOT NULL,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Enable RLS on profiles table
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- Enable RLS on quiz_history table
 ALTER TABLE public.quiz_history ENABLE ROW LEVEL SECURITY;
+
+-- Enable RLS on study_conversations table
+ALTER TABLE public.study_conversations ENABLE ROW LEVEL SECURITY;
+
+-- Enable RLS on bookmarked_questions table
+ALTER TABLE public.bookmarked_questions ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for profiles table
 CREATE POLICY "Users can view own profile" ON public.profiles
@@ -47,6 +77,29 @@ CREATE POLICY "Users can view own quiz history" ON public.quiz_history
 
 CREATE POLICY "Users can insert own quiz history" ON public.quiz_history
   FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Create policies for study_conversations table
+CREATE POLICY "Users can view own conversations" ON public.study_conversations
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own conversations" ON public.study_conversations
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own conversations" ON public.study_conversations
+  FOR DELETE USING (auth.uid() = user_id);
+
+-- Create policies for bookmarked_questions table
+CREATE POLICY "Users can view own bookmarks" ON public.bookmarked_questions
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own bookmarks" ON public.bookmarked_questions
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own bookmarks" ON public.bookmarked_questions
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own bookmarks" ON public.bookmarked_questions
+  FOR DELETE USING (auth.uid() = user_id);
 
 -- Create function to automatically create profile on user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -68,3 +121,12 @@ CREATE TRIGGER on_auth_user_created
 CREATE INDEX IF NOT EXISTS idx_quiz_history_user_id ON public.quiz_history(user_id);
 CREATE INDEX IF NOT EXISTS idx_quiz_history_created_at ON public.quiz_history(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_quiz_history_category ON public.quiz_history(category);
+
+-- Create indexes for study_conversations table
+CREATE INDEX IF NOT EXISTS idx_study_conversations_user_id ON public.study_conversations(user_id);
+CREATE INDEX IF NOT EXISTS idx_study_conversations_created_at ON public.study_conversations(created_at DESC);
+
+-- Create indexes for bookmarked_questions table
+CREATE INDEX IF NOT EXISTS idx_bookmarked_questions_user_id ON public.bookmarked_questions(user_id);
+CREATE INDEX IF NOT EXISTS idx_bookmarked_questions_category ON public.bookmarked_questions(category);
+CREATE INDEX IF NOT EXISTS idx_bookmarked_questions_created_at ON public.bookmarked_questions(created_at DESC);

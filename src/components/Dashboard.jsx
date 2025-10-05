@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { quizService } from '../services/quizService'
 import WeaknessAnalysis from './WeaknessAnalysis'
 import PerformanceCharts from './PerformanceCharts'
+import StudyBuddyChat from './StudyBuddyChat'
 
 const Dashboard = ({ onClose }) => {
   const { user } = useAuth()
@@ -126,6 +127,16 @@ const Dashboard = ({ onClose }) => {
             📈 Performance Charts
           </button>
           <button
+            onClick={() => setActiveTab('chat')}
+            className={`dashboard-tab px-6 py-3 font-medium transition-colors whitespace-nowrap ${
+              activeTab === 'chat'
+                ? 'text-purple-400 border-b-2 border-purple-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            🤖 AI Study Buddy
+          </button>
+          <button
             onClick={() => setActiveTab('history')}
             className={`dashboard-tab px-6 py-3 font-medium transition-colors whitespace-nowrap ${
               activeTab === 'history'
@@ -173,6 +184,13 @@ const Dashboard = ({ onClose }) => {
           {/* Performance Charts Tab */}
           {activeTab === 'charts' && (
             <PerformanceCharts user={user} />
+          )}
+
+          {/* AI Study Buddy Chat Tab */}
+          {activeTab === 'chat' && (
+            <div className="h-full">
+              <StudyBuddyChat isFloating={false} />
+            </div>
           )}
 
           {/* Quiz History Tab */}
