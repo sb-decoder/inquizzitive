@@ -86,10 +86,10 @@ const Dashboard = ({ onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="glass-card w-full max-w-6xl max-h-[90vh] overflow-hidden">
+    <div className="dashboard-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="dashboard-modal glass-card w-full max-w-6xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="dashboard-header flex items-center justify-between p-6 border-b border-white/10">
           <div>
             <h2 className="text-2xl font-bold text-white">Dashboard</h2>
             <p className="text-gray-400">Welcome back, {user?.email}</p>
@@ -105,10 +105,10 @@ const Dashboard = ({ onClose }) => {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-white/10">
+        <div className="dashboard-tabs flex border-b border-white/10 overflow-x-auto">
           <button
             onClick={() => setActiveTab('analysis')}
-            className={`px-6 py-3 font-medium transition-colors ${
+            className={`dashboard-tab px-6 py-3 font-medium transition-colors whitespace-nowrap ${
               activeTab === 'analysis'
                 ? 'text-purple-400 border-b-2 border-purple-400'
                 : 'text-gray-400 hover:text-white'
@@ -118,7 +118,7 @@ const Dashboard = ({ onClose }) => {
           </button>
           <button
             onClick={() => setActiveTab('charts')}
-            className={`px-6 py-3 font-medium transition-colors ${
+            className={`dashboard-tab px-6 py-3 font-medium transition-colors whitespace-nowrap ${
               activeTab === 'charts'
                 ? 'text-purple-400 border-b-2 border-purple-400'
                 : 'text-gray-400 hover:text-white'
@@ -138,7 +138,7 @@ const Dashboard = ({ onClose }) => {
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`px-6 py-3 font-medium transition-colors ${
+            className={`dashboard-tab px-6 py-3 font-medium transition-colors whitespace-nowrap ${
               activeTab === 'history'
                 ? 'text-purple-400 border-b-2 border-purple-400'
                 : 'text-gray-400 hover:text-white'
@@ -148,7 +148,7 @@ const Dashboard = ({ onClose }) => {
           </button>
           <button
             onClick={() => setActiveTab('stats')}
-            className={`px-6 py-3 font-medium transition-colors ${
+            className={`dashboard-tab px-6 py-3 font-medium transition-colors whitespace-nowrap ${
               activeTab === 'stats'
                 ? 'text-purple-400 border-b-2 border-purple-400'
                 : 'text-gray-400 hover:text-white'
@@ -158,7 +158,7 @@ const Dashboard = ({ onClose }) => {
           </button>
           <button
             onClick={() => setActiveTab('profile')}
-            className={`px-6 py-3 font-medium transition-colors ${
+            className={`dashboard-tab px-6 py-3 font-medium transition-colors whitespace-nowrap ${
               activeTab === 'profile'
                 ? 'text-purple-400 border-b-2 border-purple-400'
                 : 'text-gray-400 hover:text-white'
@@ -169,7 +169,7 @@ const Dashboard = ({ onClose }) => {
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+        <div className="dashboard-content p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
           {error && (
             <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300">
               {error}
