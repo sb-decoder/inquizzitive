@@ -1,43 +1,45 @@
-import { useState, useEffect } from 'react'
-import { analyticsService } from '../services/analyticsService'
-import SmartNotifications from './SmartNotifications'
+import { useState, useEffect } from "react";
+import { analyticsService } from "../services/analyticsService";
+import SmartNotifications from "./SmartNotifications";
 
 const NotificationBadge = ({ user, onCategorySelect }) => {
-  const [hasNotifications, setHasNotifications] = useState(false)
-  const [showPanel, setShowPanel] = useState(false)
-  const [urgentCount, setUrgentCount] = useState(0)
+  const [hasNotifications, setHasNotifications] = useState(false);
+  const [showPanel, setShowPanel] = useState(false);
+  const [urgentCount, setUrgentCount] = useState(0);
 
   useEffect(() => {
     if (user) {
-      checkForNotifications()
+      checkForNotifications();
     }
-  }, [user])
+  }, [user]);
 
   const checkForNotifications = async () => {
     try {
-      const analysis = await analyticsService.analyzeWeakness(user.id)
+      const analysis = await analyticsService.analyzeWeakness(user.id);
       if (analysis && !analysis.error) {
-        const urgentRecs = analysis.recommendations?.filter(rec => 
-          rec.priority === 'high' || rec.type === 'urgent'
-        ) || []
-        
-        const declining = analysis.overallProgress?.recentTrend === 'declining-fast'
-        
-        const totalUrgent = urgentRecs.length + (declining ? 1 : 0)
-        setUrgentCount(totalUrgent)
-        setHasNotifications(totalUrgent > 0)
+        const urgentRecs =
+          analysis.recommendations?.filter(
+            (rec) => rec.priority === "high" || rec.type === "urgent",
+          ) || [];
+
+        const declining =
+          analysis.overallProgress?.recentTrend === "declining-fast";
+
+        const totalUrgent = urgentRecs.length + (declining ? 1 : 0);
+        setUrgentCount(totalUrgent);
+        setHasNotifications(totalUrgent > 0);
       }
     } catch (error) {
-      console.error('Error checking notifications:', error)
+      console.error("Error checking notifications:", error);
     }
-  }
+  };
 
   const handleRecommendationClick = (category) => {
-    setShowPanel(false)
-    onCategorySelect?.(category)
-  }
+    setShowPanel(false);
+    onCategorySelect?.(category);
+  };
 
-  if (!user || !hasNotifications) return null
+  if (!user || !hasNotifications) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
@@ -45,11 +47,11 @@ const NotificationBadge = ({ user, onCategorySelect }) => {
       {showPanel && (
         <>
           {/* Backdrop */}
-          <div 
+          <div
             className="fixed inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setShowPanel(false)}
           />
-          
+
           {/* Panel */}
           <div className="absolute bottom-16 right-0 w-96 max-w-[90vw] bg-gray-900/95 backdrop-blur-lg rounded-lg border border-white/20 shadow-2xl">
             <div className="p-4 border-b border-white/10">
@@ -64,8 +66,8 @@ const NotificationBadge = ({ user, onCategorySelect }) => {
               </div>
             </div>
             <div className="p-4 max-h-96 overflow-y-auto">
-              <SmartNotifications 
-                user={user} 
+              <SmartNotifications
+                user={user}
                 onRecommendationClick={handleRecommendationClick}
               />
             </div>
@@ -80,21 +82,21 @@ const NotificationBadge = ({ user, onCategorySelect }) => {
         aria-label="Smart recommendations"
       >
         <div className="text-xl">🧠</div>
-        
+
         {/* Notification Badge */}
         {urgentCount > 0 && (
           <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
-            {urgentCount > 9 ? '9+' : urgentCount}
+            {urgentCount > 9 ? "9+" : urgentCount}
           </div>
         )}
-        
+
         {/* Pulse animation for urgent notifications */}
         {urgentCount > 0 && (
           <div className="absolute inset-0 rounded-full bg-red-500/20 animate-ping"></div>
         )}
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default NotificationBadge
+export default NotificationBadge;

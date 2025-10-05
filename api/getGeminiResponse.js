@@ -2,13 +2,16 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
-  if(req.method !== "GET") {
+  if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed. Use GET." });
   }
   try {
     const { qcount, category, difficulty } = req.query;
-    if(!qcount || !category || !difficulty) {
-      return res.status(400).json({ error: "Missing required query parameters: qcount, category, difficulty" });
+    if (!qcount || !category || !difficulty) {
+      return res.status(400).json({
+        error:
+          "Missing required query parameters: qcount, category, difficulty",
+      });
     }
     const numQuestions = parseInt(qcount, 10);
     const selectedCategory = category;
@@ -62,4 +65,4 @@ export default async function handler(req, res) {
       details: error.message,
     });
   }
-};
+}

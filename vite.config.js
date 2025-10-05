@@ -4,14 +4,17 @@ import { defineConfig } from "vite";
 export default defineConfig({
   base: "./",
   server: {
-    proxy: process.env.NODE_ENV === 'production' ? undefined : {
-      "/api": {
-        target: process.env.VITE_API_BASE_URL, // Express backend
-        changeOrigin: true,
-        secure: false,
-        rewrite: path => path.replace(/^\/api/, '')
-      },
-    },
+    proxy:
+      process.env.NODE_ENV === "production"
+        ? undefined
+        : {
+            "/api": {
+              target: process.env.VITE_API_BASE_URL, // Express backend
+              changeOrigin: true,
+              secure: false,
+              rewrite: (path) => path.replace(/^\/api/, ""),
+            },
+          },
   },
   plugins: [react()],
   build: {
