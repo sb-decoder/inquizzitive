@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import getGeminiResponse from "./api/getGeminiResponse.js";
+import studyBuddy from "./api/studyBuddy.js";
 import dotenv from "dotenv";
 import cors from "cors";
 
@@ -11,12 +12,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5174;
+const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
 // --- API Route for Gemini (test) ---
 app.use("/api/getGeminiResponse", getGeminiResponse);
+
+// --- API Route for Study Buddy Chat ---
+app.use("/api/studyBuddy", studyBuddy);
 
 // Serve built files in production
 if (process.env.NODE_ENV === "production") {
