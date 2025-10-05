@@ -22,12 +22,12 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-image: linear-gradient(
       135deg,
-      #fff2f2 0%,
-      #a9b5df 15%,
-      #7886c7 60%,
-      #2d336b 100%
+      #7fb8b5 0%,
+      #64a8b9 15%,
+      #365486 60%,
+      #0F1035 100%
     );
-    background-color: #fff2f2;
+    background-color: #7FC7D9;
 
     min-height: 100vh;
     overflow-x: hidden;
@@ -392,7 +392,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #4c2a78 0%, #5D2F77 80%, #E45A92 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
