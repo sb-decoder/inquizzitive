@@ -1,3 +1,6 @@
+-- Complete Supabase Database Setup for Inquizzitive
+-- Run this entire script in your Supabase SQL Editor
+
 -- Enable Row Level Security (RLS) for all tables
 -- This ensures users can only access their own data
 

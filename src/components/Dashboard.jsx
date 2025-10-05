@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { quizService } from '../services/quizService'
 import WeaknessAnalysis from './WeaknessAnalysis'
 import PerformanceCharts from './PerformanceCharts'
+import BookmarkedQuestions from './BookmarkedQuestions'
 
 const Dashboard = ({ onClose }) => {
   const { user } = useAuth()
@@ -126,6 +127,16 @@ const Dashboard = ({ onClose }) => {
             📈 Performance Charts
           </button>
           <button
+            onClick={() => setActiveTab('bookmarks')}
+            className={`px-6 py-3 font-medium transition-colors ${
+              activeTab === 'bookmarks'
+                ? 'text-purple-400 border-b-2 border-purple-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            🔖 Bookmarks
+          </button>
+          <button
             onClick={() => setActiveTab('history')}
             className={`px-6 py-3 font-medium transition-colors ${
               activeTab === 'history'
@@ -173,6 +184,11 @@ const Dashboard = ({ onClose }) => {
           {/* Performance Charts Tab */}
           {activeTab === 'charts' && (
             <PerformanceCharts user={user} />
+          )}
+
+          {/* Bookmarks Tab */}
+          {activeTab === 'bookmarks' && (
+            <BookmarkedQuestions user={user} />
           )}
 
           {/* Quiz History Tab */}
