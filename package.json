@@ -13,6 +13,7 @@
     "start": "cross-env NODE_ENV=production node server.js"
   },
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.51.0",
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.58.0",
     "cors": "^2.8.5",
