@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { quizService } from '../services/quizService'
 import WeaknessAnalysis from './WeaknessAnalysis'
