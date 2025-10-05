@@ -25,11 +25,11 @@ const getQuestionLabel = (value) => QUESTION_OPTIONS.find(opt => opt.value === v
 export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboard, saveQuizResult }) {
   // Mobile menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   // Custom questions for subjects
   // const customQuestions = {
   //   Sports: [
-     
+
   //     {
   //       question: "Which country has won the most Olympic medals overall?",
   //       options: ["USA", "China", "Russia", "Germany"],
@@ -80,7 +80,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   //     }
   //   ],
   //   Literature: [
-     
+
   //     {
   //       question: "Who wrote 'War and Peace'?",
   //       options: ["Leo Tolstoy", "Fyodor Dostoevsky", "Anton Chekhov", "Vladimir Nabokov"],
@@ -173,7 +173,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   //       answer: "USA",
   //       explanation: "The USA launched the Artemis mission to the Moon."
   //     },
-  
+
   //     {
   //       question: "Who won the Nobel Peace Prize in 2024?",
   //       options: ["World Food Programme", "Malala Yousafzai", "Abiy Ahmed", "Maria Ressa"],
@@ -182,7 +182,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   //     },
   //   ],
   //   Geography: [
-      
+
   //     {
   //       question: "Which is the smallest country in the world by area?",
   //       options: ["Vatican City", "Monaco", "Nauru", "San Marino"],
@@ -233,7 +233,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   //     }
   //   ],
   //   History: [
-      
+
   //     {
   //       question: "Who was the first President of the United States?",
   //       options: ["George Washington", "John Adams", "Thomas Jefferson", "James Madison"],
@@ -272,7 +272,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   //     }
   //   ],
   //   "Indian Defence": [
-      
+
   //     {
   //       question: "Which Indian submarine is nuclear-powered?",
   //       options: ["INS Arihant", "INS Chakra", "INS Sindhughosh", "INS Shankul"],
@@ -297,7 +297,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   //       answer: "Akash",
   //       explanation: "Akash is a surface-to-air missile developed by India."
   // },
-   
+
   //     {
   //       question: "Which Indian aircraft is known as 'Tejas'?",
   //       options: ["LCA", "Sukhoi", "Mirage", "Jaguar"],
@@ -312,7 +312,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   // },
   //   ],
   //   Politics: [
-      
+
   //     {
   //       question: "Who is the current Chief Minister of West Bengal?",
   //       options: ["Mamata Banerjee", "Suvendu Adhikari", "Abhishek Banerjee", "Babul Supriyo"],
@@ -337,7 +337,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   //       answer: "DMK",
   //       explanation: "DMK is currently in power in Tamil Nadu."
   // },
-   
+
   //     {
   //       question: "Who is the current Prime Minister of India?",
   //       options: ["Narendra Modi", "Rahul Gandhi", "Amit Shah", "Manmohan Singh"],
@@ -413,7 +413,8 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       //   return;
       // }
       // Otherwise, use AI-generated questions
-      const result = await fetch(`/api/gemini?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`,{
+      const requestUrl = `${import.meta.env.VITE_API_BASE_URL || ""}/api/getGeminiResponse?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`
+      const result = await fetch(requestUrl, {
         method: "GET"
       })
       let text = await result.text();
@@ -465,11 +466,11 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   }
 
   function retryQuiz() {
-  setQuiz([...originalQuiz]);        
-  setAnswers({});                    
-  setSubmitted(false);               
-  setTimeLeft(originalQuiz.length * 30);
-}
+    setQuiz([...originalQuiz]);
+    setAnswers({});
+    setSubmitted(false);
+    setTimeLeft(originalQuiz.length * 30);
+  }
 
   // Timer
   useEffect(() => {
@@ -486,12 +487,12 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
 
   async function handleSubmit() {
     setSubmitted(true);
-    
+
     // Save quiz result to database if user is authenticated
     if (user && saveQuizResult) {
       const score = calculateScore();
       const timeTaken = (quiz.length * 30) - timeLeft; // Calculate time taken
-      
+
       const quizData = {
         category: selectedCategory,
         difficulty: selectedDifficulty,
@@ -502,7 +503,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
         questions: quiz,
         userAnswers: answers
       };
-      
+
       try {
         const result = await saveQuizResult(quizData);
         if (result.error) {
@@ -559,89 +560,89 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   }
 
   // PDF Generation Function
-const generatePDF = () => {
-  try {
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    });
-
-    // Set font and colors for glassmorphic theme
-    doc.setFont('Helvetica', 'normal');
-    doc.setTextColor(40, 40, 40);
-
-    // Add title
-    doc.setFontSize(18);
-    doc.text('Inquizzitive Quiz Results', 20, 20);
-
-    // Add score summary
-    doc.setFontSize(14);
-    doc.text(`Score: ${score.percentage}%`, 20, 40);
-    doc.text(`Total Questions: ${score.total}`, 20, 50);
-    doc.text(`Correct Answers: ${score.correct}`, 20, 60);
-    doc.text(`Incorrect Answers: ${score.total - score.correct}`, 20, 70);
-
-    // Add question-wise feedback
-    if (quiz.length > 0) {
-      doc.setFontSize(12);
-      doc.text('Question-wise Performance:', 20, 90);
-      let yPosition = 100;
-
-      quiz.forEach((q, index) => {
-        // Check for page overflow
-        if (yPosition > 260) {
-          doc.addPage();
-          yPosition = 20;
-        }
-
-        const userAnswer = answers[index] || 'Not answered';
-        const isCorrect = userAnswer.toLowerCase() === q.answer.toLowerCase();
-
-        doc.setFontSize(10);
-
-        // Split question text to fit page width
-        const questionLines = doc.splitTextToSize(`${index + 1}. ${q.question}`, 170);
-        doc.text(questionLines, 20, yPosition);
-        yPosition += questionLines.length * 5;
-
-        const answerLines = doc.splitTextToSize(`Your Answer: ${userAnswer}`, 170);
-        doc.text(answerLines, 20, yPosition);
-        yPosition += answerLines.length * 5;
-
-        const correctLines = doc.splitTextToSize(`Correct Answer: ${q.answer}`, 170);
-        doc.text(correctLines, 20, yPosition);
-        yPosition += correctLines.length * 5;
-
-        const statusLines = doc.splitTextToSize(`Status: ${isCorrect ? 'Correct' : 'Incorrect'}`, 170);
-        doc.text(statusLines, 20, yPosition);
-        yPosition += statusLines.length * 5;
-
-        if (q.explanation) {
-          const explanationLines = doc.splitTextToSize(`Explanation: ${q.explanation}`, 170);
-          doc.text(explanationLines, 20, yPosition);
-          yPosition += explanationLines.length * 5;
-        }
-
-        yPosition += 5; 
+  const generatePDF = () => {
+    try {
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
       });
+
+      // Set font and colors for glassmorphic theme
+      doc.setFont('Helvetica', 'normal');
+      doc.setTextColor(40, 40, 40);
+
+      // Add title
+      doc.setFontSize(18);
+      doc.text('Inquizzitive Quiz Results', 20, 20);
+
+      // Add score summary
+      doc.setFontSize(14);
+      doc.text(`Score: ${score.percentage}%`, 20, 40);
+      doc.text(`Total Questions: ${score.total}`, 20, 50);
+      doc.text(`Correct Answers: ${score.correct}`, 20, 60);
+      doc.text(`Incorrect Answers: ${score.total - score.correct}`, 20, 70);
+
+      // Add question-wise feedback
+      if (quiz.length > 0) {
+        doc.setFontSize(12);
+        doc.text('Question-wise Performance:', 20, 90);
+        let yPosition = 100;
+
+        quiz.forEach((q, index) => {
+          // Check for page overflow
+          if (yPosition > 260) {
+            doc.addPage();
+            yPosition = 20;
+          }
+
+          const userAnswer = answers[index] || 'Not answered';
+          const isCorrect = userAnswer.toLowerCase() === q.answer.toLowerCase();
+
+          doc.setFontSize(10);
+
+          // Split question text to fit page width
+          const questionLines = doc.splitTextToSize(`${index + 1}. ${q.question}`, 170);
+          doc.text(questionLines, 20, yPosition);
+          yPosition += questionLines.length * 5;
+
+          const answerLines = doc.splitTextToSize(`Your Answer: ${userAnswer}`, 170);
+          doc.text(answerLines, 20, yPosition);
+          yPosition += answerLines.length * 5;
+
+          const correctLines = doc.splitTextToSize(`Correct Answer: ${q.answer}`, 170);
+          doc.text(correctLines, 20, yPosition);
+          yPosition += correctLines.length * 5;
+
+          const statusLines = doc.splitTextToSize(`Status: ${isCorrect ? 'Correct' : 'Incorrect'}`, 170);
+          doc.text(statusLines, 20, yPosition);
+          yPosition += statusLines.length * 5;
+
+          if (q.explanation) {
+            const explanationLines = doc.splitTextToSize(`Explanation: ${q.explanation}`, 170);
+            doc.text(explanationLines, 20, yPosition);
+            yPosition += explanationLines.length * 5;
+          }
+
+          yPosition += 5;
+        });
+      }
+
+      // Add footer
+      doc.setFontSize(8);
+      doc.setTextColor(100, 100, 100);
+      doc.text('Generated by Inquizzitive - Powered by xAI', 20, doc.internal.pageSize.height - 10);
+
+      // Save PDF
+      doc.save(`Inquizzitive_Quiz_Results_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      alert('Failed to generate PDF. Please try again.');
     }
-
-    // Add footer
-    doc.setFontSize(8);
-    doc.setTextColor(100, 100, 100);
-    doc.text('Generated by Inquizzitive - Powered by xAI', 20, doc.internal.pageSize.height - 10);
-
-    // Save PDF
-    doc.save(`Inquizzitive_Quiz_Results_${new Date().toISOString().split('T')[0]}.pdf`);
-  } catch (error) {
-    console.error('PDF generation failed:', error);
-    alert('Failed to generate PDF. Please try again.');
-  }
-};
+  };
 
   const score = submitted ? calculateScore() : null;
- 
+
   function calculateProgress() {
     const answeredCount = Object.keys(answers).length;
     const totalQuestions = quiz.length;
@@ -655,7 +656,7 @@ const generatePDF = () => {
 
   const progress = calculateProgress();
 
-  
+
   // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -672,7 +673,7 @@ const generatePDF = () => {
 
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('keydown', handleEscapeKey);
-    
+
     return () => {
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('keydown', handleEscapeKey);
@@ -701,7 +702,7 @@ const generatePDF = () => {
           <span className="nav-logo">🧠</span>
           <span className="nav-title">Inquizzitive</span>
         </div>
-        
+
         {/* Desktop Navigation */}
         <div className="nav-links desktop-nav">
           <button className="nav-btn" onClick={resetQuiz}>
@@ -785,7 +786,7 @@ const generatePDF = () => {
               </svg>
             )}
           </button>
-          
+
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="hamburger-btn p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
@@ -804,8 +805,8 @@ const generatePDF = () => {
       {isMobileMenuOpen && (
         <div className="mobile-menu">
           <div className="mobile-menu-content">
-            <button 
-              className="mobile-menu-item" 
+            <button
+              className="mobile-menu-item"
               onClick={() => {
                 resetQuiz();
                 setIsMobileMenuOpen(false);
@@ -814,8 +815,8 @@ const generatePDF = () => {
               <span className="mobile-menu-icon">🎯</span>
               Practice
             </button>
-            <button 
-              className="mobile-menu-item" 
+            <button
+              className="mobile-menu-item"
               onClick={() => {
                 showExamPrep();
                 setIsMobileMenuOpen(false);
@@ -826,7 +827,7 @@ const generatePDF = () => {
             </button>
             {user ? (
               <>
-                <button 
+                <button
                   className="mobile-menu-item"
                   onClick={() => {
                     onShowDashboard();
@@ -836,7 +837,7 @@ const generatePDF = () => {
                   <span className="mobile-menu-icon">📊</span>
                   Dashboard
                 </button>
-                <button 
+                <button
                   className="mobile-menu-item"
                   onClick={() => {
                     onSignOut();
@@ -848,7 +849,7 @@ const generatePDF = () => {
                 </button>
               </>
             ) : (
-              <button 
+              <button
                 className="mobile-menu-item primary"
                 onClick={() => {
                   onSignIn();
@@ -1033,7 +1034,7 @@ const generatePDF = () => {
                 <span className="progress-percentage">{progress.percentage}%</span>
               </div>
               <div className="progress-bar-container">
-                <div 
+                <div
                   className="progress-bar-fill"
                   style={{ width: `${progress.percentage}%` }}
                 ></div>
@@ -1051,9 +1052,8 @@ const generatePDF = () => {
                       <button
                         key={i}
                         onClick={() => handleOptionSelect(idx, opt)}
-                        className={`option-btn ${
-                          answers[idx] === opt ? "selected" : ""
-                        }`}
+                        className={`option-btn ${answers[idx] === opt ? "selected" : ""
+                          }`}
                       >
                         <span className="option-letter">
                           {String.fromCharCode(65 + i)}
@@ -1117,16 +1117,14 @@ const generatePDF = () => {
                 return (
                   <div
                     key={idx}
-                    className={`glass-card answer-card ${
-                      isCorrect ? "correct" : "incorrect"
-                    }`}
+                    className={`glass-card answer-card ${isCorrect ? "correct" : "incorrect"
+                      }`}
                   >
                     <div className="answer-header">
                       <span className="answer-number">Q{idx + 1}</span>
                       <span
-                        className={`answer-status ${
-                          isCorrect ? "correct" : "incorrect"
-                        }`}
+                        className={`answer-status ${isCorrect ? "correct" : "incorrect"
+                          }`}
                       >
                         {isCorrect ? "✅" : "❌"}
                       </span>
@@ -1136,9 +1134,8 @@ const generatePDF = () => {
                       <div className="answer-row">
                         <span className="answer-label">Your Answer:</span>
                         <span
-                          className={`answer-value ${
-                            isCorrect ? "correct" : "incorrect"
-                          }`}
+                          className={`answer-value ${isCorrect ? "correct" : "incorrect"
+                            }`}
                         >
                           {userAnswer || "Not answered"}
                         </span>
@@ -1170,13 +1167,13 @@ const generatePDF = () => {
           </div>
         )}
       </div>
-      
+
       {/* Scroll to Top Button */}
       <ScrollTop />
-      
+
       {/* Smart Notification Badge */}
-      <NotificationBadge 
-        user={user} 
+      <NotificationBadge
+        user={user}
         onCategorySelect={(category) => {
           setSelectedCategory(category)
           setShowStartScreen(true)
