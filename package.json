@@ -12,8 +12,6 @@
     "lint-fix": "eslint . --fix",
     "preview": "vite preview",
     "build:prod": "NODE_ENV=production vite build",
-    "client": "vite",
-    "server": "npx nodemon server.js",
     "start": "cross-env NODE_ENV=production node server.js",
     "test": "vitest --run",
     "prepare": "husky"
