@@ -4,6 +4,9 @@ import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
 import NotificationBadge from "./components/NotificationBadge";
 import GlassmorphicDropdown from "./components/GlassmorphicDropdown";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { quizService } from "./services/quizService";
+import { bookmarkService } from "./services/bookmarkService";
 
 import { jsPDF } from "jspdf"; // Import jsPDF
 import "./components/Result.css";
@@ -378,6 +381,10 @@ export default function App({
   const [showStartScreen, setShowStartScreen] = useState(true);
   const [originalQuiz, setOriginalQuiz] = useState([]);
   const [showExamPrepPage, setShowExamPrepPage] = useState(false);
+  
+  // Bookmark states
+  const [bookmarkedQuestions, setBookmarkedQuestions] = useState(new Set());
+  const [bookmarkLoading, setBookmarkLoading] = useState(new Set());
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
@@ -570,6 +577,88 @@ export default function App({
     setShowExamPrepPage(false);
     setShowStartScreen(true);
   }
+
+  // Bookmark functions
+  const checkBookmarkStatus = async (question) => {
+    if (!user) return;
+    
+    try {
+      const result = await bookmarkService.isBookmarked(question.question, question.answer);
+      if (result.isBookmarked) {
+        setBookmarkedQuestions(prev => new Set([...prev, `${question.question}-${question.answer}`]));
+      }
+    } catch (error) {
+      console.error('Error checking bookmark status:', error);
+    }
+  };
+
+  const handleBookmarkToggle = async (questionIndex) => {
+    if (!user) {
+      // Show sign-in prompt or modal
+      alert('Please sign in to bookmark questions');
+      return;
+    }
+
+    const question = quiz[questionIndex];
+    const questionKey = `${question.question}-${question.answer}`;
+    
+    setBookmarkLoading(prev => new Set([...prev, questionIndex]));
+
+    try {
+      const isCurrentlyBookmarked = bookmarkedQuestions.has(questionKey);
+      
+      if (isCurrentlyBookmarked) {
+        // Remove bookmark
+        const result = await bookmarkService.removeBookmarkByQuestion(question.question, question.answer);
+        if (result.success) {
+          setBookmarkedQuestions(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(questionKey);
+            return newSet;
+          });
+        } else {
+          console.error('Error removing bookmark:', result.error);
+        }
+      } else {
+        // Add bookmark
+        const bookmarkData = {
+          question: question.question,
+          options: question.options,
+          answer: question.answer,
+          explanation: question.explanation,
+          category: selectedCategory,
+          difficulty: selectedDifficulty
+        };
+        
+        const result = await bookmarkService.saveBookmark(bookmarkData);
+        if (result.data) {
+          setBookmarkedQuestions(prev => new Set([...prev, questionKey]));
+        } else if (result.error === 'Question already bookmarked') {
+          // Question was already bookmarked, update UI state
+          setBookmarkedQuestions(prev => new Set([...prev, questionKey]));
+        } else {
+          console.error('Error saving bookmark:', result.error);
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+    } finally {
+      setBookmarkLoading(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(questionIndex);
+        return newSet;
+      });
+    }
+  };
+
+  // Check bookmark status when quiz loads
+  useEffect(() => {
+    if (quiz.length > 0 && user) {
+      quiz.forEach(question => {
+        checkBookmarkStatus(question);
+      });
+    }
+  }, [quiz, user]);
 
   // PDF Generation Function
   const generatePDF = () => {
@@ -1096,8 +1185,32 @@ export default function App({
               {quiz.map((q, idx) => (
                 <div key={idx} className="glass-card question-card">
                   <div className="question-header">
-                    <span className="question-number">Q{idx + 1}</span>
-                    <p className="question-text">{q.question}</p>
+                    <div className="question-header-left">
+                      <span className="question-number">Q{idx + 1}</span>
+                      <p className="question-text">{q.question}</p>
+                    </div>
+                    {user && (
+                      <button
+                        onClick={() => handleBookmarkToggle(idx)}
+                        disabled={bookmarkLoading.has(idx)}
+                        className={`bookmark-btn ${
+                          bookmarkedQuestions.has(`${q.question}-${q.answer}`) ? 'bookmarked' : ''
+                        }`}
+                        title={
+                          bookmarkedQuestions.has(`${q.question}-${q.answer}`) 
+                            ? 'Remove bookmark' 
+                            : 'Bookmark this question'
+                        }
+                      >
+                        {bookmarkLoading.has(idx) ? (
+                          <span className="bookmark-loading">⟳</span>
+                        ) : bookmarkedQuestions.has(`${q.question}-${q.answer}`) ? (
+                          <span className="bookmark-icon bookmarked">🔖</span>
+                        ) : (
+                          <span className="bookmark-icon">📌</span>
+                        )}
+                      </button>
+                    )}
                   </div>
                   <div className="options-grid">
                     {q.options.map((opt, i) => (

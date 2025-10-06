@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "client": "vite",
+    "server": "npx nodemon server.js",
     "build": "vite build",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
@@ -37,6 +40,7 @@
     "@vitejs/plugin-react": "^5.0.2",
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",

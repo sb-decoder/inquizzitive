@@ -12,11 +12,47 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = "signin" }) => {
 
   const { signIn, signUp, resetPassword } = useAuth();
 
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+
+  // Validation for full name
+  const validateName = (name) => {
+    const nameRegex = /^[A-Za-z\s]{2,}$/;
+    return nameRegex.test(name.trim());
+  };
+
+
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    if (value.length > 0 && !validateEmail(value)) {
+      setError("Invalid email format");
+    } else {
+      setError("");
+    }
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setMessage("");
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (mode === "signup" && !validateName(fullName)) {
+      setError("Please enter a valid full name (only letters, min 2 characters).");
+      return;
+    }
 
     try {
       if (mode === "signin") {
@@ -109,7 +145,7 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = "signin" }) => {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="Enter your email"
                 required
