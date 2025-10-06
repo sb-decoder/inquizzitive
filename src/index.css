@@ -1644,3 +1644,70 @@
     @apply w-5 h-5;
   }
 }
+
+/* Bookmark Styles */
+.question-header {
+  @apply flex items-start justify-between gap-3 mb-4;
+}
+
+.question-header-left {
+  @apply flex items-start gap-3 flex-1;
+}
+
+.bookmark-btn {
+  @apply flex-shrink-0 w-10 h-10 rounded-lg border-none cursor-pointer;
+  @apply flex items-center justify-center transition-all duration-300;
+  @apply bg-white/10 hover:bg-white/20 backdrop-blur-md;
+  @apply border border-white/20 hover:border-white/30;
+}
+
+.bookmark-btn:hover {
+  @apply scale-110 -translate-y-0.5;
+}
+
+.bookmark-btn:active {
+  @apply scale-95;
+}
+
+.bookmark-btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.bookmark-btn:disabled:hover {
+  @apply scale-100 translate-y-0;
+}
+
+.bookmark-icon {
+  @apply text-lg transition-all duration-300;
+}
+
+.bookmark-btn:not(.bookmarked) .bookmark-icon {
+  @apply text-gray-300 hover:text-yellow-400;
+}
+
+.bookmark-btn.bookmarked {
+  @apply bg-yellow-500/20 border-yellow-500/40;
+}
+
+.bookmark-btn.bookmarked .bookmark-icon {
+  @apply text-yellow-400;
+}
+
+.bookmark-loading {
+  @apply text-lg text-blue-400 animate-spin;
+}
+
+/* Update question card layout for mobile */
+@media (max-width: 768px) {
+  .question-header {
+    @apply gap-2;
+  }
+  
+  .bookmark-btn {
+    @apply w-8 h-8;
+  }
+  
+  .bookmark-icon {
+    @apply text-base;
+  }
+}
