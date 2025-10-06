@@ -21,7 +21,8 @@ Built with React, powered by Google's Gemini AI, and featuring a stunning glassm
 - 📊 **Detailed Analytics** - Comprehensive score reports with explanations
 - 🎨 **Glassmorphic UI** - Modern, beautiful design with smooth animations
 - 📱 **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
-- 🌐 **Open Source** - Free forever, built for the community
+- 🌐 **Open Source** - Free forever, built for the community.
+- 📌 **Bookmark** - Bookmark questions that you want to revise later.
 
 ---
 
