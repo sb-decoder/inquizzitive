@@ -4,6 +4,7 @@ import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
 import NotificationBadge from "./components/NotificationBadge";
 import GlassmorphicDropdown from "./components/GlassmorphicDropdown";
+import AIChatMentor from "./components/AIChatMentor";
 import { bookmarkService } from "./services/bookmarkService";
 
 import { jsPDF } from "jspdf"; // Import jsPDF
@@ -1034,6 +1035,9 @@ export default function App({
           setShowStartScreen(true);
         }}
       />
+
+  {/* AI Mentor Chat: show only on results screen so students can get more info */}
+  {submitted && score && <AIChatMentor />}
     </div>
   );
 }
