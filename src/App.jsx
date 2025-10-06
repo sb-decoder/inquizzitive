@@ -4,8 +4,6 @@ import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
 import NotificationBadge from "./components/NotificationBadge";
 import GlassmorphicDropdown from "./components/GlassmorphicDropdown";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { quizService } from "./services/quizService";
 import { bookmarkService } from "./services/bookmarkService";
 
 import { jsPDF } from "jspdf"; // Import jsPDF
@@ -32,333 +30,6 @@ export default function App({
 }) {
   // Mobile menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Custom questions for subjects
-  // const customQuestions = {
-  //   Sports: [
-
-  //     {
-  //       question: "Which country has won the most Olympic medals overall?",
-  //       options: ["USA", "China", "Russia", "Germany"],
-  //       answer: "USA",
-  //       explanation: "The USA has won the most Olympic medals in history."
-  //     },
-  //     {
-  //       question: "Which football club is known as 'The Red Devils'?",
-  //       options: ["Manchester United", "Liverpool", "Arsenal", "Chelsea"],
-  //       answer: "Manchester United",
-  //       explanation: "Manchester United is nicknamed 'The Red Devils'."
-  //     },
-  //     {
-  //       question: "Which city hosted the first modern Olympic Games?",
-  //       options: ["Athens", "Paris", "London", "Rome"],
-  //       answer: "Athens",
-  //       explanation: "Athens hosted the first modern Olympic Games in 1896."
-  //     },
-  //     {
-  //       question: "Which country won the ICC Cricket World Cup in 2011?",
-  //       options: ["India", "Australia", "Sri Lanka", "South Africa"],
-  //       answer: "India",
-  //       explanation: "India won the ICC Cricket World Cup in 2011."
-  //     },
-  //     {
-  //       question: "Which Indian cricketer is known as the 'God of Cricket'?",
-  //       options: ["Sachin Tendulkar", "Virat Kohli", "MS Dhoni", "Kapil Dev"],
-  //       answer: "Sachin Tendulkar",
-  //       explanation: "Sachin Tendulkar is widely regarded as the 'God of Cricket'."
-  //     },
-  //     {
-  //       question: "Which tennis player has won the most Grand Slam titles?",
-  //       options: ["Serena Williams", "Roger Federer", "Rafael Nadal", "Novak Djokovic"],
-  //       answer: "Novak Djokovic",
-  //       explanation: "Novak Djokovic holds the record for most Grand Slam titles."
-  //     },
-  //     {
-  //       question: "Which country hosted the 2022 FIFA World Cup?",
-  //       options: ["Qatar", "Russia", "USA", "Brazil"],
-  //       answer: "Qatar",
-  //       explanation: "Qatar hosted the FIFA World Cup in 2022."
-  //     },
-  //     {
-  //       question: "Who is known as the fastest man in the world?",
-  //       options: ["Usain Bolt", "Tyson Gay", "Yohan Blake", "Justin Gatlin"],
-  //       answer: "Usain Bolt",
-  //       explanation: "Usain Bolt holds the world record for the 100m sprint."
-  //     }
-  //   ],
-  //   Literature: [
-
-  //     {
-  //       question: "Who wrote 'War and Peace'?",
-  //       options: ["Leo Tolstoy", "Fyodor Dostoevsky", "Anton Chekhov", "Vladimir Nabokov"],
-  //       answer: "Leo Tolstoy",
-  //       explanation: "'War and Peace' was written by Leo Tolstoy."
-  //     },
-  //     {
-  //       question: "Who is the author of 'The Catcher in the Rye'?",
-  //       options: ["J.D. Salinger", "F. Scott Fitzgerald", "Ernest Hemingway", "Mark Twain"],
-  //       answer: "J.D. Salinger",
-  //       explanation: "J.D. Salinger wrote 'The Catcher in the Rye'."
-  //     },
-  //     {
-  //       question: "Who wrote 'The Odyssey'?",
-  //       options: ["Homer", "Virgil", "Sophocles", "Euripides"],
-  //       answer: "Homer",
-  //       explanation: "'The Odyssey' is an epic poem written by Homer."
-  //     },
-  //     {
-  //       question: "Who is the author of 'Animal Farm'?",
-  //       options: ["George Orwell", "Aldous Huxley", "Ray Bradbury", "J.K. Rowling"],
-  //       answer: "George Orwell",
-  //       explanation: "George Orwell wrote 'Animal Farm'."
-  //     },
-  //     {
-  //       question: "Who wrote 'The Great Gatsby'?",
-  //       options: ["F. Scott Fitzgerald", "Ernest Hemingway", "Mark Twain", "Harper Lee"],
-  //       answer: "F. Scott Fitzgerald",
-  //       explanation: "'The Great Gatsby' was written by F. Scott Fitzgerald."
-  //     },
-  //     {
-  //       question: "Who is the author of '1984'?",
-  //       options: ["George Orwell", "Aldous Huxley", "Ray Bradbury", "J.D. Salinger"],
-  //       answer: "George Orwell",
-  //       explanation: "George Orwell wrote the dystopian novel '1984'."
-  //     },
-  //     {
-  //       question: "Who wrote 'To Kill a Mockingbird'?",
-  //       options: ["Harper Lee", "Mark Twain", "F. Scott Fitzgerald", "Ernest Hemingway"],
-  //       answer: "Harper Lee",
-  //       explanation: "Harper Lee wrote 'To Kill a Mockingbird'."
-  //     },
-  //     {
-  //       question: "Which book series features the character Harry Potter?",
-  //       options: ["Harry Potter", "Percy Jackson", "The Hunger Games", "Twilight"],
-  //       answer: "Harry Potter",
-  //       explanation: "Harry Potter is the main character in the 'Harry Potter' series by J.K. Rowling."
-  //     }
-  //   ],
-  //   "Current Affairs": [
-  //     {
-  //       question: "Which country recently joined the European Union in 2025?",
-  //       options: ["Albania", "Serbia", "Ukraine", "Moldova"],
-  //       answer: "Ukraine",
-  //       explanation: "Ukraine joined the European Union in 2025."
-  //     },
-  //     {
-  //       question: "Who is the current UN Secretary-General?",
-  //       options: ["António Guterres", "Ban Ki-moon", "Kofi Annan", "Boutros Boutros-Ghali"],
-  //       answer: "António Guterres",
-  //       explanation: "António Guterres is the current UN Secretary-General."
-  //     },
-  //     {
-  //       question: "Who is the current Prime Minister of Canada?",
-  //       options: ["Justin Trudeau", "Stephen Harper", "Jean Chrétien", "Paul Martin"],
-  //       answer: "Justin Trudeau",
-  //       explanation: "Justin Trudeau is the current Prime Minister of Canada."
-  //     },
-  //     {
-  //       question: "Which country won the FIFA Women's World Cup in 2023?",
-  //       options: ["Spain", "USA", "Germany", "Japan"],
-  //       answer: "Spain",
-  //       explanation: "Spain won the FIFA Women's World Cup in 2023."
-  //     },
-  //     {
-  //       question: "Who is the current President of the United States?",
-  //       options: ["Joe Biden", "Donald Trump", "Barack Obama", "Kamala Harris"],
-  //       answer: "Joe Biden",
-  //       explanation: "Joe Biden is the current President of the United States (as of 2025)."
-  //     },
-  //     {
-  //       question: "Which country hosted the 2024 Summer Olympics?",
-  //       options: ["France", "Japan", "USA", "Brazil"],
-  //       answer: "France",
-  //       explanation: "France hosted the 2024 Summer Olympics in Paris."
-  //     },
-  //     {
-  //       question: "Which country launched the Artemis mission to the Moon?",
-  //       options: ["USA", "China", "Russia", "India"],
-  //       answer: "USA",
-  //       explanation: "The USA launched the Artemis mission to the Moon."
-  //     },
-
-  //     {
-  //       question: "Who won the Nobel Peace Prize in 2024?",
-  //       options: ["World Food Programme", "Malala Yousafzai", "Abiy Ahmed", "Maria Ressa"],
-  //       answer: "World Food Programme",
-  //       explanation: "The World Food Programme won the Nobel Peace Prize in 2024."
-  //     },
-  //   ],
-  //   Geography: [
-
-  //     {
-  //       question: "Which is the smallest country in the world by area?",
-  //       options: ["Vatican City", "Monaco", "Nauru", "San Marino"],
-  //       answer: "Vatican City",
-  //       explanation: "Vatican City is the smallest country in the world by area."
-  //     },
-  //     {
-  //       question: "Which mountain is the highest in Africa?",
-  //       options: ["Kilimanjaro", "Mount Kenya", "Mount Stanley", "Mount Meru"],
-  //       answer: "Kilimanjaro",
-  //       explanation: "Mount Kilimanjaro is the highest mountain in Africa."
-  //     },
-  //     {
-  //       question: "Which is the largest island in the world?",
-  //       options: ["Greenland", "Australia", "Borneo", "Madagascar"],
-  //       answer: "Greenland",
-  //       explanation: "Greenland is the largest island in the world."
-  //     },
-  //     {
-  //       question: "Which country has the longest coastline?",
-  //       options: ["Canada", "Russia", "USA", "Australia"],
-  //       answer: "Canada",
-  //       explanation: "Canada has the longest coastline in the world."
-  //     },
-  //     {
-  //       question: "What is the largest continent by area?",
-  //       options: ["Asia", "Africa", "North America", "Europe"],
-  //       answer: "Asia",
-  //       explanation: "Asia is the largest continent by area."
-  //     },
-  //     {
-  //       question: "Which river is the longest in the world?",
-  //       options: ["Nile", "Amazon", "Yangtze", "Mississippi"],
-  //       answer: "Nile",
-  //       explanation: "The Nile is considered the longest river in the world."
-  //     },
-  //     {
-  //       question: "Which desert is the largest in the world?",
-  //       options: ["Sahara", "Gobi", "Kalahari", "Arabian"],
-  //       answer: "Sahara",
-  //       explanation: "The Sahara is the largest hot desert in the world."
-  //     },
-  //     {
-  //       question: "Which country has the most natural lakes?",
-  //       options: ["Canada", "USA", "Russia", "India"],
-  //       answer: "Canada",
-  //       explanation: "Canada has the most natural lakes in the world."
-  //     }
-  //   ],
-  //   History: [
-
-  //     {
-  //       question: "Who was the first President of the United States?",
-  //       options: ["George Washington", "John Adams", "Thomas Jefferson", "James Madison"],
-  //       answer: "George Washington",
-  //       explanation: "George Washington was the first President of the United States."
-  //     },
-  //     {
-  //       question: "Who led the Indian independence movement with nonviolent resistance?",
-  //       options: ["Mahatma Gandhi", "Jawaharlal Nehru", "Subhas Chandra Bose", "Bhagat Singh"],
-  //       answer: "Mahatma Gandhi",
-  //       explanation: "Mahatma Gandhi led the Indian independence movement with nonviolent resistance."
-  //     },
-  //     {
-  //       question: "Who was the first woman to win a Nobel Prize?",
-  //       options: ["Marie Curie", "Rosalind Franklin", "Ada Lovelace", "Dorothy Hodgkin"],
-  //       answer: "Marie Curie",
-  //       explanation: "Marie Curie was the first woman to win a Nobel Prize."
-  //     },
-  //     {
-  //       question: "Who was the first man to step on the Moon?",
-  //       options: ["Neil Armstrong", "Buzz Aldrin", "Yuri Gagarin", "Michael Collins"],
-  //       answer: "Neil Armstrong",
-  //       explanation: "Neil Armstrong was the first man to step on the Moon in 1969."
-  //     },
-  //     {
-  //       question: "Who was the first Emperor of China?",
-  //       options: ["Qin Shi Huang", "Kublai Khan", "Sun Yat-sen", "Mao Zedong"],
-  //       answer: "Qin Shi Huang",
-  //       explanation: "Qin Shi Huang was the first Emperor of China."
-  //     },
-  //     {
-  //       question: "Who wrote the Indian national anthem?",
-  //       options: ["Rabindranath Tagore", "Bankim Chandra Chatterjee", "Sarojini Naidu", "Subhas Chandra Bose"],
-  //       answer: "Rabindranath Tagore",
-  //       explanation: "Rabindranath Tagore wrote 'Jana Gana Mana', the Indian national anthem."
-  //     }
-  //   ],
-  //   "Indian Defence": [
-
-  //     {
-  //       question: "Which Indian submarine is nuclear-powered?",
-  //       options: ["INS Arihant", "INS Chakra", "INS Sindhughosh", "INS Shankul"],
-  //       answer: "INS Arihant",
-  //       explanation: "INS Arihant is India's first nuclear-powered submarine."
-  //     },
-  //     {
-  //       question: "Which Indian missile is an intercontinental ballistic missile?",
-  //       options: ["Agni-V", "Prithvi", "Akash", "Nag"],
-  //       answer: "Agni-V",
-  //       explanation: "Agni-V is an intercontinental ballistic missile developed by India."
-  // },
-  //     {
-  //       question: "Which is the largest warship in the Indian Navy?",
-  //       options: ["INS Vikramaditya", "INS Viraat", "INS Shivalik", "INS Kolkata"],
-  //       answer: "INS Vikramaditya",
-  //       explanation: "INS Vikramaditya is the largest warship in the Indian Navy."
-  // },
-  //     {
-  //       question: "Which Indian missile is surface-to-air?",
-  //       options: ["Akash", "Agni", "Prithvi", "Nag"],
-  //       answer: "Akash",
-  //       explanation: "Akash is a surface-to-air missile developed by India."
-  // },
-
-  //     {
-  //       question: "Which Indian aircraft is known as 'Tejas'?",
-  //       options: ["LCA", "Sukhoi", "Mirage", "Jaguar"],
-  //       answer: "LCA",
-  //       explanation: "LCA Tejas is an Indian light combat aircraft."
-  // },
-  //     {
-  //       question: "Which is the oldest regiment in the Indian Army?",
-  //       options: ["Madras Regiment", "Sikh Regiment", "Gorkha Regiment", "Rajput Regiment"],
-  //       answer: "Madras Regiment",
-  //       explanation: "Madras Regiment is the oldest regiment in the Indian Army."
-  // },
-  //   ],
-  //   Politics: [
-
-  //     {
-  //       question: "Who is the current Chief Minister of West Bengal?",
-  //       options: ["Mamata Banerjee", "Suvendu Adhikari", "Abhishek Banerjee", "Babul Supriyo"],
-  //       answer: "Mamata Banerjee",
-  //       explanation: "Mamata Banerjee is the Chief Minister of West Bengal."
-  //     },
-  //     {
-  //       question: "Which Indian political party was founded by Arvind Kejriwal?",
-  //       options: ["AAP", "BJP", "Congress", "TMC"],
-  //       answer: "AAP",
-  //       explanation: "Arvind Kejriwal founded the Aam Aadmi Party (AAP)."
-  // },
-  //     {
-  //       question: "Who is the current Vice President of India?",
-  //       options: ["Jagdeep Dhankhar", "Venkaiah Naidu", "Hamid Ansari", "Krishna Kant"],
-  //       answer: "Jagdeep Dhankhar",
-  //       explanation: "Jagdeep Dhankhar is the current Vice President of India (as of 2025)."
-  // },
-  //     {
-  //       question: "Which party is currently in power in Tamil Nadu?",
-  //       options: ["DMK", "AIADMK", "BJP", "Congress"],
-  //       answer: "DMK",
-  //       explanation: "DMK is currently in power in Tamil Nadu."
-  // },
-
-  //     {
-  //       question: "Who is the current Prime Minister of India?",
-  //       options: ["Narendra Modi", "Rahul Gandhi", "Amit Shah", "Manmohan Singh"],
-  //       answer: "Narendra Modi",
-  //       explanation: "Narendra Modi is the current Prime Minister of India (as of 2025)."
-  // },
-  //     {
-  //       question: "Which Indian state has the largest number of Lok Sabha seats?",
-  //       options: ["Uttar Pradesh", "Maharashtra", "West Bengal", "Tamil Nadu"],
-  //       answer: "Uttar Pradesh",
-  //       explanation: "Uttar Pradesh has the largest number of Lok Sabha seats."
-  // }
-  //   ]
-  // };
   const [loading, setLoading] = useState(false);
   const [quiz, setQuiz] = useState([]);
   const [answers, setAnswers] = useState({});
@@ -381,7 +52,7 @@ export default function App({
   const [showStartScreen, setShowStartScreen] = useState(true);
   const [originalQuiz, setOriginalQuiz] = useState([]);
   const [showExamPrepPage, setShowExamPrepPage] = useState(false);
-  
+
   // Bookmark states
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState(new Set());
   const [bookmarkLoading, setBookmarkLoading] = useState(new Set());
@@ -581,43 +252,52 @@ export default function App({
   // Bookmark functions
   const checkBookmarkStatus = async (question) => {
     if (!user) return;
-    
+
     try {
-      const result = await bookmarkService.isBookmarked(question.question, question.answer);
+      const result = await bookmarkService.isBookmarked(
+        question.question,
+        question.answer,
+      );
       if (result.isBookmarked) {
-        setBookmarkedQuestions(prev => new Set([...prev, `${question.question}-${question.answer}`]));
+        setBookmarkedQuestions(
+          (prev) =>
+            new Set([...prev, `${question.question}-${question.answer}`]),
+        );
       }
     } catch (error) {
-      console.error('Error checking bookmark status:', error);
+      console.error("Error checking bookmark status:", error);
     }
   };
 
   const handleBookmarkToggle = async (questionIndex) => {
     if (!user) {
       // Show sign-in prompt or modal
-      alert('Please sign in to bookmark questions');
+      alert("Please sign in to bookmark questions");
       return;
     }
 
     const question = quiz[questionIndex];
     const questionKey = `${question.question}-${question.answer}`;
-    
-    setBookmarkLoading(prev => new Set([...prev, questionIndex]));
+
+    setBookmarkLoading((prev) => new Set([...prev, questionIndex]));
 
     try {
       const isCurrentlyBookmarked = bookmarkedQuestions.has(questionKey);
-      
+
       if (isCurrentlyBookmarked) {
         // Remove bookmark
-        const result = await bookmarkService.removeBookmarkByQuestion(question.question, question.answer);
+        const result = await bookmarkService.removeBookmarkByQuestion(
+          question.question,
+          question.answer,
+        );
         if (result.success) {
-          setBookmarkedQuestions(prev => {
+          setBookmarkedQuestions((prev) => {
             const newSet = new Set(prev);
             newSet.delete(questionKey);
             return newSet;
           });
         } else {
-          console.error('Error removing bookmark:', result.error);
+          console.error("Error removing bookmark:", result.error);
         }
       } else {
         // Add bookmark
@@ -627,23 +307,23 @@ export default function App({
           answer: question.answer,
           explanation: question.explanation,
           category: selectedCategory,
-          difficulty: selectedDifficulty
+          difficulty: selectedDifficulty,
         };
-        
+
         const result = await bookmarkService.saveBookmark(bookmarkData);
         if (result.data) {
-          setBookmarkedQuestions(prev => new Set([...prev, questionKey]));
-        } else if (result.error === 'Question already bookmarked') {
+          setBookmarkedQuestions((prev) => new Set([...prev, questionKey]));
+        } else if (result.error === "Question already bookmarked") {
           // Question was already bookmarked, update UI state
-          setBookmarkedQuestions(prev => new Set([...prev, questionKey]));
+          setBookmarkedQuestions((prev) => new Set([...prev, questionKey]));
         } else {
-          console.error('Error saving bookmark:', result.error);
+          console.error("Error saving bookmark:", result.error);
         }
       }
     } catch (error) {
-      console.error('Error toggling bookmark:', error);
+      console.error("Error toggling bookmark:", error);
     } finally {
-      setBookmarkLoading(prev => {
+      setBookmarkLoading((prev) => {
         const newSet = new Set(prev);
         newSet.delete(questionIndex);
         return newSet;
@@ -654,7 +334,7 @@ export default function App({
   // Check bookmark status when quiz loads
   useEffect(() => {
     if (quiz.length > 0 && user) {
-      quiz.forEach(question => {
+      quiz.forEach((question) => {
         checkBookmarkStatus(question);
       });
     }
@@ -1194,17 +874,21 @@ export default function App({
                         onClick={() => handleBookmarkToggle(idx)}
                         disabled={bookmarkLoading.has(idx)}
                         className={`bookmark-btn ${
-                          bookmarkedQuestions.has(`${q.question}-${q.answer}`) ? 'bookmarked' : ''
+                          bookmarkedQuestions.has(`${q.question}-${q.answer}`)
+                            ? "bookmarked"
+                            : ""
                         }`}
                         title={
-                          bookmarkedQuestions.has(`${q.question}-${q.answer}`) 
-                            ? 'Remove bookmark' 
-                            : 'Bookmark this question'
+                          bookmarkedQuestions.has(`${q.question}-${q.answer}`)
+                            ? "Remove bookmark"
+                            : "Bookmark this question"
                         }
                       >
                         {bookmarkLoading.has(idx) ? (
                           <span className="bookmark-loading">⟳</span>
-                        ) : bookmarkedQuestions.has(`${q.question}-${q.answer}`) ? (
+                        ) : bookmarkedQuestions.has(
+                            `${q.question}-${q.answer}`,
+                          ) ? (
                           <span className="bookmark-icon bookmarked">🔖</span>
                         ) : (
                           <span className="bookmark-icon">📌</span>

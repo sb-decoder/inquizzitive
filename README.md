@@ -26,7 +26,6 @@ Built with React, powered by Google's Gemini AI, and featuring a stunning glassm
 
 ---
 
-
 ## 🔮 Roadmap
 
 - [x] User authentication and profiles
@@ -74,7 +73,7 @@ We love contributions! Here's how you can help:
 ### Ways to Contribute
 
 - 🐞 Fix bugs and issues
-- ✨ Add new features 
+- ✨ Add new features
 - 🎨 Improve UI/UX design
 - 💡 Suggest improvements
 
@@ -109,14 +108,12 @@ This repository participates in **Hacktoberfest**!
 ## 🛠️ Tech Stack
 
 - **Frontend:** React + Vite
-- **Styling:** Custom CSS with Glassmorphism and Tailwind CSS 
+- **Styling:** Custom CSS with Glassmorphism and Tailwind CSS
 - **AI:** Google Gemini 1.5 Flash
-- **Authentication & Database:** Supabase 
+- **Authentication & Database:** Supabase
 - **Build Tool:** Vite
 - **Package Manager:** npm
 - **Deployment:** Vercel
-
-
 
 ---
 

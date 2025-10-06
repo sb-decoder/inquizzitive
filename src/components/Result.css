@@ -22,7 +22,12 @@
 
 /* src/components/Result.css */
 .download-pdf-btn {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2), rgba(59, 130, 246, 0.2)); /* Purple/pink/blue gradient */
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.2),
+    rgba(236, 72, 153, 0.2),
+    rgba(59, 130, 246, 0.2)
+  ); /* Purple/pink/blue gradient */
   backdrop-filter: blur(12px); /* Stronger blur for glass effect */
   border: 1px solid rgba(255, 255, 255, 0.4); /* Brighter border */
   border-radius: 10px; /* Softer corners */
@@ -40,7 +45,12 @@
 }
 
 .download-pdf-btn:hover {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3), rgba(59, 130, 246, 0.3)); /* Brighter gradient on hover */
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.3),
+    rgba(236, 72, 153, 0.3),
+    rgba(59, 130, 246, 0.3)
+  ); /* Brighter gradient on hover */
   transform: translateY(-3px); /* More pronounced lift */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Glow effect */
   border-color: rgba(255, 255, 255, 0.6); /* Brighter border */

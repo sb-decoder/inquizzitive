@@ -12,20 +12,16 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = "signin" }) => {
 
   const { signIn, signUp, resetPassword } = useAuth();
 
-
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-
 
   // Validation for full name
   const validateName = (name) => {
     const nameRegex = /^[A-Za-z\s]{2,}$/;
     return nameRegex.test(name.trim());
   };
-
-
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
@@ -36,7 +32,6 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = "signin" }) => {
       setError("");
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +45,9 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = "signin" }) => {
     }
 
     if (mode === "signup" && !validateName(fullName)) {
-      setError("Please enter a valid full name (only letters, min 2 characters).");
+      setError(
+        "Please enter a valid full name (only letters, min 2 characters).",
+      );
       return;
     }
 

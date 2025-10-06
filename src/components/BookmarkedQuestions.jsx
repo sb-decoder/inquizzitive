@@ -1,150 +1,162 @@
-import { useState, useEffect } from 'react'
-import { bookmarkService } from '../services/bookmarkService'
-import GlassmorphicDropdown from './GlassmorphicDropdown'
+import { useState, useEffect } from "react";
+import { bookmarkService } from "../services/bookmarkService";
+import GlassmorphicDropdown from "./GlassmorphicDropdown";
 
 const BookmarkedQuestions = ({ user }) => {
-  const [bookmarks, setBookmarks] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [stats, setStats] = useState(null)
-  const [selectedCategory, setSelectedCategory] = useState('All Categories')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [editingNotes, setEditingNotes] = useState(null)
-  const [noteText, setNoteText] = useState('')
+  const [bookmarks, setBookmarks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editingNotes, setEditingNotes] = useState(null);
+  const [noteText, setNoteText] = useState("");
 
   useEffect(() => {
     if (user) {
-      loadBookmarks()
-      loadBookmarkStats()
+      loadBookmarks();
+      loadBookmarkStats();
     }
-  }, [user])
+  }, [user]);
 
   useEffect(() => {
     if (user) {
-      filterBookmarks()
+      filterBookmarks();
     }
-  }, [selectedCategory, searchTerm])
+  }, [selectedCategory, searchTerm]);
 
   const loadBookmarks = async () => {
-    setLoading(true)
-    setError(null)
-    
+    setLoading(true);
+    setError(null);
+
     try {
-      const result = await bookmarkService.getUserBookmarks(100) // Load up to 100 bookmarks
-      if (result.error) throw new Error(result.error)
-      setBookmarks(result.data || [])
+      const result = await bookmarkService.getUserBookmarks(100); // Load up to 100 bookmarks
+      if (result.error) throw new Error(result.error);
+      setBookmarks(result.data || []);
     } catch (err) {
-      console.error('Error loading bookmarks:', err)
-      setError('Failed to load bookmarked questions.')
+      console.error("Error loading bookmarks:", err);
+      setError("Failed to load bookmarked questions.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const loadBookmarkStats = async () => {
     try {
-      const result = await bookmarkService.getBookmarkStats()
-      if (result.error) throw new Error(result.error)
-      setStats(result.data)
+      const result = await bookmarkService.getBookmarkStats();
+      if (result.error) throw new Error(result.error);
+      setStats(result.data);
     } catch (err) {
-      console.error('Error loading bookmark stats:', err)
+      console.error("Error loading bookmark stats:", err);
     }
-  }
+  };
 
   const filterBookmarks = async () => {
-    if (!user) return
+    if (!user) return;
 
-    setLoading(true)
+    setLoading(true);
     try {
-      let result
-      
+      let result;
+
       if (searchTerm.trim()) {
         // Search bookmarks
-        result = await bookmarkService.searchBookmarks(searchTerm, 50)
-      } else if (selectedCategory !== 'All Categories') {
+        result = await bookmarkService.searchBookmarks(searchTerm, 50);
+      } else if (selectedCategory !== "All Categories") {
         // Filter by category
-        result = await bookmarkService.getBookmarksByCategory(selectedCategory, 50)
+        result = await bookmarkService.getBookmarksByCategory(
+          selectedCategory,
+          50,
+        );
       } else {
         // Load all bookmarks
-        result = await bookmarkService.getUserBookmarks(100)
+        result = await bookmarkService.getUserBookmarks(100);
       }
 
-      if (result.error) throw new Error(result.error)
-      setBookmarks(result.data || [])
+      if (result.error) throw new Error(result.error);
+      setBookmarks(result.data || []);
     } catch (err) {
-      console.error('Error filtering bookmarks:', err)
-      setError('Failed to filter bookmarks.')
+      console.error("Error filtering bookmarks:", err);
+      setError("Failed to filter bookmarks.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleRemoveBookmark = async (bookmarkId) => {
     try {
-      const result = await bookmarkService.removeBookmark(bookmarkId)
-      if (result.error) throw new Error(result.error)
-      
-      setBookmarks(prev => prev.filter(bookmark => bookmark.id !== bookmarkId))
-      loadBookmarkStats() // Refresh stats
+      const result = await bookmarkService.removeBookmark(bookmarkId);
+      if (result.error) throw new Error(result.error);
+
+      setBookmarks((prev) =>
+        prev.filter((bookmark) => bookmark.id !== bookmarkId),
+      );
+      loadBookmarkStats(); // Refresh stats
     } catch (err) {
-      console.error('Error removing bookmark:', err)
-      alert('Failed to remove bookmark. Please try again.')
+      console.error("Error removing bookmark:", err);
+      alert("Failed to remove bookmark. Please try again.");
     }
-  }
+  };
 
   const handleUpdateNotes = async (bookmarkId) => {
     try {
-      const result = await bookmarkService.updateBookmarkNotes(bookmarkId, noteText)
-      if (result.error) throw new Error(result.error)
-      
-      setBookmarks(prev => 
-        prev.map(bookmark => 
-          bookmark.id === bookmarkId 
+      const result = await bookmarkService.updateBookmarkNotes(
+        bookmarkId,
+        noteText,
+      );
+      if (result.error) throw new Error(result.error);
+
+      setBookmarks((prev) =>
+        prev.map((bookmark) =>
+          bookmark.id === bookmarkId
             ? { ...bookmark, notes: noteText }
-            : bookmark
-        )
-      )
-      setEditingNotes(null)
-      setNoteText('')
+            : bookmark,
+        ),
+      );
+      setEditingNotes(null);
+      setNoteText("");
     } catch (err) {
-      console.error('Error updating notes:', err)
-      alert('Failed to update notes. Please try again.')
+      console.error("Error updating notes:", err);
+      alert("Failed to update notes. Please try again.");
     }
-  }
+  };
 
   const startEditingNotes = (bookmark) => {
-    setEditingNotes(bookmark.id)
-    setNoteText(bookmark.notes || '')
-  }
+    setEditingNotes(bookmark.id);
+    setNoteText(bookmark.notes || "");
+  };
 
   const cancelEditingNotes = () => {
-    setEditingNotes(null)
-    setNoteText('')
-  }
+    setEditingNotes(null);
+    setNoteText("");
+  };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty?.toLowerCase()) {
-      case 'easy': return 'text-green-400'
-      case 'medium': return 'text-yellow-400'
-      case 'hard': return 'text-red-400'
-      default: return 'text-gray-400'
+      case "easy":
+        return "text-green-400";
+      case "medium":
+        return "text-yellow-400";
+      case "hard":
+        return "text-red-400";
+      default:
+        return "text-gray-400";
     }
-  }
+  };
 
   const getCategoryOptions = () => {
-    if (!stats?.categoryCounts) return ['All Categories']
-    return ['All Categories', ...Object.keys(stats.categoryCounts)]
-  }
+    if (!stats?.categoryCounts) return ["All Categories"];
+    return ["All Categories", ...Object.keys(stats.categoryCounts)];
+  };
 
   if (loading && bookmarks.length === 0) {
     return (
@@ -152,14 +164,16 @@ const BookmarkedQuestions = ({ user }) => {
         <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mb-4"></div>
         <p className="text-gray-300">Loading your bookmarked questions...</p>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4">❌</div>
-        <h3 className="text-xl font-semibold text-gray-300 mb-2">Error Loading Bookmarks</h3>
+        <h3 className="text-xl font-semibold text-gray-300 mb-2">
+          Error Loading Bookmarks
+        </h3>
         <p className="text-gray-400 mb-4">{error}</p>
         <button
           onClick={loadBookmarks}
@@ -168,7 +182,7 @@ const BookmarkedQuestions = ({ user }) => {
           Retry
         </button>
       </div>
-    )
+    );
   }
 
   return (
@@ -180,14 +194,18 @@ const BookmarkedQuestions = ({ user }) => {
             <span>🔖</span>
             Bookmark Statistics
           </h4>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-400">{stats.totalBookmarks}</div>
+              <div className="text-2xl font-bold text-yellow-400">
+                {stats.totalBookmarks}
+              </div>
               <div className="text-sm text-gray-400">Total Bookmarks</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-400">{stats.recentBookmarks}</div>
+              <div className="text-2xl font-bold text-orange-400">
+                {stats.recentBookmarks}
+              </div>
               <div className="text-sm text-gray-400">This Week</div>
             </div>
             <div className="text-center">
@@ -198,10 +216,13 @@ const BookmarkedQuestions = ({ user }) => {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-400">
-                {Object.entries(stats.categoryCounts).reduce((max, [cat, count]) => 
-                  count > max.count ? { category: cat, count } : max, 
-                  { category: 'None', count: 0 }
-                ).category}
+                {
+                  Object.entries(stats.categoryCounts).reduce(
+                    (max, [cat, count]) =>
+                      count > max.count ? { category: cat, count } : max,
+                    { category: "None", count: 0 },
+                  ).category
+                }
               </div>
               <div className="text-sm text-gray-400">Top Category</div>
             </div>
@@ -220,7 +241,7 @@ const BookmarkedQuestions = ({ user }) => {
             className="w-48"
           />
         </div>
-        
+
         <div className="flex items-center gap-2 flex-1 min-w-[200px]">
           <label className="text-sm text-gray-400">Search:</label>
           <input
@@ -238,22 +259,23 @@ const BookmarkedQuestions = ({ user }) => {
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📌</div>
           <h3 className="text-xl font-semibold text-gray-300 mb-2">
-            {searchTerm || selectedCategory !== 'All Categories' 
-              ? 'No matching bookmarks found' 
-              : 'No Bookmarked Questions'
-            }
+            {searchTerm || selectedCategory !== "All Categories"
+              ? "No matching bookmarks found"
+              : "No Bookmarked Questions"}
           </h3>
           <p className="text-gray-400">
-            {searchTerm || selectedCategory !== 'All Categories'
-              ? 'Try adjusting your filters or search terms.'
-              : 'Start bookmarking interesting questions during quizzes to see them here!'
-            }
+            {searchTerm || selectedCategory !== "All Categories"
+              ? "Try adjusting your filters or search terms."
+              : "Start bookmarking interesting questions during quizzes to see them here!"}
           </p>
         </div>
       ) : (
         <div className="grid gap-4">
           {bookmarks.map((bookmark) => (
-            <div key={bookmark.id} className="bg-white/5 rounded-lg p-6 border border-white/10 hover:border-white/20 transition-colors">
+            <div
+              key={bookmark.id}
+              className="bg-white/5 rounded-lg p-6 border border-white/10 hover:border-white/20 transition-colors"
+            >
               {/* Question Header */}
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div className="flex-1">
@@ -261,14 +283,18 @@ const BookmarkedQuestions = ({ user }) => {
                     <span className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-xs font-medium">
                       {bookmark.category}
                     </span>
-                    <span className={`text-xs font-medium ${getDifficultyColor(bookmark.difficulty)}`}>
+                    <span
+                      className={`text-xs font-medium ${getDifficultyColor(bookmark.difficulty)}`}
+                    >
                       {bookmark.difficulty}
                     </span>
                     <span className="text-xs text-gray-500">
                       {formatDate(bookmark.created_at)}
                     </span>
                   </div>
-                  <h4 className="text-white font-semibold mb-2">{bookmark.question}</h4>
+                  <h4 className="text-white font-semibold mb-2">
+                    {bookmark.question}
+                  </h4>
                 </div>
                 <button
                   onClick={() => handleRemoveBookmark(bookmark.id)}
@@ -286,8 +312,8 @@ const BookmarkedQuestions = ({ user }) => {
                     key={index}
                     className={`p-3 rounded-lg border ${
                       option === bookmark.correct_answer
-                        ? 'bg-green-500/20 border-green-500/40 text-green-300'
-                        : 'bg-white/5 border-white/10 text-gray-300'
+                        ? "bg-green-500/20 border-green-500/40 text-green-300"
+                        : "bg-white/5 border-white/10 text-gray-300"
                     }`}
                   >
                     <span className="font-medium mr-2">
@@ -304,8 +330,12 @@ const BookmarkedQuestions = ({ user }) => {
               {/* Explanation */}
               {bookmark.explanation && (
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-4">
-                  <h5 className="text-blue-300 font-medium mb-1">Explanation:</h5>
-                  <p className="text-gray-300 text-sm">{bookmark.explanation}</p>
+                  <h5 className="text-blue-300 font-medium mb-1">
+                    Explanation:
+                  </h5>
+                  <p className="text-gray-300 text-sm">
+                    {bookmark.explanation}
+                  </p>
                 </div>
               )}
 
@@ -318,11 +348,11 @@ const BookmarkedQuestions = ({ user }) => {
                       onClick={() => startEditingNotes(bookmark)}
                       className="text-purple-400 hover:text-purple-300 text-sm"
                     >
-                      {bookmark.notes ? 'Edit' : 'Add Note'}
+                      {bookmark.notes ? "Edit" : "Add Note"}
                     </button>
                   )}
                 </div>
-                
+
                 {editingNotes === bookmark.id ? (
                   <div className="space-y-2">
                     <textarea
@@ -349,7 +379,7 @@ const BookmarkedQuestions = ({ user }) => {
                   </div>
                 ) : (
                   <p className="text-gray-400 text-sm italic">
-                    {bookmark.notes || 'No notes added yet.'}
+                    {bookmark.notes || "No notes added yet."}
                   </p>
                 )}
               </div>
@@ -365,14 +395,16 @@ const BookmarkedQuestions = ({ user }) => {
           Bookmark Tips
         </h5>
         <ul className="text-sm text-gray-300 space-y-1">
-          <li>• Bookmark challenging questions during quizzes for later review</li>
+          <li>
+            • Bookmark challenging questions during quizzes for later review
+          </li>
           <li>• Add personal notes to remember why a question was tricky</li>
           <li>• Use the search feature to quickly find specific topics</li>
           <li>• Review bookmarked questions before important exams</li>
         </ul>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BookmarkedQuestions
+export default BookmarkedQuestions;

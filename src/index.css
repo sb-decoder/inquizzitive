@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 /* Tailwind CSS Directives */
 @tailwind base;
@@ -19,15 +19,19 @@
 
   body,
   html {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family:
+      "Inter",
+      system-ui,
+      -apple-system,
+      sans-serif;
     background-image: linear-gradient(
       135deg,
       #7fb8b5 0%,
       #64a8b9 15%,
       #365486 60%,
-      #0F1035 100%
+      #0f1035 100%
     );
-    background-color: #7FC7D9;
+    background-color: #7fc7d9;
 
     min-height: 100vh;
     overflow-x: hidden;
@@ -283,12 +287,12 @@
     .main-container {
       padding: 80px 12px 24px;
     }
-    
+
     /* Ensure Dashboard doesn't overlap navbar on iPhone SE */
     .dashboard-overlay {
       padding-top: 65px !important;
     }
-    
+
     .mobile-menu {
       top: 55px !important;
     }
@@ -331,7 +335,10 @@
     @apply text-white font-semibold px-3 py-2 rounded-xl;
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease;
   }
   .btn-retry:hover:not(:disabled) {
     @apply -translate-y-px;
@@ -392,7 +399,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #4c2a78 0%, #5D2F77 80%, #E45A92 100%);
+    background: linear-gradient(135deg, #4c2a78 0%, #5d2f77 80%, #e45a92 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -620,7 +627,7 @@
   }
 
   .progress-bar-fill::after {
-    content: '';
+    content: "";
     @apply absolute top-0 right-0 w-2 h-full;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
     animation: shimmer 2s ease-in-out infinite;
@@ -1702,11 +1709,11 @@
   .question-header {
     @apply gap-2;
   }
-  
+
   .bookmark-btn {
     @apply w-8 h-8;
   }
-  
+
   .bookmark-icon {
     @apply text-base;
   }
