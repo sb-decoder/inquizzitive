@@ -58,70 +58,52 @@ export default function AIChatMentor() {
           <button
             aria-label={open ? "Close AI Mentor" : "Open AI Mentor"}
             onClick={() => setOpen((s) => !s)}
-            className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-rose-500 shadow-xl flex items-center justify-center text-white text-2xl"
-            title="AI Quiz Mentor"
+            className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg flex items-center justify-center text-white text-xl"
+            title="AI Mentor"
           >
-            {/* Chat SVG icon for a more professional look */}
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
-              <path d="M2 6.5C2 4.57 3.57 3 5.5 3h13C20.43 3 22 4.57 22 6.5v5c0 1.93-1.57 3.5-3.5 3.5H8.7L4 20.5V15c-1.1 0-2-.9-2-2v-6.5z" />
-            </svg>
+            💬
           </button>
 
           {/* Panel */}
           {open && (
-            <div className="mt-3 w-[420px] max-w-[95vw]">
-              <div className="glass-card p-5 rounded-xl shadow-2xl bg-slate-900/70 backdrop-blur-sm">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 flex items-center justify-center rounded-md bg-gradient-to-r from-indigo-500 to-rose-500 text-white shadow"> 
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                          <path d="M2 6.5C2 4.57 3.57 3 5.5 3h13C20.43 3 22 4.57 22 6.5v5c0 1.93-1.57 3.5-3.5 3.5H8.7L4 20.5V15c-1.1 0-2-.9-2-2v-6.5z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h4 className="text-white text-lg font-semibold">AI Quiz Mentor</h4>
-                        <div className="text-sm text-gray-300">Ask for explanations or request suggested questions</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <button onClick={() => setOpen(false)} className="text-gray-300 hover:text-white text-lg px-2 py-1">✕</button>
-                  </div>
+            <div className="mt-2 w-[360px] max-w-[90vw]">
+              <div className="glass-card p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-white font-semibold">AI Quiz Mentor</h4>
+                  <button onClick={() => setOpen(false)} className="text-gray-300 hover:text-white">✕</button>
                 </div>
 
-                <div className="mb-3">
+                <div className="mb-2">
                   <input
                     ref={inputRef}
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && send()}
-                    placeholder="Ask: Why is the answer not the World Bank? Or: suggest 10 questions"
-                    className="w-full px-4 py-3 rounded-lg bg-white/6 text-white placeholder-gray-300 text-base outline-none"
+                    placeholder="Ask: Why is the answer not the World Bank?"
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 text-white placeholder-gray-300"
                   />
                 </div>
 
-                <div className="flex gap-3 mb-4">
-                  <button onClick={send} disabled={loading} className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-rose-500 text-white font-medium shadow">
-                    {loading ? "Thinking..." : "Ask Mentor"}
+                <div className="flex gap-2 mb-3">
+                  <button onClick={send} disabled={loading} className="px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    {loading ? "Thinking..." : "Ask"}
                   </button>
-                  <button onClick={() => { setMessages([]); setQuestion(""); }} className="px-4 py-2 rounded-lg bg-white/6 text-white">Clear</button>
+                  <button onClick={() => { setMessages([]); setQuestion(""); }} className="px-3 py-2 rounded-lg bg-white/10 text-white">Clear</button>
                 </div>
 
                 {error && <div className="mb-2 text-sm text-red-300">{error}</div>}
 
-                <div className="space-y-3 max-h-72 overflow-y-auto">
+                <div className="space-y-2 max-h-56 overflow-y-auto">
                   {messages.map((m, i) => {
                     if (m.type === "questions") {
                       return (
-                        <div key={i} className="p-3 rounded-md bg-white/5">
-                          <div className="text-xs text-gray-300 mb-2">Mentor – Suggested Questions</div>
-                          <div className="text-base text-white space-y-3">
+                        <div key={i} className="p-2 rounded-md bg-white/10">
+                          <div className="text-xs text-gray-300 mb-1">Mentor – Suggested Questions</div>
+                          <div className="text-sm text-white space-y-2">
                             {m.questions.slice(0, 10).map((q, idx) => (
-                              <div key={idx} className="p-3 rounded-md bg-white/6">
-                                <div className="font-semibold text-white">{idx + 1}. {q.question}</div>
-                                <ul className="list-disc list-inside text-sm text-gray-200 mt-2">
+                              <div key={idx} className="p-2 rounded-md bg-white/5">
+                                <div className="font-medium">{idx + 1}. {q.question}</div>
+                                <ul className="list-disc list-inside text-sm text-gray-200 mt-1">
                                   {q.options?.map((opt, oi) => (
                                     <li key={oi}>{opt}</li>
                                   ))}
@@ -134,9 +116,9 @@ export default function AIChatMentor() {
                     }
 
                     return (
-                      <div key={i} className={`p-3 rounded-md ${m.role === "user" ? "bg-white/6" : "bg-white/8"}`}>
-                        <div className="text-sm text-gray-300 mb-1">{m.role === "user" ? "You" : "Mentor"}</div>
-                        <div className="text-base text-white">{m.text}</div>
+                      <div key={i} className={`p-2 rounded-md ${m.role === "user" ? "bg-white/5" : "bg-white/10"}`}>
+                        <div className="text-xs text-gray-300 mb-1">{m.role === "user" ? "You" : "Mentor"}</div>
+                        <div className="text-sm text-white">{m.text}</div>
                       </div>
                     );
                   })}
