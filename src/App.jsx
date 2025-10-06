@@ -4,8 +4,6 @@ import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
 import NotificationBadge from "./components/NotificationBadge";
 import GlassmorphicDropdown from "./components/GlassmorphicDropdown";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { quizService } from "./services/quizService";
 import { bookmarkService } from "./services/bookmarkService";
 
 import { jsPDF } from "jspdf"; // Import jsPDF
@@ -381,7 +379,7 @@ export default function App({
   const [showStartScreen, setShowStartScreen] = useState(true);
   const [originalQuiz, setOriginalQuiz] = useState([]);
   const [showExamPrepPage, setShowExamPrepPage] = useState(false);
-  
+
   // Bookmark states
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState(new Set());
   const [bookmarkLoading, setBookmarkLoading] = useState(new Set());
@@ -581,43 +579,52 @@ export default function App({
   // Bookmark functions
   const checkBookmarkStatus = async (question) => {
     if (!user) return;
-    
+
     try {
-      const result = await bookmarkService.isBookmarked(question.question, question.answer);
+      const result = await bookmarkService.isBookmarked(
+        question.question,
+        question.answer,
+      );
       if (result.isBookmarked) {
-        setBookmarkedQuestions(prev => new Set([...prev, `${question.question}-${question.answer}`]));
+        setBookmarkedQuestions(
+          (prev) =>
+            new Set([...prev, `${question.question}-${question.answer}`]),
+        );
       }
     } catch (error) {
-      console.error('Error checking bookmark status:', error);
+      console.error("Error checking bookmark status:", error);
     }
   };
 
   const handleBookmarkToggle = async (questionIndex) => {
     if (!user) {
       // Show sign-in prompt or modal
-      alert('Please sign in to bookmark questions');
+      alert("Please sign in to bookmark questions");
       return;
     }
 
     const question = quiz[questionIndex];
     const questionKey = `${question.question}-${question.answer}`;
-    
-    setBookmarkLoading(prev => new Set([...prev, questionIndex]));
+
+    setBookmarkLoading((prev) => new Set([...prev, questionIndex]));
 
     try {
       const isCurrentlyBookmarked = bookmarkedQuestions.has(questionKey);
-      
+
       if (isCurrentlyBookmarked) {
         // Remove bookmark
-        const result = await bookmarkService.removeBookmarkByQuestion(question.question, question.answer);
+        const result = await bookmarkService.removeBookmarkByQuestion(
+          question.question,
+          question.answer,
+        );
         if (result.success) {
-          setBookmarkedQuestions(prev => {
+          setBookmarkedQuestions((prev) => {
             const newSet = new Set(prev);
             newSet.delete(questionKey);
             return newSet;
           });
         } else {
-          console.error('Error removing bookmark:', result.error);
+          console.error("Error removing bookmark:", result.error);
         }
       } else {
         // Add bookmark
@@ -627,23 +634,23 @@ export default function App({
           answer: question.answer,
           explanation: question.explanation,
           category: selectedCategory,
-          difficulty: selectedDifficulty
+          difficulty: selectedDifficulty,
         };
-        
+
         const result = await bookmarkService.saveBookmark(bookmarkData);
         if (result.data) {
-          setBookmarkedQuestions(prev => new Set([...prev, questionKey]));
-        } else if (result.error === 'Question already bookmarked') {
+          setBookmarkedQuestions((prev) => new Set([...prev, questionKey]));
+        } else if (result.error === "Question already bookmarked") {
           // Question was already bookmarked, update UI state
-          setBookmarkedQuestions(prev => new Set([...prev, questionKey]));
+          setBookmarkedQuestions((prev) => new Set([...prev, questionKey]));
         } else {
-          console.error('Error saving bookmark:', result.error);
+          console.error("Error saving bookmark:", result.error);
         }
       }
     } catch (error) {
-      console.error('Error toggling bookmark:', error);
+      console.error("Error toggling bookmark:", error);
     } finally {
-      setBookmarkLoading(prev => {
+      setBookmarkLoading((prev) => {
         const newSet = new Set(prev);
         newSet.delete(questionIndex);
         return newSet;
@@ -654,7 +661,7 @@ export default function App({
   // Check bookmark status when quiz loads
   useEffect(() => {
     if (quiz.length > 0 && user) {
-      quiz.forEach(question => {
+      quiz.forEach((question) => {
         checkBookmarkStatus(question);
       });
     }
@@ -1194,17 +1201,21 @@ export default function App({
                         onClick={() => handleBookmarkToggle(idx)}
                         disabled={bookmarkLoading.has(idx)}
                         className={`bookmark-btn ${
-                          bookmarkedQuestions.has(`${q.question}-${q.answer}`) ? 'bookmarked' : ''
+                          bookmarkedQuestions.has(`${q.question}-${q.answer}`)
+                            ? "bookmarked"
+                            : ""
                         }`}
                         title={
-                          bookmarkedQuestions.has(`${q.question}-${q.answer}`) 
-                            ? 'Remove bookmark' 
-                            : 'Bookmark this question'
+                          bookmarkedQuestions.has(`${q.question}-${q.answer}`)
+                            ? "Remove bookmark"
+                            : "Bookmark this question"
                         }
                       >
                         {bookmarkLoading.has(idx) ? (
                           <span className="bookmark-loading">⟳</span>
-                        ) : bookmarkedQuestions.has(`${q.question}-${q.answer}`) ? (
+                        ) : bookmarkedQuestions.has(
+                            `${q.question}-${q.answer}`,
+                          ) ? (
                           <span className="bookmark-icon bookmarked">🔖</span>
                         ) : (
                           <span className="bookmark-icon">📌</span>
