@@ -506,8 +506,8 @@ export default function App({
       {/* Floating Navbar */}
       <nav className="floating-nav">
         <div className="nav-brand">
-          <span className="nav-logo">🧠</span>
-          <span className="nav-title">Inquizzitive</span>
+          <span className="nav-logo"> 🧠 </span>
+          <span className="nav-title">InQuizzitive</span>
         </div>
 
         {/* Desktop Navigation */}
@@ -722,7 +722,7 @@ export default function App({
           <div className="welcome-section">
             <div className="glass-card welcome-card">
               <h1 className="welcome-title">
-                Welcome to <span className="gradient-text">Inquizzitive</span>
+                Welcome to <span className="gradient-text">InQuizzitive</span>
               </h1>
               <p className="welcome-subtitle">
                 Master government exams with AI-powered practice sessions

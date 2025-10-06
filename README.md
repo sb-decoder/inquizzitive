@@ -1,4 +1,4 @@
-# 🧠 Inquizzitive
+# 🧠 InQuizzitive
 
 [![Hacktoberfest](https://img.shields.io/badge/Hacktoberfest-2025-blueviolet?style=for-the-badge&logo=hacktoberfest)](https://hacktoberfest.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](./LICENSE)
@@ -9,6 +9,8 @@
 **AI-powered quiz application for government exam preparation** - Master SSC, UPSC, Bank exams, and more with personalized practice sessions!
 
 Built with React, powered by Google's Gemini AI, and featuring a stunning glassmorphic UI.
+
+<img width="1919" height="986" alt="image" src="https://github.com/user-attachments/assets/6b8cbe95-a538-4bdc-9132-d4fffd50ef02" />
 
 ---
 
