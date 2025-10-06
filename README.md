@@ -10,6 +10,8 @@
 
 Built with React, powered by Google's Gemini AI, and featuring a stunning glassmorphic UI.
 
+<img width="1919" height="986" alt="image" src="https://github.com/user-attachments/assets/6b8cbe95-a538-4bdc-9132-d4fffd50ef02" />
+
 ---
 
 ## ✨ Features
