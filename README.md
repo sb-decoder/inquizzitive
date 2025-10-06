@@ -31,10 +31,10 @@ Built with React, powered by Google's Gemini AI, and featuring a stunning glassm
 
 - [x] User authentication and profiles
 - [x] Progress tracking dashboard
-- [ ] Leaderboard system
-- [ ] More exam categories (GATE, CAT, etc.)
 - [x] PDF export of quiz results
 - [x] Dark/Light theme toggle
+- [ ] Leaderboard system
+- [ ] More exam categories (GATE, CAT, etc.)
 - [ ] Previous year papers integration
 
 ---
@@ -46,6 +46,7 @@ Built with React, powered by Google's Gemini AI, and featuring a stunning glassm
 - Node.js (v14 or higher)
 - npm or yarn
 - Google Gemini API key
+- Supabase setup
 
 ## 🎮 How to Use
 
@@ -73,7 +74,7 @@ We love contributions! Here's how you can help:
 ### Ways to Contribute
 
 - 🐞 Fix bugs and issues
-- ✨ Add new features (more categories, difficulty algorithms, etc.)
+- ✨ Add new features 
 - 🎨 Improve UI/UX design
 - 💡 Suggest improvements
 
@@ -108,10 +109,12 @@ This repository participates in **Hacktoberfest**!
 ## 🛠️ Tech Stack
 
 - **Frontend:** React + Vite
-- **Styling:** Custom CSS with Glassmorphism
+- **Styling:** Custom CSS with Glassmorphism and Tailwind CSS 
 - **AI:** Google Gemini 1.5 Flash
+- **Authentication & Database:** Supabase 
 - **Build Tool:** Vite
 - **Package Manager:** npm
+- **Deployment:** Vercel
 
 
 
