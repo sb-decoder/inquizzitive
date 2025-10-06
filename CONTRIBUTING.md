@@ -62,6 +62,7 @@ npm run start
 
 ```bash
 git add .
+npm run prepare
 git commit -m "✨ Added new feature: description (fixes #issue_number)"
 git push origin feature/your-feature-name
 ```
