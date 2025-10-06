@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
+import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
-const AuthModal = ({ isOpen, onClose, mode: initialMode = 'signin' }) => {
-  const [mode, setMode] = useState(initialMode) // 'signin', 'signup', 'reset'
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [fullName, setFullName] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
+const AuthModal = ({ isOpen, onClose, mode: initialMode = "signin" }) => {
+  const [mode, setMode] = useState(initialMode); // 'signin', 'signup', 'reset'
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  const { signIn, signUp, resetPassword } = useAuth()
+  const { signIn, signUp, resetPassword } = useAuth();
 
 
   const validateEmail = (email) => {
@@ -39,10 +39,10 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = 'signin' }) => {
 
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    setMessage('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setMessage("");
 
     if (!validateEmail(email)) {
       setError("Please enter a valid email address.");
@@ -55,41 +55,41 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = 'signin' }) => {
     }
 
     try {
-      if (mode === 'signin') {
-        const { error } = await signIn(email, password)
-        if (error) throw error
-        setMessage('Successfully signed in!')
-        setTimeout(() => onClose(), 1000)
-      } else if (mode === 'signup') {
-        const { error } = await signUp(email, password, fullName)
-        if (error) throw error
-        setMessage('Check your email for the confirmation link!')
-      } else if (mode === 'reset') {
-        const { error } = await resetPassword(email)
-        if (error) throw error
-        setMessage('Password reset email sent!')
+      if (mode === "signin") {
+        const { error } = await signIn(email, password);
+        if (error) throw error;
+        setMessage("Successfully signed in!");
+        setTimeout(() => onClose(), 1000);
+      } else if (mode === "signup") {
+        const { error } = await signUp(email, password, fullName);
+        if (error) throw error;
+        setMessage("Check your email for the confirmation link!");
+      } else if (mode === "reset") {
+        const { error } = await resetPassword(email);
+        if (error) throw error;
+        setMessage("Password reset email sent!");
       }
     } catch (error) {
-      setError(error.message)
+      setError(error.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const resetForm = () => {
-    setEmail('')
-    setPassword('')
-    setFullName('')
-    setError('')
-    setMessage('')
-  }
+    setEmail("");
+    setPassword("");
+    setFullName("");
+    setError("");
+    setMessage("");
+  };
 
   const switchMode = (newMode) => {
-    setMode(newMode)
-    resetForm()
-  }
+    setMode(newMode);
+    resetForm();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -97,22 +97,32 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = 'signin' }) => {
         <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">
-              {mode === 'signin' && 'Sign In'}
-              {mode === 'signup' && 'Sign Up'}
-              {mode === 'reset' && 'Reset Password'}
+              {mode === "signin" && "Sign In"}
+              {mode === "signup" && "Sign Up"}
+              {mode === "reset" && "Reset Password"}
             </h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === 'signup' && (
+            {mode === "signup" && (
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Full Name
@@ -142,7 +152,7 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = 'signin' }) => {
               />
             </div>
 
-            {mode !== 'reset' && (
+            {mode !== "reset" && (
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Password
@@ -183,27 +193,27 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = 'signin' }) => {
                 </div>
               ) : (
                 <>
-                  {mode === 'signin' && 'Sign In'}
-                  {mode === 'signup' && 'Sign Up'}
-                  {mode === 'reset' && 'Send Reset Email'}
+                  {mode === "signin" && "Sign In"}
+                  {mode === "signup" && "Sign Up"}
+                  {mode === "reset" && "Send Reset Email"}
                 </>
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center space-y-2">
-            {mode === 'signin' && (
+            {mode === "signin" && (
               <>
                 <button
-                  onClick={() => switchMode('reset')}
+                  onClick={() => switchMode("reset")}
                   className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
                 >
                   Forgot your password?
                 </button>
                 <div className="text-gray-400 text-sm">
-                  Don't have an account?{' '}
+                  Don't have an account?{" "}
                   <button
-                    onClick={() => switchMode('signup')}
+                    onClick={() => switchMode("signup")}
                     className="text-purple-400 hover:text-purple-300 transition-colors"
                   >
                     Sign up
@@ -212,11 +222,11 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = 'signin' }) => {
               </>
             )}
 
-            {mode === 'signup' && (
+            {mode === "signup" && (
               <div className="text-gray-400 text-sm">
-                Already have an account?{' '}
+                Already have an account?{" "}
                 <button
-                  onClick={() => switchMode('signin')}
+                  onClick={() => switchMode("signin")}
                   className="text-purple-400 hover:text-purple-300 transition-colors"
                 >
                   Sign in
@@ -224,11 +234,11 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = 'signin' }) => {
               </div>
             )}
 
-            {mode === 'reset' && (
+            {mode === "reset" && (
               <div className="text-gray-400 text-sm">
-                Remember your password?{' '}
+                Remember your password?{" "}
                 <button
-                  onClick={() => switchMode('signin')}
+                  onClick={() => switchMode("signin")}
                   className="text-purple-400 hover:text-purple-300 transition-colors"
                 >
                   Sign in
@@ -239,7 +249,7 @@ const AuthModal = ({ isOpen, onClose, mode: initialMode = 'signin' }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AuthModal
+export default AuthModal;

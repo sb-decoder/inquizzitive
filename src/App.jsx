@@ -1,29 +1,35 @@
 // src/App.jsx
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useState } from "react";
 import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
-import AuthModal from "./components/AuthModal";
 import NotificationBadge from "./components/NotificationBadge";
 import GlassmorphicDropdown from "./components/GlassmorphicDropdown";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { quizService } from "./services/quizService";
 import { bookmarkService } from "./services/bookmarkService";
 
-import { jsPDF } from 'jspdf'; // Import jsPDF
-import './components/Result.css'
+import { jsPDF } from "jspdf"; // Import jsPDF
+import "./components/Result.css";
 
 const QUESTION_OPTIONS = [
-  { value: 5, label: '5 Questions (2.5 min)' },
-  { value: 10, label: '10 Questions (5 min)' },
-  { value: 15, label: '15 Questions (7.5 min)' },
-  { value: 20, label: '20 Questions (10 min)' },
-]
-const QUESTION_LABELS = QUESTION_OPTIONS.map(opt => opt.label)
-const getQuestionValue = (label) => QUESTION_OPTIONS.find(opt => opt.label === label)?.value
-const getQuestionLabel = (value) => QUESTION_OPTIONS.find(opt => opt.value === value)?.label
+  { value: 5, label: "5 Questions (2.5 min)" },
+  { value: 10, label: "10 Questions (5 min)" },
+  { value: 15, label: "15 Questions (7.5 min)" },
+  { value: 20, label: "20 Questions (10 min)" },
+];
+const QUESTION_LABELS = QUESTION_OPTIONS.map((opt) => opt.label);
+const getQuestionValue = (label) =>
+  QUESTION_OPTIONS.find((opt) => opt.label === label)?.value;
+const getQuestionLabel = (value) =>
+  QUESTION_OPTIONS.find((opt) => opt.value === value)?.label;
 
-export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboard, saveQuizResult }) {
+export default function App({
+  user,
+  onSignIn,
+  onSignOut,
+  onShowDashboard,
+  saveQuizResult,
+}) {
   // Mobile menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -380,7 +386,6 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState(new Set());
   const [bookmarkLoading, setBookmarkLoading] = useState(new Set());
 
-
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode ? JSON.parse(savedMode) : false;
@@ -418,10 +423,10 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       //   return;
       // }
       // Otherwise, use AI-generated questions
-      const requestUrl = `${import.meta.env.VITE_API_BASE_URL || ""}/api/getGeminiResponse?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`
+      const requestUrl = `${import.meta.env.VITE_API_BASE_URL || ""}/api/getGeminiResponse?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`;
       const result = await fetch(requestUrl, {
-        method: "GET"
-      })
+        method: "GET",
+      });
       let text = await result.text();
       text = text.replace(/```json|```/g, "").trim();
 
@@ -435,7 +440,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       try {
         questions = JSON.parse(text);
       } catch {
-        throw new Error("Couldn't understand the quiz format. Please try again.");
+        throw new Error(
+          "Couldn't understand the quiz format. Please try again.",
+        );
       }
 
       // Validate and clean the data
@@ -453,7 +460,12 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
 
       // Basic shape check
       const first = cleanedQuestions[0];
-      if (!first || !first.question || !Array.isArray(first.options) || typeof first.answer !== "string") {
+      if (
+        !first ||
+        !first.question ||
+        !Array.isArray(first.options) ||
+        typeof first.answer !== "string"
+      ) {
         throw new Error("The quiz data was malformed. Please try again.");
       }
 
@@ -464,7 +476,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
     } catch (err) {
       console.error("Error generating quiz:", err);
       setQuiz([]);
-      const friendly = err?.message || "We couldn't generate your quiz. Please try again in a moment.";
+      const friendly =
+        err?.message ||
+        "We couldn't generate your quiz. Please try again in a moment.";
       setError(friendly);
     }
     setLoading(false);
@@ -496,7 +510,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
     // Save quiz result to database if user is authenticated
     if (user && saveQuizResult) {
       const score = calculateScore();
-      const timeTaken = (quiz.length * 30) - timeLeft; // Calculate time taken
+      const timeTaken = quiz.length * 30 - timeLeft; // Calculate time taken
 
       const quizData = {
         category: selectedCategory,
@@ -506,18 +520,18 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
         scorePercentage: parseFloat(score.percentage),
         timeTaken: timeTaken,
         questions: quiz,
-        userAnswers: answers
+        userAnswers: answers,
       };
 
       try {
         const result = await saveQuizResult(quizData);
         if (result.error) {
-          console.error('Failed to save quiz result:', result.error);
+          console.error("Failed to save quiz result:", result.error);
         } else {
-          console.log('Quiz result saved successfully');
+          console.log("Quiz result saved successfully");
         }
       } catch (error) {
-        console.error('Error saving quiz result:', error);
+        console.error("Error saving quiz result:", error);
       }
     }
   }
@@ -650,18 +664,18 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   const generatePDF = () => {
     try {
       const doc = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
       });
 
       // Set font and colors for glassmorphic theme
-      doc.setFont('Helvetica', 'normal');
+      doc.setFont("Helvetica", "normal");
       doc.setTextColor(40, 40, 40);
 
       // Add title
       doc.setFontSize(18);
-      doc.text('Inquizzitive Quiz Results', 20, 20);
+      doc.text("Inquizzitive Quiz Results", 20, 20);
 
       // Add score summary
       doc.setFontSize(14);
@@ -673,7 +687,7 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       // Add question-wise feedback
       if (quiz.length > 0) {
         doc.setFontSize(12);
-        doc.text('Question-wise Performance:', 20, 90);
+        doc.text("Question-wise Performance:", 20, 90);
         let yPosition = 100;
 
         quiz.forEach((q, index) => {
@@ -683,30 +697,45 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
             yPosition = 20;
           }
 
-          const userAnswer = answers[index] || 'Not answered';
+          const userAnswer = answers[index] || "Not answered";
           const isCorrect = userAnswer.toLowerCase() === q.answer.toLowerCase();
 
           doc.setFontSize(10);
 
           // Split question text to fit page width
-          const questionLines = doc.splitTextToSize(`${index + 1}. ${q.question}`, 170);
+          const questionLines = doc.splitTextToSize(
+            `${index + 1}. ${q.question}`,
+            170,
+          );
           doc.text(questionLines, 20, yPosition);
           yPosition += questionLines.length * 5;
 
-          const answerLines = doc.splitTextToSize(`Your Answer: ${userAnswer}`, 170);
+          const answerLines = doc.splitTextToSize(
+            `Your Answer: ${userAnswer}`,
+            170,
+          );
           doc.text(answerLines, 20, yPosition);
           yPosition += answerLines.length * 5;
 
-          const correctLines = doc.splitTextToSize(`Correct Answer: ${q.answer}`, 170);
+          const correctLines = doc.splitTextToSize(
+            `Correct Answer: ${q.answer}`,
+            170,
+          );
           doc.text(correctLines, 20, yPosition);
           yPosition += correctLines.length * 5;
 
-          const statusLines = doc.splitTextToSize(`Status: ${isCorrect ? 'Correct' : 'Incorrect'}`, 170);
+          const statusLines = doc.splitTextToSize(
+            `Status: ${isCorrect ? "Correct" : "Incorrect"}`,
+            170,
+          );
           doc.text(statusLines, 20, yPosition);
           yPosition += statusLines.length * 5;
 
           if (q.explanation) {
-            const explanationLines = doc.splitTextToSize(`Explanation: ${q.explanation}`, 170);
+            const explanationLines = doc.splitTextToSize(
+              `Explanation: ${q.explanation}`,
+              170,
+            );
             doc.text(explanationLines, 20, yPosition);
             yPosition += explanationLines.length * 5;
           }
@@ -718,13 +747,19 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       // Add footer
       doc.setFontSize(8);
       doc.setTextColor(100, 100, 100);
-      doc.text('Generated by Inquizzitive - Powered by xAI', 20, doc.internal.pageSize.height - 10);
+      doc.text(
+        "Generated by Inquizzitive - Powered by xAI",
+        20,
+        doc.internal.pageSize.height - 10,
+      );
 
       // Save PDF
-      doc.save(`Inquizzitive_Quiz_Results_${new Date().toISOString().split('T')[0]}.pdf`);
+      doc.save(
+        `Inquizzitive_Quiz_Results_${new Date().toISOString().split("T")[0]}.pdf`,
+      );
     } catch (error) {
-      console.error('PDF generation failed:', error);
-      alert('Failed to generate PDF. Please try again.');
+      console.error("PDF generation failed:", error);
+      alert("Failed to generate PDF. Please try again.");
     }
   };
 
@@ -733,51 +768,55 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
   function calculateProgress() {
     const answeredCount = Object.keys(answers).length;
     const totalQuestions = quiz.length;
-    const percentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+    const percentage =
+      totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
     return {
       answered: answeredCount,
       total: totalQuestions,
-      percentage: Math.round(percentage)
+      percentage: Math.round(percentage),
     };
   }
 
   const progress = calculateProgress();
 
-
   // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isMobileMenuOpen && !event.target.closest('.mobile-menu') && !event.target.closest('.hamburger-btn')) {
+      if (
+        isMobileMenuOpen &&
+        !event.target.closest(".mobile-menu") &&
+        !event.target.closest(".hamburger-btn")
+      ) {
         setIsMobileMenuOpen(false);
       }
     };
 
     const handleEscapeKey = (event) => {
-      if (event.key === 'Escape' && isMobileMenuOpen) {
+      if (event.key === "Escape" && isMobileMenuOpen) {
         setIsMobileMenuOpen(false);
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    document.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("keydown", handleEscapeKey);
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('keydown', handleEscapeKey);
+      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [isMobileMenuOpen]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
-      document.body.classList.add('mobile-menu-open');
+      document.body.classList.add("mobile-menu-open");
     } else {
-      document.body.classList.remove('mobile-menu-open');
+      document.body.classList.remove("mobile-menu-open");
     }
 
     // Cleanup on unmount
     return () => {
-      document.body.classList.remove('mobile-menu-open');
+      document.body.classList.remove("mobile-menu-open");
     };
   }, [isMobileMenuOpen]);
 
@@ -880,9 +919,15 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
             aria-label="Toggle menu"
           >
             <div className="hamburger-icon">
-              <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
-              <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
-              <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+              <span
+                className={`hamburger-line ${isMobileMenuOpen ? "open" : ""}`}
+              ></span>
+              <span
+                className={`hamburger-line ${isMobileMenuOpen ? "open" : ""}`}
+              ></span>
+              <span
+                className={`hamburger-line ${isMobileMenuOpen ? "open" : ""}`}
+              ></span>
             </div>
           </button>
         </div>
@@ -959,7 +1004,6 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       </div>
 
       <div className="main-container">
-
         {/* Error Banner */}
         {error && (
           <div className="alert alert-error" role="alert">
@@ -971,19 +1015,26 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
               </div>
             </div>
             <div className="alert-actions">
-              <button className="btn-retry" disabled={loading} onClick={fetchQuiz}>
+              <button
+                className="btn-retry"
+                disabled={loading}
+                onClick={fetchQuiz}
+              >
                 {loading ? "Retrying..." : "Retry"}
               </button>
-              <button className="alert-close" aria-label="Dismiss error" onClick={() => setError(null)}>×</button>
+              <button
+                className="alert-close"
+                aria-label="Dismiss error"
+                onClick={() => setError(null)}
+              >
+                ×
+              </button>
             </div>
           </div>
         )}
 
         {/* Exam Prep Page */}
-        {showExamPrepPage && (
-          <ExamPrepPage onBack={hideExamPrep} />
-        )}
-
+        {showExamPrepPage && <ExamPrepPage onBack={hideExamPrep} />}
 
         {/* Welcome Screen */}
         {showStartScreen && (
@@ -996,13 +1047,11 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
                 Master government exams with AI-powered practice sessions
               </p>
 
-
               <div className="welcome-actions">
                 <button onClick={showExamPrep} className="info-btn">
                   📚 Learn About Exam Prep
                 </button>
               </div>
-
 
               <div className="quiz-setup">
                 <div className="setup-row">
@@ -1030,7 +1079,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
                   <GlassmorphicDropdown
                     options={QUESTION_LABELS}
                     defaultOption={getQuestionLabel(numQuestions)}
-                    onSelect={(label) => setNumQuestions(getQuestionValue(label))}
+                    onSelect={(label) =>
+                      setNumQuestions(getQuestionValue(label))
+                    }
                     className="w-full"
                   />
                 </div>
@@ -1116,9 +1167,12 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
             <div className="glass-card progress-card">
               <div className="progress-header">
                 <span className="progress-text">
-                  Progress: {progress.answered} of {progress.total} questions answered
+                  Progress: {progress.answered} of {progress.total} questions
+                  answered
                 </span>
-                <span className="progress-percentage">{progress.percentage}%</span>
+                <span className="progress-percentage">
+                  {progress.percentage}%
+                </span>
               </div>
               <div className="progress-bar-container">
                 <div
@@ -1163,8 +1217,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
                       <button
                         key={i}
                         onClick={() => handleOptionSelect(idx, opt)}
-                        className={`option-btn ${answers[idx] === opt ? "selected" : ""
-                          }`}
+                        className={`option-btn ${
+                          answers[idx] === opt ? "selected" : ""
+                        }`}
                       >
                         <span className="option-letter">
                           {String.fromCharCode(65 + i)}
@@ -1215,7 +1270,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
                     <span className="score-value total">{score.total}</span>
                   </div>
                 </div>
-                <button className="retry-btn" onClick={retryQuiz}>🔄️ Retry</button>
+                <button className="retry-btn" onClick={retryQuiz}>
+                  🔄️ Retry
+                </button>
               </div>
             </div>
 
@@ -1228,14 +1285,16 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
                 return (
                   <div
                     key={idx}
-                    className={`glass-card answer-card ${isCorrect ? "correct" : "incorrect"
-                      }`}
+                    className={`glass-card answer-card ${
+                      isCorrect ? "correct" : "incorrect"
+                    }`}
                   >
                     <div className="answer-header">
                       <span className="answer-number">Q{idx + 1}</span>
                       <span
-                        className={`answer-status ${isCorrect ? "correct" : "incorrect"
-                          }`}
+                        className={`answer-status ${
+                          isCorrect ? "correct" : "incorrect"
+                        }`}
                       >
                         {isCorrect ? "✅" : "❌"}
                       </span>
@@ -1245,8 +1304,9 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
                       <div className="answer-row">
                         <span className="answer-label">Your Answer:</span>
                         <span
-                          className={`answer-value ${isCorrect ? "correct" : "incorrect"
-                            }`}
+                          className={`answer-value ${
+                            isCorrect ? "correct" : "incorrect"
+                          }`}
                         >
                           {userAnswer || "Not answered"}
                         </span>
@@ -1286,8 +1346,8 @@ export default function App({ user, onSignIn, onSignUp, onSignOut, onShowDashboa
       <NotificationBadge
         user={user}
         onCategorySelect={(category) => {
-          setSelectedCategory(category)
-          setShowStartScreen(true)
+          setSelectedCategory(category);
+          setShowStartScreen(true);
         }}
       />
     </div>
