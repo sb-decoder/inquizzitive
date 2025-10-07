@@ -1212,7 +1212,91 @@
     @apply -translate-y-0.5;
     box-shadow: 0 8px 30px rgba(245, 87, 108, 0.4);
   }
+  /* Add these at the end of @layer components */
+.scroll-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
 }
+
+.scroll-to-top-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 20px rgba(245, 87, 108, 0.3);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  backdrop-filter: blur(10px);
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.scroll-to-top-btn:hover {
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 8px 30px rgba(245, 87, 108, 0.4);
+  background: linear-gradient(135deg, #f093fb 20%, #f5576c 80%);
+}
+
+.scroll-to-top-btn:active {
+  transform: scale(0.95);
+}
+
+.scroll-to-top-icon {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.notification-badge {
+  position: fixed;
+  bottom: 96px;
+  right: 24px;
+  z-index: 50;
+}
+
+/* ...rest of notification badge, panel, and responsive styles ... */
+
+
+}
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 /* Animations */
 @keyframes float {
