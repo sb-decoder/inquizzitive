@@ -723,21 +723,22 @@ export default function App({
           <div className="welcome-section-new">
             {/* Guest Mode Notice - only show when user is not signed in and not acknowledged */}
             {!user && !guestAcknowledged && (
-              <GuestModeNotice 
-                onSignIn={onSignIn} 
+              <GuestModeNotice
+                onSignIn={onSignIn}
                 onContinueAsGuest={() => setGuestAcknowledged(true)}
               />
             )}
-            
-            <div className={`glass-card welcome-card ${!user && !guestAcknowledged ? 'disabled-form' : ''}`}>
+
+            <div
+              className={`glass-card welcome-card ${!user && !guestAcknowledged ? "disabled-form" : ""}`}
+            >
               <h1 className="welcome-title">
                 Welcome to <span className="gradient-text">InQuizzitive</span>
               </h1>
               <p className="welcome-subtitle">
-                {user 
+                {user
                   ? `Ready to continue your exam prep journey? Your progress is being tracked!`
-                  : `Master government exams with AI-powered practice sessions`
-                }
+                  : `Master government exams with AI-powered practice sessions`}
               </p>
 
               <div className="welcome-actions">
@@ -784,7 +785,9 @@ export default function App({
                   className="start-btn"
                 >
                   <span>🚀</span>
-                  {(!user && !guestAcknowledged) ? 'Choose Your Experience First' : 'Start Quiz'}
+                  {!user && !guestAcknowledged
+                    ? "Choose Your Experience First"
+                    : "Start Quiz"}
                 </button>
               </div>
             </div>

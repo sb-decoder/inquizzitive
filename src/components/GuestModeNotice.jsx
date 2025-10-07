@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const GuestModeNotice = ({ onSignIn, onContinueAsGuest }) => {
   return (
@@ -6,28 +6,23 @@ const GuestModeNotice = ({ onSignIn, onContinueAsGuest }) => {
       <div className="guest-notice-card-small floating">
         <div className="guest-notice-header-small">
           <span className="icon-brain-small">🧠</span>
-          <h3 className="guest-notice-title-small">
-            Ready to Quiz?
-          </h3>
+          <h3 className="guest-notice-title-small">Ready to Quiz?</h3>
         </div>
-        
+
         <p className="guest-notice-subtitle-small">
           Your adventure awaits! Pick your path:
         </p>
 
         <div className="guest-notice-actions-small">
-          <button 
+          <button
             onClick={onContinueAsGuest}
             className="guest-btn guest-btn-secondary"
           >
             <span className="btn-icon">🎮</span>
             <span>Quick Play Mode</span>
           </button>
-          
-          <button 
-            onClick={onSignIn}
-            className="guest-btn guest-btn-primary"
-          >
+
+          <button onClick={onSignIn} className="guest-btn guest-btn-primary">
             <span className="btn-icon">✨</span>
             <span>Unlock Full Power</span>
           </button>
@@ -43,7 +38,7 @@ const GuestModeNotice = ({ onSignIn, onContinueAsGuest }) => {
             <span>Pro: Track & dominate</span>
           </div>
         </div>
-        
+
         <div className="floating-decorations">
           <div className="floating-dot dot-1"></div>
           <div className="floating-dot dot-2"></div>
@@ -51,7 +46,7 @@ const GuestModeNotice = ({ onSignIn, onContinueAsGuest }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GuestModeNotice
+export default GuestModeNotice;
