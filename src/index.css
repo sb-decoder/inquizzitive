@@ -386,7 +386,7 @@
   /* Welcome Section - New Layout */
   .welcome-section-new {
     @apply flex items-start justify-center gap-8 min-h-screen;
-    padding: 120px 20px 20px;
+    padding: 20px 20px 20px;
   }
 
   .welcome-section {
@@ -2197,6 +2197,8 @@
   
   .guest-notice-card-small {
     padding: 16px;
+  }
+}
 /* Bookmark Styles */
 .question-header {
   @apply flex items-start justify-between gap-3 mb-4;
