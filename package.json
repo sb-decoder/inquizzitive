@@ -14,7 +14,8 @@
     "build:prod": "NODE_ENV=production vite build",
     "start": "cross-env NODE_ENV=production node server.js",
     "test": "vitest --run",
-    "prepare": "husky"
+    "prepare": "husky",
+    "initial-db-setup": "node db-setup.js"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.51.0",
