@@ -3,6 +3,9 @@
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 
+# DB Connection URI from Supabase > Project > Settings > Database > Connection Info
+DB_URI=
+
 # Google Gemini API Key
 # Get this from Google AI Studio: https://makersuite.google.com/app/apikey
 GEMINI_API_KEY=

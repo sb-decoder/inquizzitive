@@ -23,6 +23,7 @@ This guide will help you set up Supabase authentication and database for the Inq
 2. Copy the following values:
    - Project URL
    - Project API Key (anon public)
+   - DB Connection URI from Supabase > Project > Settings > Database > Connection Info
 
 ## Step 3: Update Environment Variables
 
@@ -31,26 +32,23 @@ Your `.env` file should already contain:
 ```
 VITE_SUPABASE_URL=https://xyz.supabase.co
 VITE_SUPABASE_ANON_KEY=.....
+DB_URI=
 ```
 
 If you need to update these values with your own Supabase project:
 
 1. Replace `VITE_SUPABASE_URL` with your Project URL
 2. Replace `VITE_SUPABASE_ANON_KEY` with your anon public key
+3. Replace `DB_URI` with your DB URI
 
 ## Step 4: Set Up Database Tables
 
-1. In your Supabase dashboard, go to the SQL Editor
-2. Copy and paste the entire contents of `database-setup.sql` file
-3. Click "Run" to execute the SQL commands
+1. Hit the command:
+```
+npm run initial-db-setup
+```
 
-This will create:
-
-- `profiles` table for user profiles
-- `quiz_history` table for storing quiz results
-- Row Level Security (RLS) policies
-- Automatic profile creation trigger
-- Necessary indexes for performance
+This will create the required schemas
 
 ## Step 5: Configure Authentication
 
@@ -61,10 +59,11 @@ This will create:
 
 ## Step 6: Testing
 
-1. Start your development server:
+1. Start your development server by hitting the below command in separate terminal:
 
 ```bash
-npm run dev
+npm run client
+npm run server
 ```
 
 2. Open your browser and navigate to `http://localhost:5173`
