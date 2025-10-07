@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 /* Tailwind CSS Directives */
 @tailwind base;
@@ -19,15 +19,19 @@
 
   body,
   html {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family:
+      "Inter",
+      system-ui,
+      -apple-system,
+      sans-serif;
     background-image: linear-gradient(
       135deg,
-      #fff2f2 0%,
-      #a9b5df 15%,
-      #7886c7 60%,
-      #2d336b 100%
+      #7fb8b5 0%,
+      #64a8b9 15%,
+      #365486 60%,
+      #0f1035 100%
     );
-    background-color: #fff2f2;
+    background-color: #7fc7d9;
 
     min-height: 100vh;
     overflow-x: hidden;
@@ -97,6 +101,15 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
+  }
+
+  /* Medium screens: reduce min-width to prevent overflow */
+  @media (max-width: 836px) {
+    .floating-nav {
+      @apply min-w-0;
+      width: calc(100% - 40px);
+      max-width: calc(100vw - 40px);
+    }
   }
 
   .floating-nav > * {
@@ -269,6 +282,22 @@
     padding: 100px 20px 40px;
   }
 
+  /* iPhone SE specific adjustments */
+  @media (max-width: 400px) and (max-height: 700px) {
+    .main-container {
+      padding: 80px 12px 24px;
+    }
+
+    /* Ensure Dashboard doesn't overlap navbar on iPhone SE */
+    .dashboard-overlay {
+      padding-top: 65px !important;
+    }
+
+    .mobile-menu {
+      top: 55px !important;
+    }
+  }
+
   /* Alert Banner */
   .alert {
     @apply flex justify-between items-center gap-4 mb-4 px-4 py-3 rounded-2xl;
@@ -306,7 +335,10 @@
     @apply text-white font-semibold px-3 py-2 rounded-xl;
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     box-shadow: 0 4px 16px rgba(245, 87, 108, 0.25);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease;
   }
   .btn-retry:hover:not(:disabled) {
     @apply -translate-y-px;
@@ -373,7 +405,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #4c2a78 0%, #5d2f77 80%, #e45a92 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -601,7 +633,7 @@
   }
 
   .progress-bar-fill::after {
-    content: '';
+    content: "";
     @apply absolute top-0 right-0 w-2 h-full;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
     animation: shimmer 2s ease-in-out infinite;
@@ -791,10 +823,11 @@
 
   /* Results Actions */
   .results-actions {
-    @apply flex justify-center py-6;
+    @apply flex justify-center gap-4 py-6 flex-wrap;
   }
 
-  .new-quiz-btn {
+  .new-quiz-btn,
+  .download-pdf-btn {
     @apply border-none px-8 py-4 rounded-[50px] text-white;
     @apply text-lg font-semibold cursor-pointer transition-all duration-300;
     @apply flex items-center gap-3;
@@ -802,9 +835,22 @@
     box-shadow: 0 4px 20px rgba(118, 75, 162, 0.3);
   }
 
-  .new-quiz-btn:hover {
+  .download-pdf-btn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
+  }
+
+  .new-quiz-btn:hover,
+  .download-pdf-btn:hover {
     @apply -translate-y-0.5;
+  }
+
+  .new-quiz-btn:hover {
     box-shadow: 0 8px 30px rgba(118, 75, 162, 0.4);
+  }
+
+  .download-pdf-btn:hover {
+    box-shadow: 0 8px 30px rgba(79, 172, 254, 0.4);
   }
 
   .retry-btn {
@@ -1212,6 +1258,34 @@
 }
 
 /* Responsive Design */
+/* Switch to mobile navigation at 836px to prevent navbar overflow */
+@media (max-width: 836px) {
+  /* Hide desktop nav, show mobile nav */
+  .desktop-nav {
+    @apply hidden;
+  }
+
+  .mobile-nav {
+    @apply flex;
+  }
+
+  .floating-nav {
+    @apply px-4 py-2.5;
+  }
+
+  .nav-brand {
+    @apply gap-2;
+  }
+
+  .nav-title {
+    @apply text-lg;
+  }
+
+  .nav-logo {
+    @apply text-xl;
+  }
+}
+
 @media (max-width: 768px) {
   .floating-nav {
     @apply min-w-0 px-3 py-2;
@@ -1233,14 +1307,6 @@
 
   .nav-btn {
     @apply px-3 py-1.5 text-xs;
-  }
-  /* Hide desktop nav, show mobile nav */
-  .desktop-nav {
-    @apply hidden;
-  }
-
-  .mobile-nav {
-    @apply flex;
   }
 
   .main-container {
@@ -1300,7 +1366,7 @@
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 837px) {
   /* Hide mobile nav, show desktop nav */
   .mobile-nav {
     @apply hidden;
@@ -1370,6 +1436,153 @@
 
   .option-text {
     @apply text-sm;
+  }
+
+  /* Mobile result actions */
+  .results-actions {
+    @apply flex-col gap-3;
+  }
+
+  .new-quiz-btn,
+  .download-pdf-btn {
+    @apply px-6 py-3 text-base w-full;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+}
+
+/* Dashboard Responsive Styles */
+.dashboard-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm;
+}
+
+.dashboard-modal {
+  @apply glass-card w-full max-w-6xl max-h-[90vh] overflow-hidden;
+}
+
+.dashboard-header {
+  @apply flex items-center justify-between p-6 border-b border-white/10;
+}
+
+.dashboard-tabs {
+  @apply flex border-b border-white/10 overflow-x-auto;
+}
+
+.dashboard-tab {
+  @apply px-6 py-3 font-medium transition-colors whitespace-nowrap;
+}
+
+.dashboard-content {
+  @apply p-6 overflow-y-auto;
+  max-height: calc(90vh - 200px);
+}
+
+/* Mobile Dashboard Styles */
+@media (max-width: 768px) {
+  .dashboard-overlay {
+    @apply p-2;
+    /* Account for navbar on mobile */
+    padding-top: 80px;
+  }
+
+  .dashboard-modal {
+    @apply max-h-[85vh];
+  }
+
+  .dashboard-header {
+    @apply p-4;
+  }
+
+  .dashboard-header h2 {
+    @apply text-xl;
+  }
+
+  .dashboard-header p {
+    @apply text-sm;
+  }
+
+  .dashboard-tabs {
+    @apply px-2;
+  }
+
+  .dashboard-tab {
+    @apply px-4 py-2 text-sm;
+  }
+
+  .dashboard-content {
+    @apply p-4;
+    max-height: calc(85vh - 180px);
+  }
+}
+
+/* iPhone SE and small mobile devices */
+@media (max-width: 400px) {
+  .dashboard-overlay {
+    padding: 0.25rem;
+    /* Account for smaller navbar on iPhone SE */
+    padding-top: 70px;
+  }
+
+  .dashboard-modal {
+    max-height: 90vh;
+  }
+
+  .dashboard-header {
+    padding: 0.75rem;
+  }
+
+  .dashboard-header h2 {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  .dashboard-tabs {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .dashboard-tab {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    min-width: auto;
+  }
+
+  .dashboard-content {
+    padding: 0.75rem;
+    max-height: calc(90vh - 160px);
+  }
+
+  /* Improve grid layouts on very small screens */
+  .dashboard-content .grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .dashboard-content .grid.md\:grid-cols-2,
+  .dashboard-content .grid.md\:grid-cols-3,
+  .dashboard-content .grid.md\:grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Reduce text sizes for better fit */
+  .dashboard-content .text-2xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  .dashboard-content .text-xl {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  .dashboard-content .text-lg {
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 }
 
@@ -1984,5 +2197,69 @@
   
   .guest-notice-card-small {
     padding: 16px;
+/* Bookmark Styles */
+.question-header {
+  @apply flex items-start justify-between gap-3 mb-4;
+}
+
+.question-header-left {
+  @apply flex items-start gap-3 flex-1;
+}
+
+.bookmark-btn {
+  @apply flex-shrink-0 w-10 h-10 rounded-lg border-none cursor-pointer;
+  @apply flex items-center justify-center transition-all duration-300;
+  @apply bg-white/10 hover:bg-white/20 backdrop-blur-md;
+  @apply border border-white/20 hover:border-white/30;
+}
+
+.bookmark-btn:hover {
+  @apply scale-110 -translate-y-0.5;
+}
+
+.bookmark-btn:active {
+  @apply scale-95;
+}
+
+.bookmark-btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.bookmark-btn:disabled:hover {
+  @apply scale-100 translate-y-0;
+}
+
+.bookmark-icon {
+  @apply text-lg transition-all duration-300;
+}
+
+.bookmark-btn:not(.bookmarked) .bookmark-icon {
+  @apply text-gray-300 hover:text-yellow-400;
+}
+
+.bookmark-btn.bookmarked {
+  @apply bg-yellow-500/20 border-yellow-500/40;
+}
+
+.bookmark-btn.bookmarked .bookmark-icon {
+  @apply text-yellow-400;
+}
+
+.bookmark-loading {
+  @apply text-lg text-blue-400 animate-spin;
+}
+
+/* Update question card layout for mobile */
+@media (max-width: 768px) {
+  .question-header {
+    @apply gap-2;
+  }
+
+  .bookmark-btn {
+    @apply w-8 h-8;
+  }
+
+  .bookmark-icon {
+    @apply text-base;
   }
 }

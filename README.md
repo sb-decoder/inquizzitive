@@ -1,4 +1,4 @@
-# 🧠 Inquizzitive
+# 🧠 InQuizzitive
 
 [![Hacktoberfest](https://img.shields.io/badge/Hacktoberfest-2025-blueviolet?style=for-the-badge&logo=hacktoberfest)](https://hacktoberfest.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](./LICENSE)
@@ -9,6 +9,8 @@
 **AI-powered quiz application for government exam preparation** - Master SSC, UPSC, Bank exams, and more with personalized practice sessions!
 
 Built with React, powered by Google's Gemini AI, and featuring a stunning glassmorphic UI.
+
+<img width="1919" height="986" alt="image" src="https://github.com/user-attachments/assets/6b8cbe95-a538-4bdc-9132-d4fffd50ef02" />
 
 ---
 
@@ -21,19 +23,19 @@ Built with React, powered by Google's Gemini AI, and featuring a stunning glassm
 - 📊 **Detailed Analytics** - Comprehensive score reports with explanations
 - 🎨 **Glassmorphic UI** - Modern, beautiful design with smooth animations
 - 📱 **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
-- 🌐 **Open Source** - Free forever, built for the community
+- 🌐 **Open Source** - Free forever, built for the community.
+- 📌 **Bookmark** - Bookmark questions that you want to revise later.
 
 ---
-
 
 ## 🔮 Roadmap
 
 - [x] User authentication and profiles
 - [x] Progress tracking dashboard
-- [ ] Leaderboard system
-- [ ] More exam categories (GATE, CAT, etc.)
 - [x] PDF export of quiz results
 - [x] Dark/Light theme toggle
+- [ ] Leaderboard system
+- [ ] More exam categories (GATE, CAT, etc.)
 - [ ] Previous year papers integration
 
 ---
@@ -45,6 +47,7 @@ Built with React, powered by Google's Gemini AI, and featuring a stunning glassm
 - Node.js (v14 or higher)
 - npm or yarn
 - Google Gemini API key
+- Supabase setup
 
 ## 🎮 How to Use
 
@@ -72,7 +75,7 @@ We love contributions! Here's how you can help:
 ### Ways to Contribute
 
 - 🐞 Fix bugs and issues
-- ✨ Add new features (more categories, difficulty algorithms, etc.)
+- ✨ Add new features
 - 🎨 Improve UI/UX design
 - 💡 Suggest improvements
 
@@ -107,12 +110,12 @@ This repository participates in **Hacktoberfest**!
 ## 🛠️ Tech Stack
 
 - **Frontend:** React + Vite
-- **Styling:** Custom CSS with Glassmorphism
+- **Styling:** Custom CSS with Glassmorphism and Tailwind CSS
 - **AI:** Google Gemini 1.5 Flash
+- **Authentication & Database:** Supabase
 - **Build Tool:** Vite
 - **Package Manager:** npm
-
-
+- **Deployment:** Vercel
 
 ---
 

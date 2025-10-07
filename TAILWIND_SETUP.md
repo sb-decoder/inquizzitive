@@ -20,6 +20,7 @@ Your project now has **Tailwind CSS v3** fully configured and production-ready!
 
 ```bash
 npm install
+npm run prepare
 ```
 
 ### 2. Development

@@ -1,40 +1,40 @@
-import { useState } from 'react'
-import { useAuth } from './contexts/AuthContext'
-import { quizService } from './services/quizService'
-import AuthModal from './components/AuthModal'
-import Dashboard from './components/Dashboard'
-import App from './App'
+import { useState } from "react";
+import { useAuth } from "./contexts/AuthContext";
+import { quizService } from "./services/quizService";
+import AuthModal from "./components/AuthModal";
+import Dashboard from "./components/Dashboard";
+import App from "./App";
 
 const AppWithAuth = () => {
-  const { user, signOut, loading } = useAuth()
-  const [showAuthModal, setShowAuthModal] = useState(false)
-  const [showDashboard, setShowDashboard] = useState(false)
-  const [authMode, setAuthMode] = useState('signin')
+  const { user, signOut, loading } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [authMode, setAuthMode] = useState("signin");
 
   const handleSignIn = () => {
-    setAuthMode('signin')
-    setShowAuthModal(true)
-  }
+    setAuthMode("signin");
+    setShowAuthModal(true);
+  };
 
   const handleSignUp = () => {
-    setAuthMode('signup')
-    setShowAuthModal(true)
-  }
+    setAuthMode("signup");
+    setShowAuthModal(true);
+  };
 
   const handleSignOut = async () => {
-    await signOut()
-  }
+    await signOut();
+  };
 
   const handleShowDashboard = () => {
-    setShowDashboard(true)
-  }
+    setShowDashboard(true);
+  };
 
   const saveQuizResult = async (quizData) => {
-    if (!user) return { error: 'User not authenticated' }
-    
-    const result = await quizService.saveQuizResult(quizData)
-    return result
-  }
+    if (!user) return { error: "User not authenticated" };
+
+    const result = await quizService.saveQuizResult(quizData);
+    return result;
+  };
 
   if (loading) {
     return (
@@ -44,12 +44,12 @@ const AppWithAuth = () => {
           <p className="text-gray-300">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <>
-      <App 
+      <App
         user={user}
         onSignIn={handleSignIn}
         onSignUp={handleSignUp}
@@ -57,16 +57,14 @@ const AppWithAuth = () => {
         onShowDashboard={handleShowDashboard}
         saveQuizResult={saveQuizResult}
       />
-      <AuthModal 
+      <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         mode={authMode}
       />
-      {showDashboard && (
-        <Dashboard onClose={() => setShowDashboard(false)} />
-      )}
+      {showDashboard && <Dashboard onClose={() => setShowDashboard(false)} />}
     </>
-  )
-}
+  );
+};
 
-export default AppWithAuth
+export default AppWithAuth;
