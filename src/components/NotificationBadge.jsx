@@ -1,102 +1,211 @@
-import { useState, useEffect } from "react";
-import { analyticsService } from "../services/analyticsService";
-import SmartNotifications from "./SmartNotifications";
+import { useState, useEffect } from 'react';
 
-const NotificationBadge = ({ user, onCategorySelect }) => {
-  const [hasNotifications, setHasNotifications] = useState(false);
+export default function NotificationBadge({ user, onCategorySelect }) {
+  const [insights, setInsights] = useState([]);
   const [showPanel, setShowPanel] = useState(false);
-  const [urgentCount, setUrgentCount] = useState(0);
+  const [showBadge, setShowBadge] = useState(false);
 
+  // Load insights from localStorage
   useEffect(() => {
     if (user) {
-      checkForNotifications();
+      loadInsights();
     }
   }, [user]);
 
-  const checkForNotifications = async () => {
+  const loadInsights = () => {
     try {
-      const analysis = await analyticsService.analyzeWeakness(user.id);
-      if (analysis && !analysis.error) {
-        const urgentRecs =
-          analysis.recommendations?.filter(
-            (rec) => rec.priority === "high" || rec.type === "urgent",
-          ) || [];
-
-        const declining =
-          analysis.overallProgress?.recentTrend === "declining-fast";
-
-        const totalUrgent = urgentRecs.length + (declining ? 1 : 0);
-        setUrgentCount(totalUrgent);
-        setHasNotifications(totalUrgent > 0);
+      const storedInsights = localStorage.getItem(`insights_${user?.id || 'guest'}`);
+      if (storedInsights) {
+        const parsedInsights = JSON.parse(storedInsights);
+        setInsights(parsedInsights);
+        // Only show badge if there are unread insights
+        setShowBadge(parsedInsights.length > 0);
+      } else {
+        setShowBadge(false);
       }
     } catch (error) {
-      console.error("Error checking notifications:", error);
+      console.error('Error loading insights:', error);
+      setShowBadge(false);
     }
   };
 
-  const handleRecommendationClick = (category) => {
-    setShowPanel(false);
-    onCategorySelect?.(category);
+  const deleteInsight = (index) => {
+    const updatedInsights = insights.filter((_, i) => i !== index);
+    setInsights(updatedInsights);
+    
+    // Save to localStorage
+    try {
+      if (updatedInsights.length > 0) {
+        localStorage.setItem(
+          `insights_${user?.id || 'guest'}`,
+          JSON.stringify(updatedInsights)
+        );
+      } else {
+        // Remove from localStorage if no insights left
+        localStorage.removeItem(`insights_${user?.id || 'guest'}`);
+        setShowBadge(false);
+        setShowPanel(false);
+      }
+    } catch (error) {
+      console.error('Error saving insights:', error);
+    }
   };
 
-  if (!user || !hasNotifications) return null;
+  const clearAllInsights = () => {
+    setInsights([]);
+    try {
+      localStorage.removeItem(`insights_${user?.id || 'guest'}`);
+    } catch (error) {
+      console.error('Error clearing insights:', error);
+    }
+    setShowBadge(false);
+    setShowPanel(false);
+  };
+
+  const handleInsightClick = (insight) => {
+    if (onCategorySelect && insight.category) {
+      onCategorySelect(insight.category);
+      setShowPanel(false);
+    }
+  };
+
+  // Don't render anything if there are no insights or badge should be hidden
+  if (!showBadge || insights.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <>
+      {/* Notification Badge Button */}
+      <div className="notification-badge">
+        <button
+          onClick={() => setShowPanel(!showPanel)}
+          className="notification-badge-btn"
+          aria-label="View insights"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          {insights.length > 0 && (
+            <span className="badge-count">{insights.length}</span>
+          )}
+        </button>
+      </div>
+
       {/* Notification Panel */}
       {showPanel && (
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-40"
             onClick={() => setShowPanel(false)}
           />
-
+          
           {/* Panel */}
-          <div className="absolute bottom-16 right-0 w-96 max-w-[90vw] bg-gray-900/95 backdrop-blur-lg rounded-lg border border-white/20 shadow-2xl">
-            <div className="p-4 border-b border-white/10">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-white">Smart Insights</h3>
+          <div className="notification-panel">
+            <div className="p-4 border-b border-white/20">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-white font-semibold text-lg">
+                  Smart Insights
+                </h3>
                 <button
                   onClick={() => setShowPanel(false)}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-white/70 hover:text-white transition-colors"
+                  aria-label="Close panel"
                 >
-                  ×
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
                 </button>
               </div>
+              {insights.length > 1 && (
+                <button
+                  onClick={clearAllInsights}
+                  className="text-sm text-red-400 hover:text-red-300 transition-colors"
+                >
+                  Clear All
+                </button>
+              )}
             </div>
-            <div className="p-4 max-h-96 overflow-y-auto">
-              <SmartNotifications
-                user={user}
-                onRecommendationClick={handleRecommendationClick}
-              />
+
+            <div className="p-4 space-y-3 max-h-[400px] overflow-y-auto">
+              {insights.length === 0 ? (
+                <div className="text-white/60 text-center py-8">
+                  No insights available
+                </div>
+              ) : (
+                insights.map((insight, index) => (
+                  <div
+                    key={index}
+                    className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-2xl">{insight.icon || '💡'}</span>
+                          <h4 className="text-white font-medium text-sm">
+                            {insight.title}
+                          </h4>
+                        </div>
+                        <p className="text-white/80 text-sm leading-relaxed mb-3">
+                          {insight.message}
+                        </p>
+                        {insight.category && (
+                          <button
+                            onClick={() => handleInsightClick(insight)}
+                            className="text-xs px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium hover:shadow-lg transition-all"
+                          >
+                            Practice {insight.category}
+                          </button>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => deleteInsight(index)}
+                        className="text-white/50 hover:text-red-400 transition-colors flex-shrink-0"
+                        aria-label="Delete insight"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </>
       )}
-
-      {/* Floating Button */}
-      <button
-        onClick={() => setShowPanel(!showPanel)}
-        className="relative bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-4 rounded-full shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-900"
-        aria-label="Smart recommendations"
-      >
-        <div className="text-xl">🧠</div>
-
-        {/* Notification Badge */}
-        {urgentCount > 0 && (
-          <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
-            {urgentCount > 9 ? "9+" : urgentCount}
-          </div>
-        )}
-
-        {/* Pulse animation for urgent notifications */}
-        {urgentCount > 0 && (
-          <div className="absolute inset-0 rounded-full bg-red-500/20 animate-ping"></div>
-        )}
-      </button>
-    </div>
+    </>
   );
-};
-
-export default NotificationBadge;
+}
