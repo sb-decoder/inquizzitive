@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
 import NotificationBadge from "./components/NotificationBadge";
+import GuestModeNotice from "./components/GuestModeNotice";
 import GlassmorphicDropdown from "./components/GlassmorphicDropdown";
 import { bookmarkService } from "./services/bookmarkService";
 
@@ -52,6 +53,7 @@ export default function App({
   const [showStartScreen, setShowStartScreen] = useState(true);
   const [originalQuiz, setOriginalQuiz] = useState([]);
   const [showExamPrepPage, setShowExamPrepPage] = useState(false);
+  const [guestAcknowledged, setGuestAcknowledged] = useState(!!user); // Auto-acknowledge if user is signed in
 
   // Bookmark states
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState(new Set());
@@ -718,13 +720,24 @@ export default function App({
 
         {/* Welcome Screen */}
         {showStartScreen && (
-          <div className="welcome-section">
-            <div className="glass-card welcome-card">
+          <div className="welcome-section-new">
+            {/* Guest Mode Notice - only show when user is not signed in and not acknowledged */}
+            {!user && !guestAcknowledged && (
+              <GuestModeNotice 
+                onSignIn={onSignIn} 
+                onContinueAsGuest={() => setGuestAcknowledged(true)}
+              />
+            )}
+            
+            <div className={`glass-card welcome-card ${!user && !guestAcknowledged ? 'disabled-form' : ''}`}>
               <h1 className="welcome-title">
                 Welcome to <span className="gradient-text">InQuizzitive</span>
               </h1>
               <p className="welcome-subtitle">
-                Master government exams with AI-powered practice sessions
+                {user 
+                  ? `Ready to continue your exam prep journey? Your progress is being tracked!`
+                  : `Master government exams with AI-powered practice sessions`
+                }
               </p>
 
               <div className="welcome-actions">
@@ -767,11 +780,11 @@ export default function App({
                 </div>
                 <button
                   onClick={fetchQuiz}
-                  disabled={loading}
+                  disabled={loading || (!user && !guestAcknowledged)}
                   className="start-btn"
                 >
                   <span>🚀</span>
-                  Start Quiz
+                  {(!user && !guestAcknowledged) ? 'Choose Your Experience First' : 'Start Quiz'}
                 </button>
               </div>
             </div>
