@@ -331,6 +331,21 @@ export default function App() {
   // }
   //   ]
   // };
+
+  // REAL Adaptive difficulty state
+  const [userPerformance, setUserPerformance] = useState({
+    correctStreak: 0,
+    totalCorrect: 0,
+    totalAnswered: 0,
+    currentDifficulty: "Medium",
+    questionPool: {
+      Easy: [],
+      Medium: [],
+      Hard: []
+    },
+    currentQuestionIndex: 0
+  });
+
   const [loading, setLoading] = useState(false);
   const [quiz, setQuiz] = useState([]);
   const [answers, setAnswers] = useState({});
@@ -365,6 +380,188 @@ export default function App() {
     localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
+  // Generate questions for a specific difficulty
+  async function generateQuestions(difficulty, count = 5) {
+    try {
+      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      
+      const prompt = `
+      Generate ${count} multiple-choice questions focused on ${selectedCategory} at ${difficulty} difficulty level.
+
+      DIFFICULTY SPECIFICS:
+      - Easy: Basic recall of facts, straightforward questions with obvious distractors.
+      - Medium: Require moderate understanding, including connections between concepts, with plausible distractors.
+      - Hard: In-depth analysis, nuanced details, or application-based questions, with closely related distractors that test deep knowledge.
+
+      Guidelines for high-quality questions:
+      - Make questions clear, concise, and unambiguous—avoid vagueness, overly broad topics, or irrelevant trivia.
+      - Ensure relevance: For Current Affairs, use events up to October 2025; for History/Geography/Politics/Indian Defence, focus on India-centric or globally significant topics impacting India.
+      - Options: Provide exactly 4 options per question. Distractors must be plausible and based on common misconceptions or related facts.
+      - Answer: Must be factually correct and exactly match one option (case-sensitive, including spacing).
+      - Explanation: Provide a detailed, educational explanation (2-4 sentences) citing why the answer is correct and why others are not, to aid learning.
+      - Focus on ${selectedCategory} topics
+
+      Respond strictly in valid JSON array format (no extra text, code blocks, or markdown). Example:
+      [
+        {
+          "question": "Who is the current Prime Minister of India?",
+          "options": ["Narendra Modi", "Rahul Gandhi", "Amit Shah", "Yogi Adityanath"],
+          "answer": "Narendra Modi",
+          "explanation": "Narendra Modi has been the Prime Minister of India since 2014, leading the BJP government. The other options are prominent politicians but not the current PM."
+        }
+      ]`;
+
+      const result = await model.generateContent(prompt);
+      let text = await result.response.text();
+      text = text.replace(/```json|```/g, "").trim();
+
+      const questions = JSON.parse(text);
+      return questions.map(q => ({
+        ...q,
+        answer: q.answer?.trim(),
+        options: q.options?.map(opt => opt?.trim()),
+        difficulty: difficulty // Tag each question with its difficulty
+      }));
+    } catch (err) {
+      console.error(`Error generating ${difficulty} questions:`, err);
+      return [];
+    }
+  }
+
+  // Pre-load questions for ALL difficulty levels
+  async function preloadQuestionPools() {
+    setLoading(true);
+    
+    try {
+      // Generate questions for all difficulty levels in parallel
+      const [easyQuestions, mediumQuestions, hardQuestions] = await Promise.all([
+        generateQuestions("Easy", 8),
+        generateQuestions("Medium", 8), 
+        generateQuestions("Hard", 8)
+      ]);
+
+      setUserPerformance(prev => ({
+        ...prev,
+        questionPool: {
+          Easy: easyQuestions,
+          Medium: mediumQuestions,
+          Hard: hardQuestions
+        },
+        currentDifficulty: selectedDifficulty
+      }));
+
+      // Start with medium difficulty questions
+      setQuiz(mediumQuestions.slice(0, numQuestions));
+      setTimeLeft(numQuestions * 30);
+      
+    } catch (err) {
+      console.error("Error preloading questions:", err);
+      alert("Failed to load questions. Please try again.");
+    }
+    setLoading(false);
+  }
+
+  // Get next question based on current performance
+  const getNextQuestion = (currentPerformance) => {
+    const { questionPool, currentDifficulty, currentQuestionIndex } = currentPerformance;
+    
+    // If we have questions left in current difficulty pool
+    if (currentQuestionIndex < questionPool[currentDifficulty].length - 1) {
+      return questionPool[currentDifficulty][currentQuestionIndex];
+    }
+    
+    // If we're out of questions in current difficulty, try to get from other pools
+    const availableQuestions = [
+      ...questionPool[currentDifficulty],
+      ...questionPool.Medium,
+      ...questionPool.Easy,
+      ...questionPool.Hard
+    ].filter(q => !answers[Object.keys(answers).length]); // Not already answered
+    
+    return availableQuestions[0] || questionPool.Medium[0]; // Fallback
+  };
+
+  // REAL adaptive difficulty calculation
+  const calculateRealAdaptiveDifficulty = (performance) => {
+    const { correctStreak, totalCorrect, totalAnswered, currentDifficulty } = performance;
+    
+    if (totalAnswered < 2) return currentDifficulty; // Wait for some data
+    
+    const accuracy = totalCorrect / totalAnswered;
+    
+    // Adaptive logic:
+    if (currentDifficulty === "Easy" && correctStreak >= 3 && accuracy >= 0.7) {
+      return "Medium";
+    } else if (currentDifficulty === "Medium") {
+      if (correctStreak >= 3 && accuracy >= 0.8) {
+        return "Hard";
+      } else if (accuracy < 0.4) {
+        return "Easy";
+      }
+    } else if (currentDifficulty === "Hard" && accuracy < 0.5) {
+      return "Medium";
+    }
+    
+    return currentDifficulty;
+  };
+
+  // Handle option selection with REAL adaptation
+  function handleOptionSelect(qIndex, option) {
+    if (!submitted) {
+      const currentQuestion = quiz[qIndex];
+      const isCorrect = option?.trim().toLowerCase() === currentQuestion.answer?.trim().toLowerCase();
+      
+      setAnswers((prev) => ({ ...prev, [qIndex]: option }));
+      
+      // Update performance and potentially change difficulty
+      setUserPerformance(prev => {
+        const newTotalAnswered = prev.totalAnswered + 1;
+        const newTotalCorrect = prev.totalCorrect + (isCorrect ? 1 : 0);
+        const newCorrectStreak = isCorrect ? prev.correctStreak + 1 : 0;
+        const newQuestionIndex = prev.currentQuestionIndex + 1;
+        
+        const newPerformance = {
+          ...prev,
+          correctStreak: newCorrectStreak,
+          totalCorrect: newTotalCorrect,
+          totalAnswered: newTotalAnswered,
+          currentQuestionIndex: newQuestionIndex
+        };
+        
+        // Check if we should change difficulty
+        const newDifficulty = calculateRealAdaptiveDifficulty(newPerformance);
+        
+        // If difficulty changed, update the quiz with new questions
+        if (newDifficulty !== prev.currentDifficulty) {
+          setTimeout(() => {
+            updateQuizWithNewDifficulty(newDifficulty);
+          }, 500); // Small delay for smooth transition
+        }
+        
+        return {
+          ...newPerformance,
+          currentDifficulty: newDifficulty
+        };
+      });
+    }
+  }
+
+  // Update quiz when difficulty changes
+  const updateQuizWithNewDifficulty = (newDifficulty) => {
+    setUserPerformance(prev => {
+      const newQuestions = prev.questionPool[newDifficulty].slice(0, numQuestions);
+      
+      // Update the displayed quiz
+      setQuiz(newQuestions);
+      
+      // Reset answers for new questions (keep old ones for scoring)
+      setAnswers({});
+      
+      return prev;
+    });
+  };
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
@@ -376,69 +573,18 @@ export default function App() {
     setAnswers({});
     setShowStartScreen(false);
 
-    try {
-      // Use custom questions if available for the selected category
-      // if (customQuestions[selectedCategory]) {
-      //   const questions = customQuestions[selectedCategory].slice(0, numQuestions);
-      //   setQuiz(questions);
-      //   setTimeLeft(questions.length * 30);
-      //   setLoading(false);
-      //   return;
-      // }
-      // Otherwise, use AI-generated questions
-      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const prompt = `
-      Generate ${numQuestions} multiple-choice questions focused on ${selectedCategory}, tailored for Indian government exam preparation (e.g., UPSC, SSC, or similar competitive exams). Ensure questions are exam-oriented: they should cover key topics, historical events, policies, figures, or concepts relevant to the category, with a focus on factual accuracy, analytical depth, and real-world application where appropriate.
+    // Reset performance tracking
+    setUserPerformance({
+      correctStreak: 0,
+      totalCorrect: 0,
+      totalAnswered: 0,
+      currentDifficulty: selectedDifficulty,
+      questionPool: { Easy: [], Medium: [], Hard: [] },
+      currentQuestionIndex: 0
+    });
 
-      Adhere to the selected difficulty level which is ${selectedDifficulty}:
-      - Easy: Basic recall of facts, straightforward questions with obvious distractors.
-      - Medium: Require moderate understanding, including connections between concepts, with plausible distractors.
-      - Hard: In-depth analysis, nuanced details, or application-based questions, with closely related distractors that test deep knowledge.
-
-      Guidelines for high-quality questions:
-      - Make questions clear, concise, and unambiguous—avoid vagueness, overly broad topics, or irrelevant trivia.
-      - Ensure relevance: For Current Affairs, use events up to October 2025; for History/Geography/Politics/Indian Defence, focus on India-centric or globally significant topics impacting India.
-      - Options: Provide exactly 4 options per question. Distractors must be plausible and based on common misconceptions or related facts.
-      - Answer: Must be factually correct and exactly match one option (case-sensitive, including spacing).
-      - Explanation: Provide a detailed, educational explanation (2-4 sentences) citing why the answer is correct and why others are not, to aid learning.
-
-      Respond strictly in valid JSON array format (no extra text, code blocks, or markdown). Example:
-      [
-        {
-          "question": "Who is the current Prime Minister of India?",
-          "options": ["Narendra Modi", "Rahul Gandhi", "Amit Shah", "Yogi Adityanath"],
-          "answer": "Narendra Modi",
-          "explanation": "Narendra Modi has been the Prime Minister of India since 2014, leading the BJP government. The other options are prominent politicians but not the current PM."
-        }
-      ]
-
-      Ensure the entire response is parseable as JSON.`;
-      const result = await model.generateContent(prompt);
-      let text = await result.response.text();
-      text = text.replace(/```json|```/g, "").trim();
-
-      console.log("Raw AI response:", text); // Debug log
-
-      const questions = JSON.parse(text);
-
-      // Validate and clean the data
-      const cleanedQuestions = questions.map((q) => ({
-        ...q,
-        answer: q.answer?.trim(),
-        options: q.options?.map((opt) => opt?.trim()),
-      }));
-
-      console.log("Cleaned questions:", cleanedQuestions); // Debug log
-
-      setQuiz(cleanedQuestions);
-      // Set timer based on number of questions (30 seconds per question)
-      setTimeLeft(cleanedQuestions.length * 30);
-    } catch (err) {
-      console.error("Error generating quiz:", err);
-      alert("Failed to generate quiz. Check console.");
-    }
-    setLoading(false);
+    // Pre-load questions for all difficulty levels
+    await preloadQuestionPools();
   }
 
   // Timer
@@ -449,10 +595,6 @@ export default function App() {
     }
     if (timeLeft === 0 && quiz.length > 0 && !submitted) handleSubmit();
   }, [timeLeft, submitted, quiz]);
-
-  function handleOptionSelect(qIndex, option) {
-    if (!submitted) setAnswers((prev) => ({ ...prev, [qIndex]: option }));
-  }
 
   function handleSubmit() {
     setSubmitted(true);
@@ -486,6 +628,14 @@ export default function App() {
     setSubmitted(false);
     setTimeLeft(0);
     setShowStartScreen(true);
+    setUserPerformance({
+      correctStreak: 0,
+      totalCorrect: 0,
+      totalAnswered: 0,
+      currentDifficulty: selectedDifficulty,
+      questionPool: { Easy: [], Medium: [], Hard: [] },
+      currentQuestionIndex: 0
+    });
   }
 
   const score = submitted ? calculateScore() : null;
@@ -503,6 +653,26 @@ export default function App() {
 
   const progress = calculateProgress();
   
+  // Get difficulty badge color
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty) {
+      case "Easy": return "bg-green-500";
+      case "Medium": return "bg-yellow-500";
+      case "Hard": return "bg-red-500";
+      default: return "bg-blue-500";
+    }
+  };
+
+  // Get difficulty emoji
+  const getDifficultyEmoji = (difficulty) => {
+    switch (difficulty) {
+      case "Easy": return "😊";
+      case "Medium": return "😐";
+      case "Hard": return "🔥";
+      default: return "🎯";
+    }
+  };
+
   // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -562,27 +732,7 @@ export default function App() {
             className="ml-2 p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
             aria-label="Toggle dark mode"
           >
-            {isDarkMode ? (
-              <svg
-                className="w-5 h-5 text-yellow-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            ) : (
-              <svg
-                className="w-5 h-5 text-gray-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-              </svg>
-            )}
+            {isDarkMode ? "🌙" : "☀️"}
           </button>
         </div>
 
@@ -593,27 +743,7 @@ export default function App() {
             className="p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 border border-white/20 hover:border-white/30"
             aria-label="Toggle dark mode"
           >
-            {isDarkMode ? (
-              <svg
-                className="w-4 h-4 text-yellow-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            ) : (
-              <svg
-                className="w-4 h-4 text-gray-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-              </svg>
-            )}
+            {isDarkMode ? "🌙" : "☀️"}
           </button>
           
           <button
@@ -680,6 +810,10 @@ export default function App() {
 
               <p className="welcome-subtitle">
                 Master government exams with AI-powered practice sessions
+              <br />
+                <span className="text-sm opacity-75">
+                  🎯 Questions actually get harder/easier based on your performance!
+                </span>
               </p>
 
               <div className="quiz-setup">
@@ -735,7 +869,7 @@ export default function App() {
                   className="start-btn"
                 >
                   <span>🚀</span>
-                  Start Quiz
+                 {loading ? "Loading Questions..." : "Start Quiz"}
                 </button>
               </div>
             </div>
@@ -772,23 +906,8 @@ export default function App() {
                     Generating Your Quiz
                   </h3>
                   <p className="text-gray-400 animate-pulse">
-                    Crafting {numQuestions} questions on {selectedCategory}...
+                   Generating Easy, Medium & Hard questions...
                   </p>
-
-                  <div className="flex gap-2 mt-2">
-                    <div
-                      className="h-2 w-2 rounded-full bg-purple-500 animate-bounce"
-                      style={{ animationDelay: "0ms" }}
-                    ></div>
-                    <div
-                      className="h-2 w-2 rounded-full bg-pink-500 animate-bounce"
-                      style={{ animationDelay: "150ms" }}
-                    ></div>
-                    <div
-                      className="h-2 w-2 rounded-full bg-blue-500 animate-bounce"
-                      style={{ animationDelay: "300ms" }}
-                    ></div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -801,15 +920,34 @@ export default function App() {
             <div className="glass-card quiz-header-card">
               <div className="quiz-info">
                 <h2>{selectedCategory} Quiz</h2>
+                 <div className="flex flex-wrap items-center gap-3 mt-2">
                 <span className="quiz-meta">
-                  {selectedDifficulty} • {quiz.length} Questions
+                 {getDifficultyEmoji(userPerformance.currentDifficulty)} {userPerformance.currentDifficulty} • {quiz.length} Questions
                 </span>
+                  {/* REAL Adaptive difficulty indicator */}
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${getDifficultyColor(userPerformance.currentDifficulty)}`}>
+                    🔄 Live Adaptive: {userPerformance.currentDifficulty}
+                  </span>
+                  
+                  {/* Performance stats */}
+                  <span className="text-sm opacity-75">
+                    🔥 Streak: {userPerformance.correctStreak} • ✅ {userPerformance.totalCorrect}/{userPerformance.totalAnswered}
+                  </span>
+                </div>
+                
+                {/* NEW: Difficulty progression info */}
+                {userPerformance.totalAnswered > 0 && (
+                  <div className="mt-2 text-xs opacity-60">
+                    {userPerformance.currentDifficulty === "Easy" && "Get 3+ correct in a row to advance to Medium!"}
+                    {userPerformance.currentDifficulty === "Medium" && userPerformance.correctStreak >= 2 && "Keep going! 1 more correct for Hard level!"}
+                    {userPerformance.currentDifficulty === "Hard" && "You're at the highest level! Maintain >50% accuracy."}
+                  </div>
+                )}
               </div>
               <div className="timer">
                 <span className="timer-icon">⏱️</span>
                 <span className="timer-text">
-                  {Math.floor(timeLeft / 60)}:
-                  {(timeLeft % 60).toString().padStart(2, "0")}
+                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
                 </span>
               </div>
             </div>
@@ -817,6 +955,9 @@ export default function App() {
               <div className="progress-header">
                 <span className="progress-text">
                   Progress: {progress.answered} of {progress.total} questions answered
+                {userPerformance.totalAnswered > 0 && (
+                    <span className="ml-2">• Accuracy: {Math.round((userPerformance.totalCorrect / userPerformance.totalAnswered) * 100)}%</span>
+                  )}
                 </span>
                 <span className="progress-percentage">{progress.percentage}%</span>
               </div>
@@ -828,11 +969,17 @@ export default function App() {
               </div>
             </div>
 
-            <div className="questions-container">
+           <div className="questions-container">
               {quiz.map((q, idx) => (
                 <div key={idx} className="glass-card question-card">
                   <div className="question-header">
-                    <span className="question-number">Q{idx + 1}</span>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="question-number">Q{idx + 1}</span>
+                      {/* Show actual question difficulty */}
+                      <span className={`text-xs px-2 py-1 rounded-full ${getDifficultyColor(q.difficulty)} text-white`}>
+                        {q.difficulty}
+                      </span>
+                    </div>
                     <p className="question-text">{q.question}</p>
                   </div>
 
@@ -871,6 +1018,12 @@ export default function App() {
               <div className="results-celebration">
                 <span className="celebration-emoji">🎉</span>
                 <h2>Quiz Completed!</h2>
+                 <p className="text-white opacity-75 mt-2">
+                  Your journey: Started at {selectedDifficulty} • Reached:{" "}
+                  <span className={`font-bold ${getDifficultyColor(userPerformance.currentDifficulty).replace('bg-', 'text-')}`}>
+                    {userPerformance.currentDifficulty}
+                  </span>
+                </p>
               </div>
 
               <div className="score-display">
@@ -891,34 +1044,36 @@ export default function App() {
                       {score.total - score.correct}
                     </span>
                   </div>
+                   <div className="score-item">
+                    <span className="score-label">Best Streak</span>
+                    <span className="score-value total">{userPerformance.correctStreak}</span>
+                  </div>
                   <div className="score-item">
-                    <span className="score-label">Total</span>
-                    <span className="score-value total">{score.total}</span>
+                    <span className="score-label">Final Level</span>
+                    <span className={`score-value ${getDifficultyColor(userPerformance.currentDifficulty).replace('bg-', 'text-')}`}>
+                      {userPerformance.currentDifficulty}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="answers-review">
+              <div className="answers-review">
               <h3 className="review-title">📝 Answer Review</h3>
               {quiz.map((q, idx) => {
                 const userAnswer = answers[idx];
                 const isCorrect = userAnswer === q.answer;
 
                 return (
-                  <div
-                    key={idx}
-                    className={`glass-card answer-card ${
-                      isCorrect ? "correct" : "incorrect"
-                    }`}
-                  >
+                  <div key={idx} className={`glass-card answer-card ${isCorrect ? "correct" : "incorrect"}`}>
                     <div className="answer-header">
-                      <span className="answer-number">Q{idx + 1}</span>
-                      <span
-                        className={`answer-status ${
-                          isCorrect ? "correct" : "incorrect"
-                        }`}
-                      >
+                      <div className="flex items-center gap-2">
+                        <span className="answer-number">Q{idx + 1}</span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${getDifficultyColor(q.difficulty)} text-white`}>
+                          {q.difficulty}
+                        </span>
+                      </div>
+                      <span className={`answer-status ${isCorrect ? "correct" : "incorrect"}`}>
                         {isCorrect ? "✅" : "❌"}
                       </span>
                     </div>
@@ -928,11 +1083,7 @@ export default function App() {
                     <div className="answer-details">
                       <div className="answer-row">
                         <span className="answer-label">Your Answer:</span>
-                        <span
-                          className={`answer-value ${
-                            isCorrect ? "correct" : "incorrect"
-                          }`}
-                        >
+                        <span className={`answer-value ${isCorrect ? "correct" : "incorrect"}`}>
                           {userAnswer || "Not answered"}
                         </span>
                       </div>

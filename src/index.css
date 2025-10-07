@@ -948,3 +948,56 @@
     border: 1px solid #ddd !important;
   }
 }
+
+/* Adaptive difficulty badge styles */
+.bg-green-500 {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.bg-yellow-500 {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.bg-red-500 {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.bg-blue-500 {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.text-green-500 {
+  color: #10b981;
+}
+
+.text-yellow-500 {
+  color: #f59e0b;
+}
+
+.text-red-500 {
+  color: #ef4444;
+}
+
+.text-blue-500 {
+  color: #3b82f6;
+}
+
+.performance-stats {
+  @apply flex items-center gap-4 text-sm;
+}
+
+.streak-indicator {
+  @apply px-2 py-1 rounded-full font-semibold;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+  .quiz-info .flex-wrap {
+    @apply flex-col items-start gap-2;
+  }
+  
+  .performance-stats {
+    @apply flex-col items-start gap-1;
+  }
+}
