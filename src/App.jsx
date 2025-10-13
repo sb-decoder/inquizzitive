@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ExamPrepPage from "./ExamPrepPage";
 import ScrollTop from "./components/ScrollTop";
 import NotificationBadge from "./components/NotificationBadge";
@@ -54,6 +54,7 @@ export default function App({
   const [originalQuiz, setOriginalQuiz] = useState([]);
   const [showExamPrepPage, setShowExamPrepPage] = useState(false);
   const [guestAcknowledged, setGuestAcknowledged] = useState(!!user); // Auto-acknowledge if user is signed in
+  const resultRef = useRef(null);
 
   // Bookmark states
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState(new Set());
@@ -172,6 +173,13 @@ export default function App({
     }
     if (timeLeft === 0 && quiz.length > 0 && !submitted) handleSubmit();
   }, [timeLeft, submitted, quiz]);
+
+
+  useEffect(() => {
+    if (submitted) {
+      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [submitted]);
 
   function handleOptionSelect(qIndex, option) {
     if (!submitted) setAnswers((prev) => ({ ...prev, [qIndex]: option }));
@@ -941,7 +949,7 @@ export default function App({
 
         {/* Results Section */}
         {submitted && score && (
-          <div className="results-section">
+          <div ref={resultRef} className="results-section">
             <div className="glass-card results-header">
               <div className="results-celebration">
                 <span className="celebration-emoji">🎉</span>
