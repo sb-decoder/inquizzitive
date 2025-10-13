@@ -55,6 +55,7 @@ export default function App({
   const [showExamPrepPage, setShowExamPrepPage] = useState(false);
   const [guestAcknowledged, setGuestAcknowledged] = useState(!!user); // Auto-acknowledge if user is signed in
   const resultRef = useRef(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   // Bookmark states
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState(new Set());
@@ -85,6 +86,7 @@ export default function App({
     setAnswers({});
     setError(null);
     setShowStartScreen(false);
+    setCurrentQuestionIndex(0);
 
     try {
       // Use custom questions if available for the selected category
@@ -163,6 +165,7 @@ export default function App({
     setAnswers({});
     setSubmitted(false);
     setTimeLeft(originalQuiz.length * 30);
+    setCurrentQuestionIndex(0);
   }
 
   // Timer
@@ -174,7 +177,6 @@ export default function App({
     if (timeLeft === 0 && quiz.length > 0 && !submitted) handleSubmit();
   }, [timeLeft, submitted, quiz]);
 
-
   useEffect(() => {
     if (submitted) {
       resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -184,6 +186,16 @@ export default function App({
   function handleOptionSelect(qIndex, option) {
     if (!submitted) setAnswers((prev) => ({ ...prev, [qIndex]: option }));
   }
+
+  const goToPrevQuestion = () => {
+    setCurrentQuestionIndex((idx) => Math.max(0, idx - 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goToNextQuestion = () => {
+    setCurrentQuestionIndex((idx) => Math.min(quiz.length - 1, idx + 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   async function handleSubmit() {
     setSubmitted(true);
@@ -247,6 +259,7 @@ export default function App({
 
     setError(null);
     setShowExamPrepPage(false);
+    setCurrentQuestionIndex(0);
   }
 
   function showExamPrep() {
@@ -853,65 +866,68 @@ export default function App({
         {/* Quiz Section */}
         {quiz.length > 0 && !submitted && (
           <div className="quiz-section">
-            <div className="glass-card quiz-header-card">
-              <div className="quiz-info">
-                <h2>{selectedCategory} Quiz</h2>
-                <span className="quiz-meta">
-                  {selectedDifficulty} • {quiz.length} Questions
-                </span>
+            <div className="quiz-fixed-header">
+              <div className="glass-card quiz-header-card">
+                <div className="quiz-info">
+                  <h2>{selectedCategory} Quiz</h2>
+                  <span className="quiz-meta">
+                    {selectedDifficulty} • {quiz.length} Questions
+                  </span>
+                </div>
+                <div className="timer">
+                  <span className="timer-icon">⏱️</span>
+                  <span className="timer-text">
+                    {Math.floor(timeLeft / 60)}:
+                    {(timeLeft % 60).toString().padStart(2, "0")}
+                  </span>
+                </div>
               </div>
-              <div className="timer">
-                <span className="timer-icon">⏱️</span>
-                <span className="timer-text">
-                  {Math.floor(timeLeft / 60)}:
-                  {(timeLeft % 60).toString().padStart(2, "0")}
-                </span>
+              <div className="glass-card progress-card">
+                <div className="progress-header">
+                  <span className="progress-text">
+                    Progress: {progress.answered} of {progress.total} questions
+                    answered
+                  </span>
+                  <span className="progress-percentage">
+                    {progress.percentage}%
+                  </span>
+                </div>
+                <div className="progress-bar-container">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: `${progress.percentage}%` }}
+                  ></div>
+                </div>
               </div>
             </div>
-            <div className="glass-card progress-card">
-              <div className="progress-header">
-                <span className="progress-text">
-                  Progress: {progress.answered} of {progress.total} questions
-                  answered
-                </span>
-                <span className="progress-percentage">
-                  {progress.percentage}%
-                </span>
-              </div>
-              <div className="progress-bar-container">
-                <div
-                  className="progress-bar-fill"
-                  style={{ width: `${progress.percentage}%` }}
-                ></div>
-              </div>
-            </div>
-            <div className="questions-container">
-              {quiz.map((q, idx) => (
-                <div key={idx} className="glass-card question-card">
+
+            <div className="quiz-content">
+              {quiz[currentQuestionIndex] && (
+                <div className="glass-card question-card">
                   <div className="question-header">
                     <div className="question-header-left">
-                      <span className="question-number">Q{idx + 1}</span>
-                      <p className="question-text">{q.question}</p>
+                      <span className="question-number">Q{currentQuestionIndex + 1}</span>
+                      <p className="question-text">{quiz[currentQuestionIndex].question}</p>
                     </div>
                     {user && (
                       <button
-                        onClick={() => handleBookmarkToggle(idx)}
-                        disabled={bookmarkLoading.has(idx)}
+                        onClick={() => handleBookmarkToggle(currentQuestionIndex)}
+                        disabled={bookmarkLoading.has(currentQuestionIndex)}
                         className={`bookmark-btn ${
-                          bookmarkedQuestions.has(`${q.question}-${q.answer}`)
+                          bookmarkedQuestions.has(`${quiz[currentQuestionIndex].question}-${quiz[currentQuestionIndex].answer}`)
                             ? "bookmarked"
                             : ""
                         }`}
                         title={
-                          bookmarkedQuestions.has(`${q.question}-${q.answer}`)
+                          bookmarkedQuestions.has(`${quiz[currentQuestionIndex].question}-${quiz[currentQuestionIndex].answer}`)
                             ? "Remove bookmark"
                             : "Bookmark this question"
                         }
                       >
-                        {bookmarkLoading.has(idx) ? (
+                        {bookmarkLoading.has(currentQuestionIndex) ? (
                           <span className="bookmark-loading">⟳</span>
                         ) : bookmarkedQuestions.has(
-                            `${q.question}-${q.answer}`,
+                            `${quiz[currentQuestionIndex].question}-${quiz[currentQuestionIndex].answer}`,
                           ) ? (
                           <span className="bookmark-icon bookmarked">🔖</span>
                         ) : (
@@ -921,12 +937,12 @@ export default function App({
                     )}
                   </div>
                   <div className="options-grid">
-                    {q.options.map((opt, i) => (
+                    {quiz[currentQuestionIndex].options.map((opt, i) => (
                       <button
                         key={i}
-                        onClick={() => handleOptionSelect(idx, opt)}
+                        onClick={() => handleOptionSelect(currentQuestionIndex, opt)}
                         className={`option-btn ${
-                          answers[idx] === opt ? "selected" : ""
+                          answers[currentQuestionIndex] === opt ? "selected" : ""
                         }`}
                       >
                         <span className="option-letter">
@@ -936,13 +952,27 @@ export default function App({
                       </button>
                     ))}
                   </div>
+
+                  <div className="nav-actions">
+                    <button
+                      onClick={goToPrevQuestion}
+                      className="nav-btn-prev"
+                      disabled={currentQuestionIndex === 0}
+                    >
+                      ← Prev
+                    </button>
+                    {currentQuestionIndex < quiz.length - 1 ? (
+                      <button onClick={goToNextQuestion} className="nav-btn-next">
+                        Next →
+                      </button>
+                    ) : (
+                      <button onClick={handleSubmit} className="submit-btn">
+                        Submit Quiz
+                      </button>
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
-            <div className="quiz-actions">
-              <button onClick={handleSubmit} className="submit-btn">
-                Submit Quiz
-              </button>
+              )}
             </div>
           </div>
         )}
