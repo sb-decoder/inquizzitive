@@ -1,11 +1,11 @@
-import "dotenv/config";
-import { fileURLToPath } from "url";
 import express from "express";
-import cors from "cors";
 import path from "path";
+import { fileURLToPath } from "url";
+import getGeminiResponse from "./api/getGeminiResponse.js";
+import dotenv from "dotenv";
+import cors from "cors";
 
-import quiz from "./api/quiz.js";
-import quizAnswer from "./api/get-quiz-answer.js";
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,8 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 // --- API Route for Gemini (test) ---
-app.use("/api/quiz", quiz);
-app.use("/api/get-quiz-answer", quizAnswer);
+app.use("/api/getGeminiResponse", getGeminiResponse);
 
 // Serve built files in production
 if (process.env.NODE_ENV === "production") {

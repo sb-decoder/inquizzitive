@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export default function NotificationBadge({ user, onCategorySelect }) {
   const [insights, setInsights] = useState([]);
@@ -14,9 +14,7 @@ export default function NotificationBadge({ user, onCategorySelect }) {
 
   const loadInsights = () => {
     try {
-      const storedInsights = localStorage.getItem(
-        `insights_${user?.id || "guest"}`,
-      );
+      const storedInsights = localStorage.getItem(`insights_${user?.id || 'guest'}`);
       if (storedInsights) {
         const parsedInsights = JSON.parse(storedInsights);
         setInsights(parsedInsights);
@@ -26,7 +24,7 @@ export default function NotificationBadge({ user, onCategorySelect }) {
         setShowBadge(false);
       }
     } catch (error) {
-      console.error("Error loading insights:", error);
+      console.error('Error loading insights:', error);
       setShowBadge(false);
     }
   };
@@ -34,31 +32,31 @@ export default function NotificationBadge({ user, onCategorySelect }) {
   const deleteInsight = (index) => {
     const updatedInsights = insights.filter((_, i) => i !== index);
     setInsights(updatedInsights);
-
+    
     // Save to localStorage
     try {
       if (updatedInsights.length > 0) {
         localStorage.setItem(
-          `insights_${user?.id || "guest"}`,
-          JSON.stringify(updatedInsights),
+          `insights_${user?.id || 'guest'}`,
+          JSON.stringify(updatedInsights)
         );
       } else {
         // Remove from localStorage if no insights left
-        localStorage.removeItem(`insights_${user?.id || "guest"}`);
+        localStorage.removeItem(`insights_${user?.id || 'guest'}`);
         setShowBadge(false);
         setShowPanel(false);
       }
     } catch (error) {
-      console.error("Error saving insights:", error);
+      console.error('Error saving insights:', error);
     }
   };
 
   const clearAllInsights = () => {
     setInsights([]);
     try {
-      localStorage.removeItem(`insights_${user?.id || "guest"}`);
+      localStorage.removeItem(`insights_${user?.id || 'guest'}`);
     } catch (error) {
-      console.error("Error clearing insights:", error);
+      console.error('Error clearing insights:', error);
     }
     setShowBadge(false);
     setShowPanel(false);
@@ -112,7 +110,7 @@ export default function NotificationBadge({ user, onCategorySelect }) {
             className="fixed inset-0 z-40"
             onClick={() => setShowPanel(false)}
           />
-
+          
           {/* Panel */}
           <div className="notification-panel">
             <div className="p-4 border-b border-white/20">
@@ -164,9 +162,7 @@ export default function NotificationBadge({ user, onCategorySelect }) {
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-2xl">
-                            {insight.icon || "💡"}
-                          </span>
+                          <span className="text-2xl">{insight.icon || '💡'}</span>
                           <h4 className="text-white font-medium text-sm">
                             {insight.title}
                           </h4>
