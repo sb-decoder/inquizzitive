@@ -21,7 +21,6 @@ const getQuestionValue = (label) =>
   QUESTION_OPTIONS.find((opt) => opt.label === label)?.value;
 const getQuestionLabel = (value) =>
   QUESTION_OPTIONS.find((opt) => opt.value === value)?.label;
-let quizID = null;
 
 export default function App({
   user,
@@ -87,14 +86,64 @@ export default function App({
     setShowStartScreen(false);
 
     try {
-      const requestUrl = `/api/quiz?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`;
-      const response = await fetch(requestUrl);
-      const data = await response.json();
+      // Use custom questions if available for the selected category
+      // if (customQuestions[selectedCategory]) {
+      //   const questions = customQuestions[selectedCategory].slice(0, numQuestions);
+      //   setQuiz(questions);
+      //   setTimeLeft(questions.length * 30);
+      //   setShowStartScreen(false);
+      //   setLoading(false);
+      //   return;
+      // }
+      // Otherwise, use AI-generated questions
+      const requestUrl = `${import.meta.env.VITE_API_BASE_URL || ""}/api/getGeminiResponse?qcount=${numQuestions}&category=${selectedCategory}&difficulty=${selectedDifficulty}`;
+      const result = await fetch(requestUrl, {
+        method: "GET",
+      });
+      let text = await result.text();
+      text = text.replace(/```json|```/g, "").trim();
 
-      const cleanedQuestions = data.quizQs;
-      quizID = data.quiz_id;
+      console.log("Raw AI response:", text); // Debug log
+
+      if (!text) {
+        throw new Error("The AI returned an empty response. Please try again.");
+      }
+
+      let questions;
+      try {
+        questions = JSON.parse(text);
+      } catch {
+        throw new Error(
+          "Couldn't understand the quiz format. Please try again.",
+        );
+      }
+
+      // Validate and clean the data
+      if (!Array.isArray(questions) || questions.length === 0) {
+        throw new Error("No questions were generated. Please try again.");
+      }
+
+      const cleanedQuestions = questions.map((q) => ({
+        ...q,
+        answer: q.answer?.trim(),
+        options: q.options?.map((opt) => opt?.trim()),
+      }));
+
+      console.log("Cleaned questions:", cleanedQuestions); // Debug log
+
+      // Basic shape check
+      const first = cleanedQuestions[0];
+      if (
+        !first ||
+        !first.question ||
+        !Array.isArray(first.options) ||
+        typeof first.answer !== "string"
+      ) {
+        throw new Error("The quiz data was malformed. Please try again.");
+      }
 
       setQuiz(cleanedQuestions);
+      setOriginalQuiz(cleanedQuestions);
       setTimeLeft(cleanedQuestions.length * 30);
       setShowStartScreen(false);
     } catch (err) {
@@ -130,16 +179,6 @@ export default function App({
 
   async function handleSubmit() {
     setSubmitted(true);
-
-    if (quizID != null) {
-      const requestUrl = `/api/get-quiz-answer?id=${quizID}`;
-      const response = await fetch(requestUrl);
-      const data = await response.json();
-
-      setQuiz(data);
-      setOriginalQuiz(data);
-      quizID = null;
-    }
 
     // Save quiz result to database if user is authenticated
     if (user && saveQuizResult) {

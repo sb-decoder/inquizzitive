@@ -3,12 +3,12 @@
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 
-# Get SUPABASE SECRET KEY values from your Supabase Dashboard > Settings > API > API Keys > Add new secret key
-SUPABASE_SECRET_KEY=
+# DB Connection URI from Supabase > Project > Settings > Database > Connection Info
+DB_URI=
 
 # Google Gemini API Key
 # Get this from Google AI Studio: https://makersuite.google.com/app/apikey
 GEMINI_API_KEY=
 
-# DB Connection URI from Supabase > Project > Settings > Database > Connection Info
-DB_URI=
+# Only required for development i.e. locally
+VITE_API_BASE_URL=http://localhost:5174/api
