@@ -509,6 +509,22 @@
     @apply flex flex-col gap-6;
   }
 
+  /* Fixed quiz header (keeps timer and progress visible) */
+  .quiz-fixed-header {
+    position: sticky;
+    top: 100px; /* accounts for floating nav height and spacing */
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Content area under the fixed header */
+  .quiz-content {
+    display: block;
+    margin-top: 12px;
+  }
+
   .quiz-header-card {
     @apply px-8 py-6 flex justify-between items-center;
   }
@@ -545,6 +561,24 @@
   .question-card {
     @apply p-7;
     animation: slideInUp 0.5s ease-out;
+  }
+
+  /* Horizontal nav actions */
+  .nav-actions {
+    @apply flex items-center justify-between mt-6;
+  }
+  .nav-btn-prev,
+  .nav-btn-next {
+    @apply border-none px-6 py-3 rounded-[40px] text-white font-semibold cursor-pointer transition-all duration-300;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
+  }
+  .nav-btn-prev:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+  .nav-btn-next {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 20px rgba(245, 87, 108, 0.3);
   }
 
   .question-header {
